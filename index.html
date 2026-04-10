@@ -175,7 +175,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.02);}
 <button class="mob-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
 
 <!-- APP -->
-<div id="app">
+<div id="app" style="display:none">
 <div class="shell">
 
 <aside class="sidebar" id="sidebar">
@@ -705,11 +705,16 @@ let COLAB_MAP = {}; // { "NOME COMPLETO": { empresa, cargo, salario } }
 async function init() {
   const { data:{ session } } = await db.auth.getSession();
   if (session) { SESSION = session; await onLogin(session.user); }
-  else { show('login-screen'); }
+  else { mostrarLogin(); }
   db.auth.onAuthStateChange(async (_e, s) => {
-    if (s) { SESSION = s; await onLogin(s.user); }
-    else window.location.reload();
+    if (s && !SESSION) { SESSION = s; await onLogin(s.user); }
+    else if (!s)       { SESSION = null; mostrarLogin(); }
   });
+}
+
+function mostrarLogin() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
 }
 
 async function onLogin(user) {
@@ -724,8 +729,8 @@ async function onLogin(user) {
   }
   // Carregar colaboradores em memória para dropdowns
   await carregarColaboradoresDropdown();
-  hide('login-screen');
-  show('app');
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
   q('dash-date').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   loadPage('dashboard');
 }
