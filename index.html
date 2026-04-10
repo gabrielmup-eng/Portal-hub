@@ -6,6 +6,7 @@
 <title>HubOn</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -171,6 +172,10 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
     <div id="lerr"></div>
     <div class="fg"><label>E-mail</label><input type="email" id="li-email" placeholder="seu@email.com" autocomplete="email"></div>
     <div class="fg"><label>Senha</label><input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <input type="checkbox" id="li-lembrar" checked style="accent-color:var(--or);width:15px;height:15px;cursor:pointer;">
+      <label for="li-lembrar" style="font-size:12.5px;color:var(--tx2);cursor:pointer;text-transform:none;letter-spacing:0;">Manter conectado neste dispositivo</label>
+    </div>
     <button class="lbtn" id="lbtn" onclick="doLogin()">Entrar</button>
   </div>
 </div>
@@ -580,7 +585,13 @@ const SUPABASE_ANON    = 'sb_publishable_ypgq1IS7TqilRgwg5Gbgwg_xmZxC9ES';  // e
 // ═══════════════════════════════════════
 
 const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_ANON);
+const db = createClient(SUPABASE_URL, SUPABASE_ANON, {
+  auth: {
+    persistSession: true,          // mantém sessão entre abas
+    autoRefreshToken: true,
+    storageKey: 'hubon-session',
+  }
+});
 
 let SESSION = null;
 let ROLE    = 'gerente';
@@ -624,6 +635,13 @@ async function onLogin(user) {
 async function doLogin() {
   const btn = el('lbtn');
   btn.disabled = true; btn.textContent = 'Entrando…';
+  const lembrar = el('li-lembrar')?.checked !== false;
+  
+  // Se não quer lembrar: configura sessão sem persistência
+  if (!lembrar) {
+    await db.auth.signOut(); // limpa qualquer sessão anterior
+  }
+
   const { error } = await db.auth.signInWithPassword({
     email: v('li-email'), password: v('li-pass')
   });
@@ -632,6 +650,13 @@ async function doLogin() {
     const e = el('lerr');
     e.textContent = 'E-mail ou senha incorretos.';
     e.style.display = 'block';
+    return;
+  }
+  // Se não quer lembrar, limpa ao fechar a aba
+  if (!lembrar) {
+    window.addEventListener('beforeunload', async () => {
+      await db.auth.signOut();
+    });
   }
 }
 async function doLogout() { await db.auth.signOut(); }
@@ -1057,23 +1082,37 @@ async function importar() {
 
 // Extrai texto do PDF via FileReader (decodifica base64 para string)
 async function extrairDoBase64(b64) {
-  // Decodifica base64 → binary string → pdftotext não está disponível no browser
-  // Usamos abordagem: extrair texto legível do base64 diretamente
-  // O PDF do JB Contábil é text-based (não escaneado), então o texto está em cleartext no binário
-  const bin = atob(b64);
-  // Extrai strings legíveis (sequências ASCII >= 4 chars)
-  let textoExtraido = '';
-  let buf = '';
-  for (let i = 0; i < bin.length; i++) {
-    const c = bin.charCodeAt(i);
-    if (c >= 32 && c < 127) {
-      buf += bin[i];
-    } else {
-      if (buf.length >= 4) textoExtraido += buf + '\n';
-      buf = '';
+  try {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const binStr = atob(b64);
+    const bytes  = new Uint8Array(binStr.length);
+    for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
+
+    const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+    let textoTotal = '';
+
+    for (let p = 1; p <= pdf.numPages; p++) {
+      const page    = await pdf.getPage(p);
+      const content = await page.getTextContent();
+      let lastY = null, linha = '';
+      for (const item of content.items) {
+        if (lastY !== null && Math.abs(item.transform[5] - lastY) > 3) {
+          textoTotal += linha + '\n';
+          linha = '';
+        }
+        linha += item.str;
+        lastY  = item.transform[5];
+      }
+      if (linha) textoTotal += linha + '\n';
     }
+    return parsearTexto(textoTotal);
+  } catch(err) {
+    console.error('PDF.js erro:', err);
+    toast('Erro ao ler o PDF: ' + err.message, false);
+    return [];
   }
-  return parsearTexto(textoExtraido);
 }
 
 // Regex precisa para o formato JB Contábil
