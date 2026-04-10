@@ -1238,45 +1238,73 @@ async function extrairDoBase64(b64) {
     for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
 
     const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
-    let textoTotal = '';
+    const colaboradores = [];
 
     for (let p = 1; p <= pdf.numPages; p++) {
       const page    = await pdf.getPage(p);
       const content = await page.getTextContent();
 
-      // Agrupa itens por linha (mesmo Y), reconstrói com espaços por posição X
+      // Agrupar itens por linha (Y arredondado)
       const linhas = {};
       for (const item of content.items) {
         const y = Math.round(item.transform[5]);
-        const x = Math.round(item.transform[4]);
         if (!linhas[y]) linhas[y] = [];
-        linhas[y].push({ x, str: item.str });
+        linhas[y].push({ x: item.transform[4], str: item.str.trim() });
       }
 
-      // Ordena linhas de cima para baixo (Y decrescente em PDF)
-      const ysOrdenados = Object.keys(linhas).map(Number).sort((a,b) => b - a);
+      // Processar cada linha de cima para baixo
+      const ys = Object.keys(linhas).map(Number).sort((a, b) => b - a);
+      for (const y of ys) {
+        const itens = linhas[y].filter(i => i.str).sort((a, b) => a.x - b.x);
+        if (!itens.length) continue;
 
-      for (const y of ysOrdenados) {
-        const itens = linhas[y].sort((a,b) => a.x - b.x);
-        // Reconstrói linha inserindo espaços proporcional à distância X
-        let linha = '';
-        let xAnterior = null;
+        // Verificar se é linha de colaborador: começa com 6 dígitos
+        const primeiro = itens[0].str;
+        if (!/^\d{6}$/.test(primeiro)) continue;
+
+        // Determinar largura da página para calcular thresholds relativos
+        // No JB Contábil A4: nome até ~54% da largura, cargo até ~97%
+        // Usamos posição X absoluta: nome < 350pt, cargo < 560pt
+        const nome_parts  = [];
+        const cargo_parts = [];
+        let salario = '';
+        let dataAdm = '';
+
         for (const it of itens) {
-          if (xAnterior !== null) {
-            const gap = it.x - xAnterior;
-            // Cada ~6px = 1 espaço (fonte 10pt em 72dpi)
-            const espacos = Math.max(1, Math.round(gap / 6));
-            linha += ' '.repeat(espacos);
+          if (/^\d{6}$/.test(it.str)) continue; // pular o código
+          if (/^\d{1,3}[.,]\d{3},\d{2}$/.test(it.str)) { salario = it.str; continue; }
+          if (/^\/Mensal$/.test(it.str)) continue;
+          if (/^\d{2}\/\d{2}\/\d{4}$/.test(it.str)) { dataAdm = it.str; continue; }
+          if (/^\d+,\d{2}\/\d{2},\d{2}%$/.test(it.str)) continue; // periculosidade
+          if (/^0,00\/\d{2},\d{2}%$/.test(it.str)) continue;
+
+          // Separar por coluna X
+          // Nome: X < 345  |  Cargo: X >= 345
+          if (it.x < 345) {
+            nome_parts.push(it.str);
+          } else {
+            cargo_parts.push(it.str);
           }
-          linha += it.str;
-          xAnterior = it.x + (it.str.length * 6);
         }
-        textoTotal += linha.trimEnd() + '\n';
+
+        const nome  = nome_parts.join(' ').trim();
+        const cargo = cargo_parts.join(' ').trim();
+
+        if (!nome || !dataAdm) continue;
+        if (nome.startsWith('Total')) continue;
+
+        const [d, mo, y2] = dataAdm.split('/');
+        colaboradores.push({
+          nome,
+          cargo,
+          salario: salario ? parseFloat(salario.replace(/\./g, '').replace(',', '.')) : null,
+          data_admissao: `${y2}-${mo}-${d}`,
+        });
       }
     }
 
-    console.log('PDF.js extraiu:', textoTotal.substring(0, 500));
-    return parsearTexto(textoTotal);
+    console.log('PDF.js extraiu:', colaboradores);
+    return colaboradores;
   } catch(err) {
     console.error('PDF.js erro:', err);
     toast('Erro ao ler PDF: ' + err.message, false);
@@ -1287,21 +1315,42 @@ async function extrairDoBase64(b64) {
 // Regex precisa para o formato JB Contábil
 // Linha: 000002 NOME COMPLETO            CARGO               1.860,00/Mensal  01/03/2025  0,00/00,00%
 function parsearTexto(texto) {
-  const RE = /(\d{6})\s+([A-ZÀ-Ú][A-ZÀ-Ú\s]{2,}?)\s{2,}([A-ZÀ-Ú][A-ZÀ-Ú\s/º°ª\-]+?)\s{2,}([\d.,]+)\/Mensal\s+(\d{2}\/\d{2}\/\d{4})/g;
   const resultados = [];
+  // Regex principal: funciona com espaços duplos (texto colado do PDF)
+  const RE = /(\d{6})\s+([A-ZÀ-Ú][A-ZÀ-Ú\s]{2,}?)\s{2,}([A-ZÀ-Ú][A-ZÀ-Ú\s/º°ª\-]+?)\s{2,}([\d.,]+)\/Mensal\s+(\d{2}\/\d{2}\/\d{4})/g;
   let m;
   while ((m = RE.exec(texto)) !== null) {
-    const nome  = m[2].trim();
-    const cargo = m[3].trim();
+    const nome = m[2].trim();
     if (nome.startsWith('Total')) continue;
-    const salario = parseFloat(m[4].replace(/\./g,'').replace(',','.'));
     const [d, mo, y] = m[5].split('/');
     resultados.push({
       nome,
-      cargo,
-      salario,
-      data_admissao: `${y}-${mo}-${d}`,
+      cargo:        m[3].trim(),
+      salario:      parseFloat(m[4].replace(/\./g,'').replace(',','.')),
+      data_admissao:`${y}-${mo}-${d}`,
     });
+  }
+
+  // Fallback: ancora pelo padrão do salário (funciona com espaço simples)
+  if (!resultados.length) {
+    const linhas = texto.split('\n');
+    for (const linha of linhas) {
+      const l = linha.trim();
+      const salM = l.match(/([\d]+\.[\d]{3},[\d]{2})\/Mensal\s+(\d{2}\/\d{2}\/\d{4})/);
+      const codM = l.match(/^(\d{6})\s+/);
+      if (!salM || !codM) continue;
+      const meio = l.slice(codM[0].length, l.indexOf(salM[0])).trim();
+      if (!meio || meio.startsWith('Total')) continue;
+      // Sem espaços duplos não conseguimos separar nome/cargo com segurança
+      // Salvar tudo como nome, cargo vazio
+      const [d, mo, y] = salM[2].split('/');
+      resultados.push({
+        nome:         meio,
+        cargo:        '',
+        salario:      parseFloat(salM[1].replace(/\./g,'').replace(',','.')),
+        data_admissao:`${y}-${mo}-${d}`,
+      });
+    }
   }
   return resultados;
 }
