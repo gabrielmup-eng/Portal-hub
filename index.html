@@ -200,10 +200,12 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
     <div class="ni" onclick="goPage('faltas',this)">📅 Faltas</div>
     <div class="ni" onclick="goPage('demissoes',this)">🚪 Demissões</div>
     <div class="sec-lbl">Contratação</div>
-    <div class="ni" onclick="goPage('contratos',this)">📄 Contratos</div>
     <div class="ni" onclick="goPage('entrevistas',this)">🎙️ Entrevistas</div>
     <div class="sec-lbl">Arquivos</div>
     <div class="ni" onclick="goPage('documentos',this)">📁 Documentos</div>
+    <div class="sec-lbl">Gestão</div>
+    <div class="ni" onclick="goPage('empresas',this)">🏢 Empresas</div>
+    <div class="ni" onclick="goPage('relatorios',this)">📊 Relatórios</div>
     <div class="sec-lbl admin-only">Admin</div>
     <div class="ni admin-only" onclick="goPage('usuarios',this)">🔐 Usuários</div>
   </nav>
@@ -239,6 +241,9 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
     <div><div class="pt">Colaboradores</div><div class="ps">Cadastro geral da rede</div></div>
     <div class="row">
       <input class="si" type="text" placeholder="Buscar..." oninput="filterTb('tb-colab',this.value)">
+      <select id="filtro-empresa" onchange="filtrarPorEmpresa()" style="padding:8px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13px;outline:none;min-width:180px;">
+        <option value="">Todas as empresas</option>
+      </select>
       <button class="btn btn-bl admin-only" onclick="openMo('mo-import')">📥 Importar PDF</button>
       <button class="btn btn-or admin-only" onclick="openMo('mo-colab')">＋ Novo</button>
     </div>
@@ -261,10 +266,12 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 
 <!-- ADVERTÊNCIAS -->
 <div id="page-advertencias" class="pg">
-  <div class="tb"><div><div class="pt">Advertências</div></div>
-  <button class="btn btn-or" onclick="openMo('mo-adv')">＋ Nova</button></div>
+  <div class="tb">
+    <div><div class="pt">Advertências</div><div class="ps">Geração e controle de advertências</div></div>
+    <button class="btn btn-or" onclick="abrirNovaAdv()">＋ Nova Advertência</button>
+  </div>
   <div class="tc"><table>
-    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data</th><th>Motivo</th><th>Doc.</th></tr></thead>
+    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data</th><th>Motivo</th><th>Ações</th></tr></thead>
     <tbody id="tb-adv"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
   </table></div>
 </div>
@@ -284,8 +291,8 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   <div class="tb"><div><div class="pt">Demissões</div></div>
   <button class="btn btn-or admin-only" onclick="openMo('mo-dem')">＋ Registrar</button></div>
   <div class="tc"><table>
-    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data</th></tr></thead>
-    <tbody id="tb-dem"><tr class="erow"><td colspan="4"><span class="spin"></span></td></tr></tbody>
+    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data</th><th>Docs</th></tr></thead>
+    <tbody id="tb-dem"><tr class="erow"><td colspan="5"><span class="spin"></span></td></tr></tbody>
   </table></div>
 </div>
 
@@ -314,9 +321,41 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   <div class="tb"><div><div class="pt">Documentos</div></div>
   <button class="btn btn-or" onclick="openMo('mo-up')">📎 Enviar</button></div>
   <div class="tc"><table>
-    <thead><tr><th>Arquivo</th><th>Tipo</th><th>Colaborador</th><th>Empresa</th><th>Data</th><th></th></tr></thead>
+    <thead><tr><th>Arquivo</th><th>Tipo</th><th>Colaborador</th><th>Empresa</th><th>Data</th><th>Ações</th></tr></thead>
     <tbody id="tb-docs"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
   </table></div>
+</div>
+
+<!-- EMPRESAS -->
+<div id="page-empresas" class="pg">
+  <div class="tb">
+    <div><div class="pt">Empresas</div><div class="ps">Dados cadastrais de cada unidade</div></div>
+    <button class="btn btn-or" onclick="openMo('mo-empresa')">＋ Nova Empresa</button>
+  </div>
+  <div class="tc"><table>
+    <thead><tr><th>Razão Social</th><th>CNPJ</th><th>Endereço</th><th>Telefone</th><th>E-mail</th><th></th></tr></thead>
+    <tbody id="tb-empresas"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
+  </table></div>
+</div>
+
+<!-- RELATÓRIOS -->
+<div id="page-relatorios" class="pg">
+  <div class="tb"><div><div class="pt">Relatórios</div><div class="ps">Salários, advertências e faltas</div></div></div>
+
+  <!-- Seletor de empresa para relatório -->
+  <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;margin-bottom:20px;">
+    <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+      <div class="fi" style="flex:1;min-width:180px;">
+        <label>Empresa</label>
+        <select id="rel-empresa" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13.5px;outline:none;">
+          <option value="">Todas as empresas</option>
+        </select>
+      </div>
+      <button class="btn btn-or" onclick="gerarRelatorio()">📊 Gerar Relatório</button>
+    </div>
+  </div>
+
+  <div id="rel-conteudo"></div>
 </div>
 
 <!-- USUÁRIOS -->
@@ -424,34 +463,36 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 <!-- ADVERTÊNCIA -->
 <div class="mo" id="mo-adv">
   <div class="md">
-    <div class="md-h"><h3>Nova Advertência</h3><button class="xbtn" onclick="closeMo('mo-adv')">✕</button></div>
+    <div class="md-h">
+      <h3 id="adv-modal-titulo">Nova Advertência</h3>
+      <button class="xbtn" onclick="closeMo('mo-adv');ADV_EDIT_ID=null;">✕</button>
+    </div>
     <div class="md-b">
+      <input type="hidden" id="adv-edit-id">
       <div class="fg2">
         <div class="fi full"><label>Colaborador *</label>
-          <select id="a-colab" onchange="autoFill('a-colab','a-emp','a-cargo','a-sal')"><option value="">Selecione...</option></select></div>
+          <select id="a-colab" onchange="autoFill('a-colab','a-emp','a-cargo','a-sal');preencherCNPJAdv()"><option value="">Selecione...</option></select></div>
         <div class="fi full"><label>Empresa</label><input id="a-emp" readonly></div>
+        <div class="fi"><label>CNPJ da Empresa</label><input id="a-cnpj" readonly placeholder="Cadastre a empresa primeiro"></div>
         <div class="fi"><label>Cargo</label><input id="a-cargo" readonly></div>
-        <div class="fi"><label>Salário</label><input id="a-sal" readonly></div>
-        <div class="fi"><label>Tipo *</label><select id="a-tipo"><option>Verbal</option><option>Escrita (1ª)</option><option>Escrita (2ª)</option><option>Suspensão</option></select></div>
+        <div class="fi"><label>Tipo *</label><select id="a-tipo">
+          <option>Verbal</option>
+          <option>Escrita (1ª)</option>
+          <option>Escrita (2ª)</option>
+          <option>Escrita (3ª)</option>
+          <option>Escrita (4ª)</option>
+          <option>Escrita (5ª)</option>
+          <option>Suspensão</option>
+        </select></div>
         <div class="fi"><label>Data *</label><input type="date" id="a-data"></div>
         <div class="fi full"><label>Motivo *</label><textarea id="a-motivo" placeholder="Descreva o motivo..."></textarea></div>
-        <div class="fi full"><label>Testemunhas</label><input id="a-test" placeholder="Nome e função"></div>
-        <div class="fi full">
-          <label>Documento Assinado</label>
-          <div class="uz" onclick="document.getElementById('a-file').click()">
-            <span class="uz-ic">📎</span><div class="uz-tx">Foto ou PDF</div>
-            <button type="button" class="btn btn-gh btn-sm" style="margin-top:8px" onclick="event.stopPropagation();document.getElementById('a-cam').click()">📸 Câmera</button>
-          </div>
-          <input type="file" id="a-file" accept="image/*,.pdf" style="display:none" onchange="fileOk(this,'a-ok')">
-          <input type="file" id="a-cam" accept="image/*" capture="environment" style="display:none" onchange="fileOk(this,'a-ok')">
-          <div class="fok" id="a-ok"></div>
-        </div>
+        <div class="fi full"><label>Testemunhas</label><input id="a-test" placeholder="Nome e função das testemunhas"></div>
       </div>
     </div>
     <div class="md-f">
       <button class="btn btn-bl" onclick="gerarPDF()">🖨️ Gerar PDF</button>
-      <button class="btn btn-gh" onclick="closeMo('mo-adv')">Cancelar</button>
-      <button class="btn btn-or" onclick="saveReg('advertencia')">Salvar</button>
+      <button class="btn btn-gh" onclick="closeMo('mo-adv');ADV_EDIT_ID=null;">Cancelar</button>
+      <button class="btn btn-or" id="adv-save-btn" onclick="salvarAdvertencia()">Salvar</button>
     </div>
   </div>
 </div>
@@ -478,7 +519,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 
 <!-- DEMISSÃO -->
 <div class="mo" id="mo-dem">
-  <div class="md">
+  <div class="md" style="width:640px">
     <div class="md-h"><h3>Registrar Demissão</h3><button class="xbtn" onclick="closeMo('mo-dem')">✕</button></div>
     <div class="md-b">
       <div class="fg2">
@@ -491,8 +532,38 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
         <div class="fi"><label>Data</label><input type="date" id="d-data"></div>
         <div class="fi full"><label>Motivo</label><textarea id="d-motivo"></textarea></div>
       </div>
+      <hr style="border:none;border-top:1px solid var(--bd);margin:16px 0;">
+      <div style="font-weight:600;font-size:13px;margin-bottom:12px;font-family:'Outfit',sans-serif;">📎 Documentos da Rescisão</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div class="fi"><label>Tipo de Documento</label>
+          <select id="dem-doc-tipo">
+            <option>Aviso Prévio</option>
+            <option>Termo de Quitação</option>
+            <option>Espelho da Rescisão</option>
+            <option>TRCT Assinado</option>
+            <option>Comprovante FGTS</option>
+            <option>Chave FGTS</option>
+            <option>Guia Seguro-Desemprego</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="fi"><label>Arquivo</label>
+          <div style="display:flex;gap:6px">
+            <button type="button" class="btn btn-gh btn-sm" style="flex:1" onclick="document.getElementById('dem-file').click()">📎 Selecionar</button>
+            <button type="button" class="btn btn-gh btn-sm" onclick="document.getElementById('dem-cam').click()">📸</button>
+          </div>
+          <input type="file" id="dem-file" accept="image/*,.pdf" style="display:none" onchange="fileOk(this,'dem-ok')">
+          <input type="file" id="dem-cam" accept="image/*" capture="environment" style="display:none" onchange="fileOk(this,'dem-ok')">
+          <div class="fok" id="dem-ok"></div>
+        </div>
+      </div>
+      <div id="dem-docs-preview" style="display:flex;flex-direction:column;gap:6px;"></div>
+      <button type="button" class="btn btn-gh btn-sm" style="margin-top:6px" onclick="adicionarDocDemissao()">＋ Adicionar documento</button>
     </div>
-    <div class="md-f"><button class="btn btn-gh" onclick="closeMo('mo-dem')">Cancelar</button><button class="btn btn-or" onclick="saveReg('demissao')">Salvar</button></div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-dem')">Cancelar</button>
+      <button class="btn btn-or" onclick="saveReg('demissao')">Salvar Demissão</button>
+    </div>
   </div>
 </div>
 
@@ -616,6 +687,32 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
+<!-- EMPRESA -->
+<div class="mo" id="mo-empresa">
+  <div class="md">
+    <div class="md-h"><h3 id="emp-modal-titulo">Nova Empresa</h3><button class="xbtn" onclick="closeMo('mo-empresa');EMP_EDIT_ID=null;">✕</button></div>
+    <div class="md-b">
+      <input type="hidden" id="emp-edit-id">
+      <div class="fg2">
+        <div class="fi full"><label>Razão Social *</label><input id="emp-razao" placeholder="Ex: WILLIAN CORREA FRANCO MORAES LTDA"></div>
+        <div class="fi"><label>Nome Fantasia</label><input id="emp-fantasia" placeholder="Ex: FNP Santa Rosa"></div>
+        <div class="fi"><label>CNPJ *</label><input id="emp-cnpj" placeholder="00.000.000/0001-00"></div>
+        <div class="fi"><label>Inscrição Estadual</label><input id="emp-ie" placeholder="Ex: 000.000.000"></div>
+        <div class="fi full"><label>Endereço Completo</label><input id="emp-end" placeholder="Rua, número, bairro, cidade, UF, CEP"></div>
+        <div class="fi"><label>Telefone</label><input id="emp-tel" placeholder="(00) 00000-0000"></div>
+        <div class="fi"><label>E-mail</label><input id="emp-email" placeholder="contato@empresa.com.br"></div>
+        <div class="fi"><label>Responsável Legal</label><input id="emp-resp" placeholder="Nome do sócio/responsável"></div>
+        <div class="fi"><label>Ramo de Atividade</label><input id="emp-ramo" placeholder="Ex: Alimentação / Restaurante"></div>
+        <div class="fi"><label>Data de Abertura</label><input type="date" id="emp-abertura"></div>
+      </div>
+    </div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-empresa');EMP_EDIT_ID=null;">Cancelar</button>
+      <button class="btn btn-or" onclick="salvarEmpresa()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <!-- CONFIRMAR EXCLUSÃO -->
 <div class="mo" id="mo-del">
   <div class="md" style="width:420px">
@@ -637,6 +734,25 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 // ╔══════════════════════════════════════╗
 //   CONFIGURAÇÃO — preencha antes de publicar
 // ╚══════════════════════════════════════╝
+// SQL ADICIONAL necessário no Supabase:
+// CREATE TABLE IF NOT EXISTS empresas (
+//   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+//   razao_social TEXT NOT NULL,
+//   nome_fantasia TEXT,
+//   cnpj TEXT,
+//   inscricao_estadual TEXT,
+//   endereco TEXT,
+//   telefone TEXT,
+//   email TEXT,
+//   responsavel TEXT,
+//   ramo TEXT,
+//   data_abertura DATE,
+//   created_at TIMESTAMPTZ DEFAULT NOW()
+// );
+// ALTER TABLE documentos ADD COLUMN IF NOT EXISTS colaborador_id UUID;
+// ALTER TABLE documentos ADD COLUMN IF NOT EXISTS demissao_id UUID;
+// ALTER TABLE advertencias ADD COLUMN IF NOT EXISTS cargo TEXT;
+// Habilitar RLS na tabela empresas com política de leitura para usuários autenticados.
 const SUPABASE_URL     = 'https://djopojjzuvfdukgglinj.supabase.co';       // https://xxxxx.supabase.co
 const SUPABASE_ANON    = 'sb_publishable_ypgq1IS7TqilRgwg5Gbgwg_xmZxC9ES';  // eyJhbGci...
 // ═══════════════════════════════════════
@@ -683,6 +799,8 @@ async function onLogin(user) {
     document.querySelectorAll('.admin-only').forEach(e => e.style.display = '');
   }
   await reloadCMAP();
+  await carregarEmpresasMap();
+  await popularFiltroEmpresas();
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   el('dash-date').textContent = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
@@ -775,6 +893,8 @@ function loadPage(id) {
     contratos:    () => loadTb('contratos','tb-ct', rCt),
     entrevistas:  () => loadTb('entrevistas','tb-ent', rEnt),
     documentos:   () => loadTb('documentos','tb-docs', rDocs),
+    empresas:     loadEmpresas,
+    relatorios:   () => { popularFiltroEmpresas(); el('rel-conteudo').innerHTML=''; },
     usuarios:     loadUsuarios,
   };
   if (map[id]) map[id]();
@@ -859,8 +979,20 @@ function rAdv(d) {
     <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
     <td><span class="bx or">${x(r.tipo)}</span></td>
     <td>${fd(r.data)}</td><td>${x(r.motivo||'—')}</td>
-    <td>${r.doc_url ? `<a href="${r.doc_url}" target="_blank" class="btn btn-gh btn-sm">Ver</a>` : '—'}</td>
+    <td style="display:flex;gap:5px;align-items:center;">
+      <button class="btn btn-gh btn-sm" onclick="abrirEditarAdv('${r.id}')">✏️</button>
+      <button class="btn btn-rd btn-sm" onclick="excluirAdv('${r.id}',this)">🗑</button>
+    </td>
   </tr>`).join('');
+}
+
+async function excluirAdv(id, btn) {
+  if (!confirm('Excluir esta advertência?')) return;
+  btn.disabled = true;
+  const { error } = await db.from('advertencias').delete().eq('id', id);
+  if (error) { toast('Erro: '+error.message, false); btn.disabled=false; return; }
+  toast('Advertência excluída.', true);
+  loadTb('advertencias','tb-adv', rAdv);
 }
 function rFaltas(d) {
   return d.map(r => `<tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
@@ -874,7 +1006,32 @@ function rDem(d) {
   return d.map(r => `<tr>
     <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
     <td><span class="bx rd">${x(r.tipo)}</span></td><td>${fd(r.data)}</td>
+    <td><button class="btn btn-gh btn-sm" onclick="abrirDocsDem('${r.id}','${esc(r.colaborador)}')">📁 Docs</button></td>
   </tr>`).join('');
+}
+
+let DEM_ID_ATUAL = null;
+function abrirDocsDem(id, nome) {
+  DEM_ID_ATUAL = id;
+  // Reusar modal de docs do colaborador adaptado
+  el('docs-colab-nome').textContent = nome + ' (Rescisão)';
+  DOCS_COLAB_ID   = null; // não é por colaborador_id, é por demissao_id
+  openMo('mo-docs-colab');
+  carregarDocsDem(id);
+}
+
+async function carregarDocsDem(demId) {
+  const lista = el('docs-colab-lista');
+  lista.innerHTML = '<div style="text-align:center;padding:20px"><span class="spin"></span></div>';
+  const { data } = await db.from('documentos').select('*').eq('demissao_id', demId).order('created_at', {ascending:false});
+  if (!data?.length) { lista.innerHTML = '<div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px;">Nenhum documento da rescisão.</div>'; return; }
+  lista.innerHTML = data.map(d => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;">
+      <span style="font-size:20px">📄</span>
+      <div style="flex:1"><div style="font-weight:600;font-size:13px">${x(d.tipo)}</div><div style="font-size:11.5px;color:var(--tx3)">${x(d.nome_arquivo)} · ${fd(d.created_at)}</div></div>
+      <a href="${d.url}" target="_blank" class="btn btn-gh btn-sm">Ver 📄</a>
+      <button class="btn btn-rd btn-sm" onclick="excluirDocColab('${d.id}',this)">🗑</button>
+    </div>`).join('');
 }
 function rCt(d) {
   return d.map(r => `<tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
@@ -894,8 +1051,20 @@ function rDocs(d) {
     <td><span class="bx bl">${x(r.tipo||'—')}</span></td>
     <td>${x(r.colaborador||'—')}</td><td>${x(r.empresa||'—')}</td>
     <td>${fd(r.created_at)}</td>
-    <td><a href="${r.url}" target="_blank" class="btn btn-gh btn-sm">Ver</a></td>
+    <td style="display:flex;gap:5px">
+      <a href="${r.url}" target="_blank" class="btn btn-gh btn-sm">Ver</a>
+      <button class="btn btn-rd btn-sm" onclick="excluirDoc('${r.id}',this)">🗑</button>
+    </td>
   </tr>`).join('');
+}
+
+async function excluirDoc(id, btn) {
+  if (!confirm('Excluir este documento?')) return;
+  btn.disabled = true;
+  const { error } = await db.from('documentos').delete().eq('id', id);
+  if (error) { toast('Erro: '+error.message, false); btn.disabled=false; return; }
+  toast('Documento excluído.', true);
+  btn.closest('tr').remove();
 }
 
 async function loadUsuarios() {
@@ -1120,6 +1289,19 @@ async function saveReg(tipo) {
     ativ = { tipo:'Demissão', colaborador:colab, empresa:v('d-emp'), user_nome:userName };
     // Marca colaborador como inativo
     await db.from('colaboradores').update({ status:'Inativo' }).eq('nome', colab);
+    // Subir documentos da rescisão pendentes
+    if (DEM_DOCS_PENDENTES.length > 0) {
+      // Precisamos do ID da demissão recém-criada
+      const { data: demCriada } = await db.from('demissoes').select('id').eq('colaborador', colab).order('created_at', {ascending:false}).limit(1).single();
+      if (demCriada) {
+        for (const doc of DEM_DOCS_PENDENTES) {
+          const url = await uploadFile(doc.file);
+          if (url) await db.from('documentos').insert({ nome_arquivo: doc.file.name||'doc.pdf', tipo: doc.tipo, colaborador: colab, empresa: v('d-emp'), demissao_id: demCriada.id, url, user_nome: userName });
+        }
+      }
+      DEM_DOCS_PENDENTES = [];
+      el('dem-docs-preview').innerHTML = '';
+    }
   }
   else if (tipo === 'contrato') {
     const colab = v('ct-colab');
@@ -1501,6 +1683,11 @@ function fileOk(input, prevId) {
 
 function fd(d) {
   if (!d) return '—';
+  // Evita bug de timezone: "2026-04-07" em UTC vira 06/04 no fuso -3h
+  if (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)) {
+    const [y,m,dd] = d.split('-');
+    return `${dd}/${m}/${y}`;
+  }
   const dt = new Date(d); if (isNaN(dt)) return String(d);
   return dt.toLocaleDateString('pt-BR');
 }
@@ -1534,6 +1721,366 @@ function toast(msg, ok) {
   clearTimeout(_tt);
   _tt = setTimeout(() => t.className = '', 3500);
 }
+
+// ══════════════════════════════════════════════════════
+// EMPRESAS
+// ══════════════════════════════════════════════════════
+let EMP_EDIT_ID = null;
+let EMPRESA_MAP = {}; // razaoSocial → { cnpj, ... }
+
+async function carregarEmpresasMap() {
+  const { data } = await db.from('empresas').select('razao_social, cnpj, nome_fantasia');
+  EMPRESA_MAP = {};
+  if (data) data.forEach(e => { EMPRESA_MAP[e.razao_social] = e; });
+}
+
+function preencherCNPJAdv() {
+  const empresa = el('a-emp')?.value || '';
+  const emp = EMPRESA_MAP[empresa];
+  if (el('a-cnpj')) el('a-cnpj').value = emp?.cnpj || '(não cadastrado)';
+}
+
+async function loadEmpresas() {
+  el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6"><span class="spin"></span></td></tr>';
+  const { data } = await db.from('empresas').select('*').order('razao_social');
+  if (!data?.length) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6">Nenhuma empresa cadastrada.</td></tr>'; return; }
+  el('tb-empresas').innerHTML = data.map(e => `
+    <tr>
+      <td>${x(e.razao_social)}</td>
+      <td style="font-family:monospace">${x(e.cnpj||'—')}</td>
+      <td>${x(e.endereco||'—')}</td>
+      <td>${x(e.telefone||'—')}</td>
+      <td>${x(e.email||'—')}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-gh btn-sm" onclick="editarEmpresa('${e.id}')">✏️</button>
+        <button class="btn btn-rd btn-sm" onclick="excluirEmpresa('${e.id}',this)">🗑</button>
+      </td>
+    </tr>`).join('');
+  await carregarEmpresasMap();
+}
+
+async function salvarEmpresa() {
+  const razao = v('emp-razao');
+  if (!razao) return toast('Razão Social é obrigatória.', false);
+  const payload = {
+    razao_social: razao,
+    nome_fantasia: v('emp-fantasia')||null,
+    cnpj:         v('emp-cnpj')||null,
+    inscricao_estadual: v('emp-ie')||null,
+    endereco:     v('emp-end')||null,
+    telefone:     v('emp-tel')||null,
+    email:        v('emp-email')||null,
+    responsavel:  v('emp-resp')||null,
+    ramo:         v('emp-ramo')||null,
+    data_abertura:v('emp-abertura')||null,
+  };
+  let error;
+  if (EMP_EDIT_ID) {
+    ({ error } = await db.from('empresas').update(payload).eq('id', EMP_EDIT_ID));
+  } else {
+    ({ error } = await db.from('empresas').insert(payload));
+  }
+  if (error) return toast('Erro: ' + error.message, false);
+  toast(EMP_EDIT_ID ? 'Empresa atualizada!' : 'Empresa cadastrada!', true);
+  EMP_EDIT_ID = null;
+  closeMo('mo-empresa');
+  ['emp-razao','emp-fantasia','emp-cnpj','emp-ie','emp-end','emp-tel','emp-email','emp-resp','emp-ramo','emp-abertura'].forEach(id => { if(el(id)) el(id).value=''; });
+  loadEmpresas();
+  popularFiltroEmpresas();
+}
+
+async function editarEmpresa(id) {
+  const { data } = await db.from('empresas').select('*').eq('id', id).single();
+  if (!data) return;
+  EMP_EDIT_ID = id;
+  el('emp-modal-titulo').textContent = 'Editar Empresa';
+  el('emp-razao').value    = data.razao_social||'';
+  el('emp-fantasia').value = data.nome_fantasia||'';
+  el('emp-cnpj').value     = data.cnpj||'';
+  el('emp-ie').value       = data.inscricao_estadual||'';
+  el('emp-end').value      = data.endereco||'';
+  el('emp-tel').value      = data.telefone||'';
+  el('emp-email').value    = data.email||'';
+  el('emp-resp').value     = data.responsavel||'';
+  el('emp-ramo').value     = data.ramo||'';
+  el('emp-abertura').value = data.data_abertura||'';
+  openMo('mo-empresa');
+}
+
+async function excluirEmpresa(id, btn) {
+  if (!confirm('Excluir esta empresa?')) return;
+  btn.disabled = true;
+  const { error } = await db.from('empresas').delete().eq('id', id);
+  if (error) { toast('Erro: ' + error.message, false); btn.disabled=false; return; }
+  toast('Empresa excluída.', true);
+  loadEmpresas();
+}
+
+// ══════════════════════════════════════════════════════
+// FILTRO DE EMPRESA NA ABA COLABORADORES
+// ══════════════════════════════════════════════════════
+async function popularFiltroEmpresas() {
+  // Busca empresas distintas da tabela colaboradores
+  const { data } = await db.from('colaboradores').select('empresa').order('empresa');
+  const filtro = el('filtro-empresa');
+  if (!filtro || !data) return;
+  const unicas = [...new Set(data.map(r => r.empresa).filter(Boolean))].sort();
+  // Também popula o select de relatório
+  const relEmp = el('rel-empresa');
+  const opts = '<option value="">Todas as empresas</option>' + unicas.map(e => `<option>${x(e)}</option>`).join('');
+  filtro.innerHTML = opts;
+  if (relEmp) relEmp.innerHTML = opts;
+}
+
+function filtrarPorEmpresa() {
+  const val = el('filtro-empresa')?.value?.toLowerCase() || '';
+  document.querySelectorAll('#tb-colab tr').forEach(r => {
+    if (!val) { r.style.display = ''; return; }
+    const s = r.getAttribute('data-s') || r.textContent;
+    r.style.display = s.toLowerCase().includes(val) ? '' : 'none';
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// ADVERTÊNCIAS: nova lógica (sem save/import, com edição)
+// ══════════════════════════════════════════════════════
+let ADV_EDIT_ID = null;
+
+function abrirNovaAdv() {
+  ADV_EDIT_ID = null;
+  el('adv-modal-titulo').textContent = 'Nova Advertência';
+  el('adv-save-btn').textContent = 'Gerar e Salvar';
+  el('adv-edit-id').value = '';
+  ['a-motivo','a-test'].forEach(id => { if(el(id)) el(id).value=''; });
+  if(el('a-colab')) el('a-colab').value='';
+  if(el('a-emp'))   el('a-emp').value='';
+  if(el('a-cnpj'))  el('a-cnpj').value='';
+  if(el('a-cargo')) el('a-cargo').value='';
+  if(el('a-data'))  el('a-data').value='';
+  openMo('mo-adv');
+}
+
+async function abrirEditarAdv(id) {
+  const { data } = await db.from('advertencias').select('*').eq('id', id).single();
+  if (!data) return;
+  ADV_EDIT_ID = id;
+  el('adv-modal-titulo').textContent = 'Editar Advertência';
+  el('adv-save-btn').textContent = 'Salvar Alterações';
+  el('adv-edit-id').value = id;
+  if(el('a-colab')) el('a-colab').value = data.colaborador||'';
+  if(el('a-emp'))   el('a-emp').value   = data.empresa||'';
+  if(el('a-cargo')) el('a-cargo').value = data.cargo||'';
+  if(el('a-tipo'))  el('a-tipo').value  = data.tipo||'';
+  if(el('a-data'))  el('a-data').value  = data.data||'';
+  if(el('a-motivo'))el('a-motivo').value= data.motivo||'';
+  if(el('a-test'))  el('a-test').value  = data.testemunhas||'';
+  // Preencher CNPJ
+  preencherCNPJAdv();
+  openMo('mo-adv');
+}
+
+async function salvarAdvertencia() {
+  const colab = v('a-colab');
+  if (!colab) return toast('Selecione o colaborador.', false);
+  if (!v('a-motivo')) return toast('Informe o motivo.', false);
+  const userName = el('un').textContent;
+  const payload = {
+    colaborador: colab,
+    empresa:     v('a-emp'),
+    cargo:       v('a-cargo'),
+    tipo:        v('a-tipo'),
+    data:        v('a-data')||null,
+    motivo:      v('a-motivo'),
+    testemunhas: v('a-test'),
+    user_nome:   userName,
+  };
+  let error;
+  if (ADV_EDIT_ID) {
+    ({ error } = await db.from('advertencias').update(payload).eq('id', ADV_EDIT_ID));
+  } else {
+    ({ error } = await db.from('advertencias').insert(payload));
+    if (!error) await db.from('atividades').insert({ tipo:'Advertência', colaborador:colab, empresa:v('a-emp'), user_nome:userName });
+  }
+  if (error) return toast('Erro: ' + error.message, false);
+  toast(ADV_EDIT_ID ? 'Advertência atualizada!' : 'Advertência salva!', true);
+  ADV_EDIT_ID = null;
+  closeMo('mo-adv');
+  loadTb('advertencias','tb-adv', rAdv);
+}
+
+// ══════════════════════════════════════════════════════
+// DOCUMENTOS DA DEMISSÃO
+// ══════════════════════════════════════════════════════
+let DEM_DOCS_PENDENTES = []; // docs a subir junto com a demissão
+
+function adicionarDocDemissao() {
+  const file = el('dem-file').files[0] || el('dem-cam').files[0];
+  const tipo  = v('dem-doc-tipo');
+  if (!file) return toast('Selecione um arquivo primeiro.', false);
+  DEM_DOCS_PENDENTES.push({ file, tipo });
+  const prev = el('dem-docs-preview');
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;font-size:12.5px;';
+  div.innerHTML = `<span>📄</span><span style="flex:1">${x(tipo)} — ${x(file.name)}</span><button type="button" onclick="this.parentElement.remove();DEM_DOCS_PENDENTES.splice(${DEM_DOCS_PENDENTES.length-1},1);" style="background:none;border:none;cursor:pointer;color:var(--rd);font-size:15px;">✕</button>`;
+  prev.appendChild(div);
+  el('dem-file').value=''; el('dem-ok').textContent='';
+}
+
+// ══════════════════════════════════════════════════════
+// RELATÓRIOS
+// ══════════════════════════════════════════════════════
+async function gerarRelatorio() {
+  const empresa = v('rel-empresa');
+  const cont = el('rel-conteudo');
+  cont.innerHTML = '<div style="text-align:center;padding:32px"><span class="spin"></span></div>';
+
+  // Buscar colaboradores
+  let qColab = db.from('colaboradores').select('*').eq('status','Ativo').order('empresa').order('nome');
+  if (empresa) qColab = qColab.eq('empresa', empresa);
+  const { data: colabs } = await qColab;
+
+  // Buscar advertências do período
+  let qAdv = db.from('advertencias').select('*').order('empresa').order('colaborador');
+  if (empresa) qAdv = qAdv.eq('empresa', empresa);
+  const { data: advs } = await qAdv;
+
+  // Buscar faltas
+  let qFlt = db.from('faltas').select('*').order('empresa').order('colaborador');
+  if (empresa) qFlt = qFlt.eq('empresa', empresa);
+  const { data: faltas } = await qFlt;
+
+  // Agrupar por empresa
+  const porEmpresa = {};
+  (colabs||[]).forEach(c => {
+    if (!porEmpresa[c.empresa]) porEmpresa[c.empresa] = { colabs:[], adv:[], flt:[] };
+    porEmpresa[c.empresa].colabs.push(c);
+  });
+  (advs||[]).forEach(a => {
+    if (!porEmpresa[a.empresa]) porEmpresa[a.empresa] = { colabs:[], adv:[], flt:[] };
+    porEmpresa[a.empresa].adv.push(a);
+  });
+  (faltas||[]).forEach(f => {
+    if (!porEmpresa[f.empresa]) porEmpresa[f.empresa] = { colabs:[], adv:[], flt:[] };
+    porEmpresa[f.empresa].flt.push(f);
+  });
+
+  let html_rel = '';
+  let totalGeralSal = 0;
+
+  for (const [emp, dados] of Object.entries(porEmpresa)) {
+    const totalSal = dados.colabs.reduce((s,c) => s + (Number(c.salario)||0), 0);
+    totalGeralSal += totalSal;
+    const fmt = n => 'R$ ' + Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2});
+
+    // Cabeçalho empresa
+    html_rel += `
+      <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;margin-bottom:20px;">
+        <div style="background:var(--or-bg);border-bottom:1px solid var(--bd);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;">${x(emp)}</div>
+          <div style="font-size:12.5px;color:var(--tx2)">${dados.colabs.length} colaborador(es) · Folha: <strong style="color:var(--gn)">${fmt(totalSal)}</strong></div>
+        </div>`;
+
+    // Tabela salários
+    if (dados.colabs.length) {
+      html_rel += `
+        <div style="padding:14px 18px 6px;font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em">Salários</div>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:10px;">
+          <thead><tr>
+            <th style="text-align:left;padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Nome</th>
+            <th style="text-align:left;padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Cargo</th>
+            <th style="text-align:left;padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Admissão</th>
+            <th style="text-align:right;padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Salário</th>
+          </tr></thead>
+          <tbody>
+            ${dados.colabs.map(c => `
+              <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
+                <td style="padding:10px 18px;font-size:13px;color:var(--tx)">${x(c.nome)}</td>
+                <td style="padding:10px 18px;font-size:13px;color:var(--tx2)">${x(c.cargo||'—')}</td>
+                <td style="padding:10px 18px;font-size:13px;color:var(--tx2)">${fd(c.data_admissao)}</td>
+                <td style="padding:10px 18px;font-size:13px;color:var(--tx2);text-align:right">${c.salario?fmt(c.salario):'—'}</td>
+              </tr>`).join('')}
+            <tr style="background:rgba(16,185,129,.05)">
+              <td colspan="3" style="padding:10px 18px;font-size:13px;font-weight:600;color:var(--tx)">Total da Folha</td>
+              <td style="padding:10px 18px;font-size:13px;font-weight:700;color:var(--gn);text-align:right">${fmt(totalSal)}</td>
+            </tr>
+          </tbody>
+        </table>`;
+    }
+
+    // Advertências
+    if (dados.adv.length) {
+      html_rel += `
+        <div style="padding:10px 18px 6px;font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-top:1px solid var(--bd)">Advertências (${dados.adv.length})</div>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:10px;">
+          <thead><tr>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Colaborador</th>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Tipo</th>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Data</th>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Motivo</th>
+          </tr></thead>
+          <tbody>
+            ${dados.adv.map(a => `
+              <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx)">${x(a.colaborador)}</td>
+                <td style="padding:8px 18px;font-size:12px"><span style="padding:2px 8px;border-radius:20px;background:var(--or-bg);color:var(--or);font-weight:600">${x(a.tipo)}</span></td>
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx2)">${fd(a.data)}</td>
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx2)">${x(a.motivo||'—')}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    // Faltas
+    if (dados.flt.length) {
+      const justif = dados.flt.filter(f => f.justificada === 'Sim').length;
+      const injust = dados.flt.length - justif;
+      html_rel += `
+        <div style="padding:10px 18px 6px;font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-top:1px solid var(--bd)">Faltas (${dados.flt.length} · ${justif} justificadas · ${injust} não justificadas)</div>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:10px;">
+          <thead><tr>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Colaborador</th>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Data</th>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Justificada</th>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Motivo</th>
+          </tr></thead>
+          <tbody>
+            ${dados.flt.map(f => `
+              <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx)">${x(f.colaborador)}</td>
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx2)">${fd(f.data)}</td>
+                <td style="padding:8px 18px;font-size:12px"><span style="padding:2px 8px;border-radius:20px;background:${f.justificada==='Sim'?'var(--gn-bg)':'var(--rd-bg)'};color:${f.justificada==='Sim'?'var(--gn)':'var(--rd)'};font-weight:600">${f.justificada||'—'}</span></td>
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx2)">${x(f.motivo||'—')}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    html_rel += `</div>`;
+  }
+
+  // Total geral
+  if (Object.keys(porEmpresa).length > 1) {
+    html_rel += `
+      <div style="background:var(--gn-bg);border:1px solid rgba(16,185,129,.3);border-radius:var(--r);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:15px">Total Geral da Folha</div>
+        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:22px;color:var(--gn)">R$ ${Number(totalGeralSal).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
+      </div>`;
+  }
+
+  cont.innerHTML = html_rel || '<div class="erow">Nenhum dado encontrado.</div>';
+}
+
+// ══════════════════════════════════════════════════════
+// RENDERER: advertências com botão editar
+// ══════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════
+// RENDERER: demissões com botão docs
+// ══════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════
+// RENDERER: documentos com botão excluir
+// ══════════════════════════════════════════════════════
 
 // ─── START ────────────────────────────────────────────
 init();
