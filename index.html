@@ -7,301 +7,427 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-/* ══════════════════════════════════════════
-   HUBON — DESIGN SYSTEM
-══════════════════════════════════════════ */
 :root {
-  --bg:         #0C0F14;
-  --bg2:        #131720;
-  --bg3:        #1A1F2E;
-  --border:     rgba(255,255,255,0.06);
-  --border2:    rgba(255,255,255,0.11);
-  --text:       #F0F2F7;
-  --text2:      #8B93A8;
-  --text3:      #4E566A;
-  --orange:     #F97316;
-  --orange2:    #FB923C;
-  --orange-bg:  rgba(249,115,22,0.10);
-  --orange-glow:rgba(249,115,22,0.20);
-  --green:      #10B981;
-  --green-bg:   rgba(16,185,129,0.10);
-  --red:        #EF4444;
-  --red-bg:     rgba(239,68,68,0.10);
-  --yellow:     #F59E0B;
-  --yellow-bg:  rgba(245,158,11,0.10);
-  --blue:       #3B82F6;
-  --blue-bg:    rgba(59,130,246,0.10);
-  --purple:     #8B5CF6;
-  --purple-bg:  rgba(139,92,246,0.10);
-  --radius:     10px;
-  --radius-lg:  14px;
-  --font-display: 'Outfit', sans-serif;
-  --font-body:    'DM Sans', sans-serif;
+  --bg:#0C0F14; --bg2:#131720; --bg3:#1A1F2E;
+  --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.11);
+  --text:#F0F2F7; --text2:#8B93A8; --text3:#4E566A;
+  --orange:#F97316; --orange2:#FB923C; --orange-bg:rgba(249,115,22,0.10); --orange-glow:rgba(249,115,22,0.20);
+  --green:#10B981; --green-bg:rgba(16,185,129,0.10);
+  --red:#EF4444; --red-bg:rgba(239,68,68,0.10);
+  --yellow:#F59E0B; --yellow-bg:rgba(245,158,11,0.10);
+  --blue:#3B82F6; --blue-bg:rgba(59,130,246,0.10);
+  --purple:#8B5CF6; --purple-bg:rgba(139,92,246,0.10);
+  --radius:10px; --radius-lg:14px;
+  --fd:'Outfit',sans-serif; --fb:'DM Sans',sans-serif;
 }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:14px;min-height:100vh;-webkit-font-smoothing:antialiased;}
+.hidden{display:none!important;}
+.flex{display:flex;} .items-center{align-items:center;} .justify-between{justify-content:space-between;}
+.gap-8{gap:8px;} .gap-12{gap:12px;} .mt-8{margin-top:8px;} .mb-16{margin-bottom:16px;}
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 14px; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+/* LOGIN */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+#login-screen::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(249,115,22,0.04)1px,transparent 1px),linear-gradient(90deg,rgba(249,115,22,0.04)1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,black 40%,transparent 100%);}
+.login-box{position:relative;z-index:1;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:44px 40px;width:420px;max-width:95vw;box-shadow:0 0 0 1px rgba(249,115,22,0.08),0 32px 64px rgba(0,0,0,0.6);}
+.login-header{text-align:center;margin-bottom:32px;}
+.login-tagline{font-size:11.5px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;margin-top:10px;font-family:var(--fd);}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:7px;font-family:var(--fd);}
+.form-group input{width:100%;padding:11px 14px;background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:14px;font-family:var(--fb);outline:none;}
+.form-group input:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-glow);}
+.login-btn{width:100%;padding:12px;background:var(--orange);border:none;border-radius:var(--radius);color:#fff;font-size:14px;font-weight:700;font-family:var(--fd);cursor:pointer;margin-top:6px;}
+.login-btn:hover{background:var(--orange2);}
+.login-error{background:var(--red-bg);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:10px 13px;font-size:12.5px;color:var(--red);margin-bottom:16px;display:none;}
 
-/* ══ UTILITÁRIOS ══ */
-.hidden { display: none !important; }
-.flex { display: flex; }
-.grid { display: grid; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.gap-8  { gap: 8px; }
-.gap-12 { gap: 12px; }
-.mt-8   { margin-top: 8px; }
-.mt-16  { margin-top: 16px; }
-.mb-16  { margin-bottom: 16px; }
-.w-full { width: 100%; }
+/* APP */
+#app{display:none;min-height:100vh;}
+.shell{display:flex;min-height:100vh;}
+.sidebar{width:228px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;overflow-y:auto;}
+.sidebar-head{padding:22px 18px 18px;border-bottom:1px solid var(--border);}
+.nav-section-label{padding:18px 18px 5px;font-family:var(--fd);font-size:9.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);border-left:2px solid transparent;transition:all 0.12s;}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.nav-item.active{color:var(--orange);border-left-color:var(--orange);background:var(--orange-bg);font-weight:600;}
+.sidebar-footer{margin-top:auto;padding:14px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#c2410c);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:700;font-size:13px;color:#fff;flex-shrink:0;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:12.5px;font-weight:600;color:var(--text);}
+.user-role{font-size:10px;color:var(--text3);font-family:var(--fd);}
+.logout-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:17px;}
+.main{flex:1;margin-left:228px;padding:30px;min-height:100vh;}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.page-title{font-family:var(--fd);font-size:24px;font-weight:700;letter-spacing:-0.02em;}
+.page-subtitle{font-size:12.5px;color:var(--text2);margin-top:2px;}
+.page{display:none;} .page.active{display:block;}
 
-/* ══ TELA DE LOGIN ══ */
-#login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-#login-screen::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(249,115,22,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.04) 1px, transparent 1px); background-size: 48px 48px; mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%); }
-.login-box { position: relative; z-index: 1; background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 44px 40px; width: 420px; max-width: 95vw; box-shadow: 0 0 0 1px rgba(249,115,22,0.08), 0 32px 64px rgba(0,0,0,0.6); }
-.login-header { text-align: center; margin-bottom: 32px; }
-.login-tagline { font-size: 11.5px; color: var(--text3); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 10px; font-family: var(--font-display); }
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 7px; font-family: var(--font-display); }
-.form-group input { width: 100%; padding: 11px 14px; background: var(--bg3); border: 1.5px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: 14px; font-family: var(--font-body); outline: none; }
-.form-group input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-glow); }
-.login-btn { width: 100%; padding: 12px; background: var(--orange); border: none; border-radius: var(--radius); color: #fff; font-size: 14px; font-weight: 700; font-family: var(--font-display); cursor: pointer; margin-top: 6px; }
-.login-btn:hover { background: var(--orange2); }
-.login-error { background: var(--red-bg); border: 1px solid rgba(239,68,68,0.2); border-radius: 8px; padding: 10px 13px; font-size: 12.5px; color: var(--red); margin-bottom: 16px; display: none; }
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;position:relative;overflow:hidden;}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
+.stat-card.c-green::after{background:var(--green);} .stat-card.c-yellow::after{background:var(--yellow);} .stat-card.c-orange::after{background:var(--orange);} .stat-card.c-red::after{background:var(--red);} .stat-card.c-purple::after{background:var(--purple);}
+.s-value{font-family:var(--fd);font-size:32px;font-weight:700;line-height:1;}
+.s-label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;margin-top:6px;font-family:var(--fd);}
 
-/* ══ APP LAYOUT ══ */
-#app { display: none; min-height: 100vh; }
-.shell { display: flex; min-height: 100vh; }
-.sidebar { width: 228px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 50; }
-.sidebar-head { padding: 22px 18px 18px; border-bottom: 1px solid var(--border); }
-.nav-section-label { padding: 18px 18px 5px; font-family: var(--font-display); font-size: 9.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 18px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text2); border-left: 2px solid transparent; }
-.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-.nav-item.active { color: var(--orange); border-left-color: var(--orange); background: var(--orange-bg); font-weight: 600; }
-.nav-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
-.sidebar-footer { margin-top: auto; padding: 14px 16px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-.user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), #c2410c); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 13px; color: #fff; }
-.user-info { flex: 1; min-width: 0; }
-.user-name { font-size: 12.5px; font-weight: 600; color: var(--text); }
-.user-role { font-size: 10px; color: var(--text3); font-family: var(--font-display); letter-spacing: 0.04em; }
-.logout-btn { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 17px; }
-.main { flex: 1; margin-left: 228px; padding: 30px; min-height: 100vh; }
-.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
-.page-title { font-family: var(--font-display); font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
-.page-subtitle { font-size: 12.5px; color: var(--text2); margin-top: 2px; }
-.page { display: none; }
-.page.active { display: block; }
+/* TABLE */
+.table-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+.table-card-head{padding:16px 20px;border-bottom:1px solid var(--border);font-family:var(--fd);font-weight:600;display:flex;justify-content:space-between;align-items:center;}
+table{width:100%;border-collapse:collapse;}
+thead th{text-align:left;padding:10px 16px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--text3);background:rgba(255,255,255,0.015);border-bottom:1px solid var(--border);}
+tbody td{padding:13px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--text2);}
+tbody td:first-child{color:var(--text);font-weight:500;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(255,255,255,0.02);}
+.empty-td{text-align:center;padding:32px;color:var(--text3);font-size:13px;}
 
-/* ══ CARDS & TABLES ══ */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 14px; margin-bottom: 24px; }
-.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; position: relative; }
-.stat-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; }
-.stat-card.c-green::after { background: var(--green); } .stat-card.c-yellow::after { background: var(--yellow); } .stat-card.c-orange::after { background: var(--orange); } .stat-card.c-red::after { background: var(--red); } .stat-card.c-purple::after { background: var(--purple); }
-.s-icon { font-size: 22px; margin-bottom: 12px; display: block; }
-.s-value { font-family: var(--font-display); font-size: 32px; font-weight: 700; line-height: 1; }
-.s-label { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; margin-top: 6px; }
+/* BADGE */
+.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;font-family:var(--fd);display:inline-block;}
+.badge-green{background:var(--green-bg);color:var(--green);} .badge-red{background:var(--red-bg);color:var(--red);} .badge-orange{background:var(--orange-bg);color:var(--orange);} .badge-yellow{background:var(--yellow-bg);color:var(--yellow);} .badge-blue{background:var(--blue-bg);color:var(--blue);} .badge-gray{background:rgba(255,255,255,0.06);color:var(--text3);}
 
-.table-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-.table-card-head { padding: 16px 20px; border-bottom: 1px solid var(--border); font-family: var(--font-display); font-weight: 600; display: flex; justify-content: space-between;}
-table { width: 100%; border-collapse: collapse; }
-thead th { text-align: left; padding: 10px 16px; font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text3); background: rgba(255,255,255,0.015); border-bottom: 1px solid var(--border); }
-tbody td { padding: 13px 16px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text2); }
-tbody td:first-child { color: var(--text); font-weight: 500; }
-.badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: var(--font-display); }
-.badge-green { background: var(--green-bg); color: var(--green); } .badge-red { background: var(--red-bg); color: var(--red); } .badge-orange { background: var(--orange-bg); color: var(--orange); } .badge-yellow { background: var(--yellow-bg); color: var(--yellow); } .badge-blue { background: var(--blue-bg); color: var(--blue); } .badge-gray { background: rgba(255,255,255,0.06); color: var(--text3); }
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:var(--fd);display:inline-flex;align-items:center;gap:6px;transition:all 0.12s;}
+.btn-primary{background:var(--orange);color:#fff;} .btn-primary:hover{background:var(--orange2);}
+.btn-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,130,246,0.2);} .btn-blue:hover{background:rgba(59,130,246,0.2);}
+.btn-ghost{background:rgba(255,255,255,0.05);color:var(--text);border:1px solid var(--border);} .btn-ghost:hover{background:rgba(255,255,255,0.09);}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid rgba(239,68,68,0.15);}
+.btn-sm{padding:5px 12px;font-size:12px;}
 
-/* ══ FORMS & BUTTONS ══ */
-.btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; font-family: var(--font-display); }
-.btn-primary { background: var(--orange); color: #fff; }
-.btn-ghost { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); }
-.btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.15); }
-.btn-sm { padding: 5px 12px; font-size: 12px; }
-.search-wrap input { padding: 8px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); outline: none; width: 210px; }
+/* SEARCH */
+.search-wrap input{padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none;width:210px;font-family:var(--fb);}
+.search-wrap input:focus{border-color:var(--orange);}
 
-/* ══ MODALS ══ */
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(6px); }
-.modal-overlay.open { display: flex; }
-.modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-lg); width: 580px; max-width: 96vw; max-height: 91vh; overflow-y: auto; }
-.modal-head { padding: 22px 24px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; position: sticky; top: 0; background: var(--bg2); z-index: 1; }
-.modal-head h3 { font-family: var(--font-display); font-size: 18px; font-weight: 700; }
-.close-btn { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 20px; }
-.modal-body { padding: 22px 24px; }
-.modal-foot { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; position: sticky; bottom: 0; background: var(--bg2); }
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:600px;max-width:96vw;max-height:91vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,0.7);}
+.modal-head{padding:22px 24px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1;}
+.modal-head h3{font-family:var(--fd);font-size:18px;font-weight:700;}
+.close-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;line-height:1;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;}
+.close-btn:hover{background:var(--red-bg);color:var(--red);}
+.modal-body{padding:22px 24px;}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:var(--bg2);}
 
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-.field { display: flex; flex-direction: column; gap: 5px; }
-.field.full { grid-column: 1/-1; }
-.field label { font-family: var(--font-display); font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; }
-.field input, .field select, .field textarea { padding: 10px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); outline: none; }
-.field textarea { min-height: 76px; }
+/* FORMS */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field.full{grid-column:1/-1;}
+.field label{font-family:var(--fd);font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;}
+.field input,.field select,.field textarea{padding:10px 12px;background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--fb);font-size:13.5px;outline:none;transition:border-color 0.12s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange-glow);}
+.field textarea{min-height:76px;resize:vertical;}
+.field select option{background:var(--bg2);}
+.field-hint{font-size:11px;color:var(--text3);margin-top:3px;}
 
-.upload-zone { border: 2px dashed var(--border2); border-radius: var(--radius); padding: 24px; text-align: center; cursor: pointer; background: rgba(255,255,255,0.015); }
-.upload-zone:hover { border-color: var(--orange); }
-.uz-icon { font-size: 26px; display: block; margin-bottom: 8px; }
-.file-preview { margin-top: 10px; }
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;background:rgba(255,255,255,0.015);transition:all 0.15s;}
+.upload-zone:hover{border-color:var(--orange);background:var(--orange-bg);}
+.uz-icon{font-size:26px;display:block;margin-bottom:8px;}
+.uz-text{font-size:13px;color:var(--text2);}
+.file-ok{margin-top:10px;color:var(--green);font-size:12.5px;font-weight:500;}
 
-#toast { position: fixed; bottom: 24px; right: 24px; z-index: 999; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius); padding: 13px 18px; font-weight: 500; transform: translateY(16px); opacity: 0; transition: all 0.25s; }
-#toast.show { transform: translateY(0); opacity: 1; }
-#toast.ok { border-left: 3px solid var(--green); }
-#toast.err { border-left: 3px solid var(--red); }
+/* ALERTA IMPORTAÇÃO */
+.import-log{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:14px;font-size:12.5px;color:var(--text2);max-height:160px;overflow-y:auto;display:none;}
+.import-log .ok-line{color:var(--green);}
+.import-log .skip-line{color:var(--text3);}
+.import-log .err-line{color:var(--red);}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:13px 18px;font-weight:500;transform:translateY(16px);opacity:0;transition:all 0.25s;max-width:320px;}
+#toast.show{transform:translateY(0);opacity:1;}
+#toast.ok{border-left:3px solid var(--green);}
+#toast.err{border-left:3px solid var(--red);}
+
+/* SPINNER */
+.spinner{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--orange);border-radius:50%;animation:spin 0.6s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* MOBILE */
+@media(max-width:800px){
+  .sidebar{transform:translateX(-100%);transition:transform 0.25s;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:20px;}
+  .form-grid{grid-template-columns:1fr;}
+  .mob-toggle{display:flex!important;}
+}
+.mob-toggle{display:none;position:fixed;top:14px;left:14px;z-index:60;background:var(--bg2);border:1px solid var(--border2);border-radius:9px;padding:8px 11px;cursor:pointer;font-size:17px;color:var(--text);}
 </style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-header">
-      <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:26px;">Hub<span style="color:#F97316">On</span></div>
+      <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:28px;letter-spacing:-0.03em;">Hub<span style="color:#F97316">On</span></div>
       <div class="login-tagline">Gestão de Redes · Food</div>
     </div>
     <div id="login-error" class="login-error"></div>
-    <div class="form-group"><label>E-mail</label><input type="email" id="login-email" placeholder="seu@email.com"></div>
+    <div class="form-group"><label>E-mail</label><input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email"></div>
     <div class="form-group"><label>Senha</label><input type="password" id="login-pass" placeholder="••••••••"></div>
-    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <button class="login-btn" onclick="doLogin()">Entrar no HubOn</button>
   </div>
 </div>
 
 <div id="toast"></div>
+<button class="mob-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
 
+<!-- APP -->
 <div id="app">
 <div class="shell">
 
 <aside class="sidebar" id="sidebar">
-  <div class="sidebar-head"><span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:20px;">Hub<span style="color:#F97316">On</span></span></div>
+  <div class="sidebar-head">
+    <span style="font-family:'Outfit',sans-serif;font-weight:800;font-size:20px;">Hub<span style="color:#F97316">On</span></span>
+  </div>
   <nav>
     <div class="nav-section-label">Visão Geral</div>
     <div class="nav-item active" onclick="goPage('dashboard',this)">📊 Dashboard</div>
-    
     <div class="nav-section-label">Pessoas</div>
     <div class="nav-item" onclick="goPage('colaboradores',this)">👥 Colaboradores</div>
     <div class="nav-item" onclick="goPage('exames',this)">🏥 Exames</div>
     <div class="nav-item" onclick="goPage('advertencias',this)">⚠️ Advertências</div>
     <div class="nav-item" onclick="goPage('faltas',this)">📅 Faltas</div>
     <div class="nav-item" onclick="goPage('demissoes',this)">🚪 Demissões</div>
-    
     <div class="nav-section-label">Contratação</div>
     <div class="nav-item" onclick="goPage('contratos',this)">📄 Contratos</div>
     <div class="nav-item" onclick="goPage('entrevistas',this)">🎙️ Entrevistas</div>
-    
     <div class="nav-section-label">Arquivos</div>
     <div class="nav-item" onclick="goPage('documentos',this)">📁 Documentos</div>
-    
     <div class="nav-section-label admin-only">Admin</div>
     <div class="nav-item admin-only" onclick="goPage('usuarios',this)">🔐 Usuários</div>
   </nav>
   <div class="sidebar-footer">
     <div class="user-avatar" id="ua">H</div>
     <div class="user-info"><div class="user-name" id="un">—</div><div class="user-role" id="ur">—</div></div>
-    <button class="logout-btn" onclick="doLogout()">⏻</button>
+    <button class="logout-btn" onclick="doLogout()" title="Sair">⏻</button>
   </div>
 </aside>
 
 <main class="main">
 
+<!-- DASHBOARD -->
 <div id="page-dashboard" class="page active">
   <div class="topbar"><div><div class="page-title">Dashboard</div><div class="page-subtitle" id="dash-date"></div></div></div>
   <div class="stats-grid">
-    <div class="stat-card c-green"><div class="s-value" id="d-ativos">—</div><div class="s-label">Ativos</div></div>
-    <div class="stat-card c-yellow"><div class="s-value" id="d-exames">—</div><div class="s-label">Exames a Vencer</div></div>
+    <div class="stat-card c-green"><div class="s-value" id="d-ativos">—</div><div class="s-label">Colaboradores Ativos</div></div>
+    <div class="stat-card c-yellow"><div class="s-value" id="d-exames">—</div><div class="s-label">Exames a Vencer (30d)</div></div>
     <div class="stat-card c-orange"><div class="s-value" id="d-adv">—</div><div class="s-label">Advertências (Mês)</div></div>
     <div class="stat-card c-red"><div class="s-value" id="d-faltas">—</div><div class="s-label">Faltas (Mês)</div></div>
     <div class="stat-card c-purple"><div class="s-value" id="d-contratos">—</div><div class="s-label">Contratos a Vencer</div></div>
   </div>
   <div class="table-card">
     <div class="table-card-head">Últimas Ações</div>
-    <table><thead><tr><th>Tipo</th><th>Colaborador</th><th>Empresa</th><th>Data</th></tr></thead><tbody id="tb-atividades"></tbody></table>
+    <table><thead><tr><th>Tipo</th><th>Colaborador</th><th>Empresa</th><th>Data</th></tr></thead>
+    <tbody id="tb-ativ"><tr><td colspan="4" class="empty-td">Carregando...</td></tr></tbody></table>
   </div>
 </div>
 
+<!-- COLABORADORES -->
 <div id="page-colaboradores" class="page">
   <div class="topbar">
     <div><div class="page-title">Colaboradores</div><div class="page-subtitle">Cadastro geral da rede</div></div>
-    <div class="flex gap-8">
-      <div class="search-wrap"><input type="text" placeholder="Buscar..." oninput="filterRows('tb-colab',this.value)"></div>
-      <button class="btn btn-primary admin-only" style="background:var(--blue)" onclick="openModal('m-import')">📥 Importar PDF (Contab)</button>
+    <div class="flex gap-8 items-center" style="flex-wrap:wrap;">
+      <div class="search-wrap"><input type="text" placeholder="Buscar nome ou empresa..." oninput="filterRows('tb-colab',this.value)"></div>
+      <button class="btn btn-blue admin-only" onclick="openModal('m-import')">📥 Importar Contabilidade</button>
       <button class="btn btn-primary admin-only" onclick="openModal('m-colab')">＋ Novo</button>
     </div>
   </div>
   <div class="table-card">
-    <table><thead><tr><th>Cod</th><th>Nome</th><th>Cargo</th><th>Empresa</th><th>Admissão</th><th>Status</th><th></th></tr></thead><tbody id="tb-colab"></tbody></table>
+    <table>
+      <thead><tr><th>Cód.</th><th>Nome</th><th>Cargo</th><th>Empresa</th><th>Admissão</th><th>Salário</th><th>Status</th></tr></thead>
+      <tbody id="tb-colab"><tr><td colspan="7" class="empty-td">Carregando...</td></tr></tbody>
+    </table>
   </div>
 </div>
 
+<!-- EXAMES -->
 <div id="page-exames" class="page">
   <div class="topbar">
-    <div><div class="page-title">Exames Ocupacionais</div></div>
-    <div class="flex gap-8"><button class="btn btn-primary" onclick="openModal('m-exame')">＋ Registrar</button></div>
+    <div><div class="page-title">Exames Ocupacionais</div><div class="page-subtitle">Validade com alertas automáticos</div></div>
+    <button class="btn btn-primary" onclick="openModal('m-exame')">＋ Registrar</button>
   </div>
   <div class="table-card">
-    <table><thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Validade</th><th>Doc.</th></tr></thead><tbody id="tb-exames"></tbody></table>
+    <table><thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Validade</th><th>Status</th><th>Doc.</th></tr></thead>
+    <tbody id="tb-exames"><tr><td colspan="6" class="empty-td">Carregando...</td></tr></tbody></table>
   </div>
 </div>
 
+<!-- ADVERTÊNCIAS -->
 <div id="page-advertencias" class="page">
   <div class="topbar">
-    <div><div class="page-title">Advertências</div></div>
-    <div class="flex gap-8"><button class="btn btn-primary" onclick="openModal('m-adv')">＋ Nova</button></div>
+    <div><div class="page-title">Advertências</div><div class="page-subtitle">Registro com documento assinado</div></div>
+    <button class="btn btn-primary" onclick="openModal('m-adv')">＋ Nova</button>
   </div>
   <div class="table-card">
-    <table><thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data</th><th>Motivo</th><th>Doc.</th></tr></thead><tbody id="tb-adv"></tbody></table>
+    <table><thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data</th><th>Motivo</th><th>Doc.</th></tr></thead>
+    <tbody id="tb-adv"><tr><td colspan="6" class="empty-td">Carregando...</td></tr></tbody></table>
   </div>
 </div>
 
-<div id="page-faltas" class="page"><div class="topbar"><div><div class="page-title">Faltas</div></div><button class="btn btn-primary" onclick="openModal('m-falta')">＋ Registrar</button></div><div class="table-card"><table><thead><tr><th>Colaborador</th><th>Data</th><th>Justificada</th><th>Motivo</th></tr></thead><tbody id="tb-faltas"></tbody></table></div></div>
+<!-- FALTAS -->
+<div id="page-faltas" class="page">
+  <div class="topbar">
+    <div><div class="page-title">Faltas</div></div>
+    <button class="btn btn-primary" onclick="openModal('m-falta')">＋ Registrar</button>
+  </div>
+  <div class="table-card">
+    <table><thead><tr><th>Colaborador</th><th>Empresa</th><th>Data</th><th>Justificada</th><th>Motivo</th></tr></thead>
+    <tbody id="tb-faltas"><tr><td colspan="5" class="empty-td">Carregando...</td></tr></tbody></table>
+  </div>
+</div>
 
-<div id="page-demissoes" class="page"><div class="topbar"><div><div class="page-title">Demissões</div></div><button class="btn btn-primary admin-only" onclick="openModal('m-demissao')">＋ Registrar</button></div><div class="table-card"><table><thead><tr><th>Colaborador</th><th>Tipo</th><th>Data</th></tr></thead><tbody id="tb-demissoes"></tbody></table></div></div>
+<!-- DEMISSÕES -->
+<div id="page-demissoes" class="page">
+  <div class="topbar">
+    <div><div class="page-title">Demissões</div></div>
+    <button class="btn btn-primary admin-only" onclick="openModal('m-demissao')">＋ Registrar</button>
+  </div>
+  <div class="table-card">
+    <table><thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data</th></tr></thead>
+    <tbody id="tb-demissoes"><tr><td colspan="4" class="empty-td">Carregando...</td></tr></tbody></table>
+  </div>
+</div>
 
-<div id="page-contratos" class="page"><div class="topbar"><div><div class="page-title">Contratos</div></div><button class="btn btn-primary admin-only" onclick="openModal('m-contrato')">＋ Novo</button></div><div class="table-card"><table><thead><tr><th>Colaborador</th><th>Tipo</th><th>Término</th></tr></thead><tbody id="tb-contratos"></tbody></table></div></div>
+<!-- CONTRATOS -->
+<div id="page-contratos" class="page">
+  <div class="topbar">
+    <div><div class="page-title">Contratos</div></div>
+    <button class="btn btn-primary admin-only" onclick="openModal('m-contrato')">＋ Novo</button>
+  </div>
+  <div class="table-card">
+    <table><thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Término</th><th>Status</th></tr></thead>
+    <tbody id="tb-contratos"><tr><td colspan="5" class="empty-td">Carregando...</td></tr></tbody></table>
+  </div>
+</div>
 
-<div id="page-entrevistas" class="page"><div class="topbar"><div><div class="page-title">Entrevistas</div></div><button class="btn btn-primary" onclick="openModal('m-entrevista')">＋ Avaliar</button></div><div class="table-card"><table><thead><tr><th>Candidato</th><th>Nota</th><th>Recomendação</th></tr></thead><tbody id="tb-entrevistas"></tbody></table></div></div>
+<!-- ENTREVISTAS -->
+<div id="page-entrevistas" class="page">
+  <div class="topbar">
+    <div><div class="page-title">Entrevistas</div></div>
+    <button class="btn btn-primary" onclick="openModal('m-entrevista')">＋ Avaliar</button>
+  </div>
+  <div class="table-card">
+    <table><thead><tr><th>Candidato</th><th>Vaga</th><th>Nota</th><th>Recomendação</th></tr></thead>
+    <tbody id="tb-entrevistas"><tr><td colspan="4" class="empty-td">Carregando...</td></tr></tbody></table>
+  </div>
+</div>
 
-<div id="page-documentos" class="page"><div class="topbar"><div><div class="page-title">Documentos</div></div><button class="btn btn-primary" onclick="openModal('m-upload')">📎 Enviar</button></div><div class="table-card"><table><thead><tr><th>Arquivo</th><th>Tipo</th><th>Colaborador</th><th>Data</th><th></th></tr></thead><tbody id="tb-docs"></tbody></table></div></div>
+<!-- DOCUMENTOS -->
+<div id="page-documentos" class="page">
+  <div class="topbar">
+    <div><div class="page-title">Documentos</div><div class="page-subtitle">Arquivos vinculados aos colaboradores</div></div>
+    <button class="btn btn-primary" onclick="openModal('m-upload')">📎 Enviar Documento</button>
+  </div>
+  <div class="table-card">
+    <table><thead><tr><th>Arquivo</th><th>Tipo</th><th>Colaborador</th><th>Empresa</th><th>Data</th><th></th></tr></thead>
+    <tbody id="tb-docs"><tr><td colspan="6" class="empty-td">Carregando...</td></tr></tbody></table>
+  </div>
+</div>
 
-<div id="page-usuarios" class="page"><div class="topbar"><div><div class="page-title">Usuários</div></div></div><div id="lista-usuarios"></div></div>
+<!-- USUÁRIOS -->
+<div id="page-usuarios" class="page">
+  <div class="topbar"><div><div class="page-title">Usuários</div></div></div>
+  <div id="lista-usuarios"></div>
+</div>
 
 </main>
 </div>
 </div>
 
+<!-- ══════════════════════════════════════
+     MODAIS
+══════════════════════════════════════ -->
+
+<!-- MODAL IMPORTAÇÃO JB CONTÁBIL -->
 <div class="modal-overlay" id="m-import">
   <div class="modal">
-    <div class="modal-head"><h3>Importar Dados (PDF JB Contábil)</h3><button class="close-btn" onclick="closeModal('m-import')">✕</button></div>
+    <div class="modal-head">
+      <h3>📥 Importar Relação de Empregados (JB Contábil)</h3>
+      <button class="close-btn" onclick="closeModal('m-import')">✕</button>
+    </div>
     <div class="modal-body">
-      <p style="color:var(--text3); margin-bottom:10px;">Copie o texto do arquivo "FNP SANTA ROSA.pdf" da Relação de Empregados e cole abaixo. O sistema extrairá nomes, cargos, salários e criará códigos de 1 a 1000.</p>
-      <textarea id="import-text" placeholder="Cole o texto aqui..." style="width:100%;height:150px;padding:10px;background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;"></textarea>
+      <div class="field full" style="margin-bottom:14px;">
+        <label>Empresa destino (nome no sistema)</label>
+        <input id="imp-empresa" placeholder="Ex: FNP SANTA ROSA" style="padding:10px 12px;background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--fb);font-size:13.5px;outline:none;width:100%;">
+        <div class="field-hint">Este nome será salvo como "empresa" de todos os colaboradores importados. Use o mesmo nome que já usa no sistema para consistência.</div>
+      </div>
+      <div class="field full" style="margin-bottom:6px;">
+        <label>Texto copiado do PDF (Relação de Empregados)</label>
+        <textarea id="import-text" placeholder="Abra o PDF no seu computador, selecione todo o texto (Ctrl+A), copie (Ctrl+C) e cole aqui (Ctrl+V)..." style="width:100%;height:160px;padding:10px 12px;background:var(--bg3);border:1.5px solid var(--border);color:var(--text);border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;outline:none;"></textarea>
+        <div class="field-hint">O sistema reconhece automaticamente o formato da JB Contábil: Código · Nome · Cargo · Salário · Admissão</div>
+      </div>
+      <div id="import-log" class="import-log"></div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="closeModal('m-import')">Cancelar</button>
-      <button class="btn btn-primary" onclick="processarImportacao()">Analisar e Salvar</button>
+      <button class="btn btn-primary" id="btn-importar" onclick="processarImportacao()">▶ Analisar e Importar</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="m-colab"><div class="modal"><div class="modal-head"><h3>Colaborador</h3><button class="close-btn" onclick="closeModal('m-colab')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Nome *</label><input id="c-nome"></div><div class="field"><label>Código Próprio (ID)</label><input id="c-cpf" placeholder="Ex: 0001"></div><div class="field"><label>Cargo *</label><input id="c-cargo"></div><div class="field"><label>Empresa *</label><select id="c-empresa"><option value="WILLIAN CORREA FRANCO MORAES">WILLIAN CORREA FRANCO MORAES</option></select></div><div class="field"><label>Admissão</label><input type="date" id="c-admissao"></div><div class="field"><label>Salário</label><input type="number" id="c-salario"></div></div></div><div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-colab')">Cancelar</button><button class="btn btn-primary" onclick="save('colaborador')">Salvar</button></div></div></div>
-
-<div class="modal-overlay" id="m-exame">
+<!-- MODAL NOVO COLABORADOR -->
+<div class="modal-overlay" id="m-colab">
   <div class="modal">
-    <div class="modal-head"><h3>Registrar Exame</h3><button class="close-btn" onclick="closeModal('m-exame')">✕</button></div>
+    <div class="modal-head"><h3>Novo Colaborador</h3><button class="close-btn" onclick="closeModal('m-colab')">✕</button></div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="field full"><label>Colaborador *</label><input id="e-colab"></div>
-        <div class="field"><label>Empresa</label><select id="e-empresa"><option value="WILLIAN CORREA FRANCO MORAES">WILLIAN CORREA</option></select></div>
-        <div class="field"><label>Tipo *</label><select id="e-tipo"><option>Admissional</option><option>Periódico</option><option>Demissional</option></select></div>
-        <div class="field full"><label>Validade *</label><input type="date" id="e-validade"></div>
+        <div class="field full"><label>Nome Completo *</label><input id="c-nome" placeholder="Nome completo"></div>
+        <div class="field"><label>Cargo / Função</label><input id="c-cargo" placeholder="Ex: Operador de Caixa"></div>
+        <div class="field"><label>Empresa *</label><input id="c-empresa" placeholder="Ex: FNP SANTA ROSA"></div>
+        <div class="field"><label>Data de Admissão</label><input type="date" id="c-admissao"></div>
+        <div class="field"><label>Salário (R$)</label><input type="number" id="c-salario" step="0.01" placeholder="0,00"></div>
+      </div>
+      <div class="field-hint" style="margin-top:10px;">💡 O código do colaborador é gerado automaticamente pelo sistema (sequencial, sem repetição).</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-colab')">Cancelar</button>
+      <button class="btn btn-primary" onclick="save('colaborador')">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EXAME -->
+<div class="modal-overlay" id="m-exame">
+  <div class="modal">
+    <div class="modal-head"><h3>Registrar Exame Ocupacional</h3><button class="close-btn" onclick="closeModal('m-exame')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full">
+          <label>Colaborador *</label>
+          <select id="e-colab" onchange="vincularEmpresa('e-colab','e-empresa-display')">
+            <option value="">Selecione o colaborador...</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Empresa (preenchida automaticamente)</label>
+          <input id="e-empresa-display" readonly placeholder="Será preenchida ao selecionar o colaborador" style="opacity:0.6;cursor:not-allowed;">
+          <input type="hidden" id="e-empresa">
+        </div>
+        <div class="field">
+          <label>Cargo</label>
+          <input id="e-cargo-display" readonly placeholder="—" style="opacity:0.6;cursor:not-allowed;">
+        </div>
+        <div class="field">
+          <label>Salário</label>
+          <input id="e-salario-display" readonly placeholder="—" style="opacity:0.6;cursor:not-allowed;">
+        </div>
+        <div class="field"><label>Tipo *</label>
+          <select id="e-tipo"><option>Admissional</option><option>Periódico</option><option>Demissional</option><option>Retorno ao Trabalho</option><option>Mudança de Função</option></select>
+        </div>
+        <div class="field"><label>Validade *</label><input type="date" id="e-validade"></div>
         <div class="field full">
           <label>Anexar Exame (Foto / PDF)</label>
           <div class="upload-zone" onclick="document.getElementById('ex-file').click()">
-            <span class="uz-icon">📎</span><div>Escolher Arquivo do Celular/PC</div>
-            <button type="button" class="btn btn-ghost mt-8" onclick="event.stopPropagation(); document.getElementById('ex-cam').click()">📸 Tirar Foto Agora</button>
+            <span class="uz-icon">📎</span>
+            <div class="uz-text">Clique para selecionar arquivo</div>
+            <button type="button" class="btn btn-ghost mt-8" style="margin-top:10px;" onclick="event.stopPropagation();document.getElementById('ex-cam').click()">📸 Tirar Foto com Câmera</button>
           </div>
-          <input type="file" id="ex-file" accept="image/*,.pdf" style="display:none" onchange="document.getElementById('ex-prev').innerText = this.files[0].name">
-          <input type="file" id="ex-cam" accept="image/*" capture="environment" style="display:none" onchange="document.getElementById('ex-prev').innerText = 'Foto capturada!'">
-          <div id="ex-prev" style="margin-top:10px; color:var(--green)"></div>
+          <input type="file" id="ex-file" accept="image/*,.pdf" style="display:none" onchange="showFileName(this,'ex-prev')">
+          <input type="file" id="ex-cam" accept="image/*" capture="environment" style="display:none" onchange="showFileName(this,'ex-prev')">
+          <div class="file-ok" id="ex-prev"></div>
         </div>
       </div>
     </div>
@@ -312,267 +438,814 @@ tbody td:first-child { color: var(--text); font-weight: 500; }
   </div>
 </div>
 
+<!-- MODAL ADVERTÊNCIA -->
 <div class="modal-overlay" id="m-adv">
   <div class="modal">
     <div class="modal-head"><h3>Nova Advertência</h3><button class="close-btn" onclick="closeModal('m-adv')">✕</button></div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="field"><label>Colaborador *</label><input id="a-colab"></div>
-        <div class="field"><label>Empresa *</label><select id="a-empresa"><option value="WILLIAN CORREA FRANCO MORAES">WILLIAN CORREA</option></select></div>
-        <div class="field"><label>Tipo *</label><select id="a-tipo"><option>Verbal</option><option>Escrita (1ª)</option><option>Escrita (2ª)</option><option>Suspensão</option></select></div>
+        <div class="field full">
+          <label>Colaborador *</label>
+          <select id="a-colab" onchange="vincularEmpresa('a-colab','a-empresa-display')">
+            <option value="">Selecione o colaborador...</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Empresa (preenchida automaticamente)</label>
+          <input id="a-empresa-display" readonly placeholder="Será preenchida ao selecionar o colaborador" style="opacity:0.6;cursor:not-allowed;">
+          <input type="hidden" id="a-empresa">
+        </div>
+        <div class="field">
+          <label>Cargo</label>
+          <input id="a-cargo-display" readonly placeholder="—" style="opacity:0.6;cursor:not-allowed;">
+        </div>
+        <div class="field">
+          <label>Salário</label>
+          <input id="a-salario-display" readonly placeholder="—" style="opacity:0.6;cursor:not-allowed;">
+        </div>
+        <div class="field"><label>Tipo *</label>
+          <select id="a-tipo"><option>Verbal</option><option>Escrita (1ª)</option><option>Escrita (2ª)</option><option>Suspensão</option></select>
+        </div>
         <div class="field"><label>Data *</label><input type="date" id="a-data"></div>
-        <div class="field full"><label>Motivo *</label><textarea id="a-motivo"></textarea></div>
+        <div class="field full"><label>Motivo da Advertência *</label><textarea id="a-motivo" placeholder="Descreva o motivo..."></textarea></div>
+        <div class="field full"><label>Testemunhas</label><input id="a-test" placeholder="Nome e função das testemunhas"></div>
         <div class="field full">
           <label>Anexar Assinatura (Foto / PDF)</label>
           <div class="upload-zone" onclick="document.getElementById('adv-file').click()">
-            <span class="uz-icon">📎</span><div>Escolher Arquivo do Celular/PC</div>
-            <button type="button" class="btn btn-ghost mt-8" onclick="event.stopPropagation(); document.getElementById('adv-cam').click()">📸 Tirar Foto Agora</button>
+            <span class="uz-icon">📎</span>
+            <div class="uz-text">Clique para selecionar arquivo</div>
+            <button type="button" class="btn btn-ghost" style="margin-top:10px;" onclick="event.stopPropagation();document.getElementById('adv-cam').click()">📸 Tirar Foto com Câmera</button>
           </div>
-          <input type="file" id="adv-file" accept="image/*,.pdf" style="display:none" onchange="document.getElementById('adv-prev').innerText = this.files[0].name">
-          <input type="file" id="adv-cam" accept="image/*" capture="environment" style="display:none" onchange="document.getElementById('adv-prev').innerText = 'Foto capturada!'">
-          <div id="adv-prev" style="margin-top:10px; color:var(--green)"></div>
+          <input type="file" id="adv-file" accept="image/*,.pdf" style="display:none" onchange="showFileName(this,'adv-prev')">
+          <input type="file" id="adv-cam" accept="image/*" capture="environment" style="display:none" onchange="showFileName(this,'adv-prev')">
+          <div class="file-ok" id="adv-prev"></div>
         </div>
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-primary" style="background:var(--blue)" onclick="gerarPDFAdvertencia()">🖨️ Gerar PDF</button>
+      <button class="btn btn-blue" onclick="gerarPDFAdvertencia()">🖨️ Gerar PDF</button>
       <button class="btn btn-primary" onclick="save('advertencia')">Salvar no Sistema</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="m-falta"><div class="modal"><div class="modal-head"><h3>Falta</h3><button class="close-btn" onclick="closeModal('m-falta')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Colaborador *</label><input id="f-colab"></div><div class="field"><label>Data *</label><input type="date" id="f-data"></div><div class="field"><label>Justificada?</label><select id="f-just"><option>Sim</option><option>Não</option></select></div></div></div><div class="modal-foot"><button class="btn btn-primary" onclick="save('falta')">Salvar</button></div></div></div>
-<div class="modal-overlay" id="m-demissao"><div class="modal"><div class="modal-head"><h3>Demissão</h3><button class="close-btn" onclick="closeModal('m-demissao')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Colaborador *</label><input id="d-colab"></div><div class="field full"><label>Tipo *</label><select id="d-tipo"><option>Sem justa causa</option><option>Pedido</option></select></div></div></div><div class="modal-foot"><button class="btn btn-primary" onclick="save('demissao')">Salvar</button></div></div></div>
-<div class="modal-overlay" id="m-contrato"><div class="modal"><div class="modal-head"><h3>Contrato</h3><button class="close-btn" onclick="closeModal('m-contrato')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Colaborador *</label><input id="ct-colab"></div><div class="field"><label>Tipo *</label><input id="ct-tipo"></div><div class="field"><label>Término *</label><input type="date" id="ct-fim"></div></div></div><div class="modal-foot"><button class="btn btn-primary" onclick="save('contrato')">Salvar</button></div></div></div>
-<div class="modal-overlay" id="m-entrevista"><div class="modal"><div class="modal-head"><h3>Entrevista</h3><button class="close-btn" onclick="closeModal('m-entrevista')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Candidato *</label><input id="en-cand"></div><div class="field"><label>Nota (1-5)</label><input type="number" id="en-nota"></div><div class="field"><label>Recomendação</label><input id="en-rec"></div></div></div><div class="modal-foot"><button class="btn btn-primary" onclick="save('entrevista')">Salvar</button></div></div></div>
+<!-- MODAL FALTA -->
+<div class="modal-overlay" id="m-falta">
+  <div class="modal">
+    <div class="modal-head"><h3>Registrar Falta</h3><button class="close-btn" onclick="closeModal('m-falta')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full">
+          <label>Colaborador *</label>
+          <select id="f-colab" onchange="vincularEmpresa('f-colab','f-empresa-display')">
+            <option value="">Selecione o colaborador...</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Empresa (preenchida automaticamente)</label>
+          <input id="f-empresa-display" readonly style="opacity:0.6;cursor:not-allowed;">
+          <input type="hidden" id="f-empresa">
+        </div>
+        <div class="field">
+          <label>Cargo</label>
+          <input id="f-cargo-display" readonly placeholder="—" style="opacity:0.6;cursor:not-allowed;">
+        </div>
+        <div class="field">
+          <label>Salário</label>
+          <input id="f-salario-display" readonly placeholder="—" style="opacity:0.6;cursor:not-allowed;">
+        </div>
+        <div class="field"><label>Data *</label><input type="date" id="f-data"></div>
+        <div class="field"><label>Justificada?</label><select id="f-just"><option>Não</option><option>Sim</option></select></div>
+        <div class="field full"><label>Motivo / Atestado</label><textarea id="f-motivo" placeholder="Descreva ou indique o atestado..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-falta')">Cancelar</button>
+      <button class="btn btn-primary" onclick="save('falta')">Salvar</button>
+    </div>
+  </div>
+</div>
 
+<!-- MODAL DEMISSÃO -->
+<div class="modal-overlay" id="m-demissao">
+  <div class="modal">
+    <div class="modal-head"><h3>Registrar Demissão</h3><button class="close-btn" onclick="closeModal('m-demissao')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full">
+          <label>Colaborador *</label>
+          <select id="d-colab" onchange="vincularEmpresa('d-colab','d-empresa-display')">
+            <option value="">Selecione o colaborador...</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Empresa</label>
+          <input id="d-empresa-display" readonly style="opacity:0.6;cursor:not-allowed;">
+          <input type="hidden" id="d-empresa">
+        </div>
+        <div class="field">
+          <label>Cargo</label>
+          <input id="d-cargo-display" readonly placeholder="—" style="opacity:0.6;cursor:not-allowed;">
+        </div>
+        <div class="field">
+          <label>Salário</label>
+          <input id="d-salario-display" readonly placeholder="—" style="opacity:0.6;cursor:not-allowed;">
+        </div>
+        <div class="field"><label>Tipo *</label>
+          <select id="d-tipo"><option>Sem justa causa</option><option>Com justa causa</option><option>Pedido de demissão</option><option>Acordo mútuo (§6º)</option></select>
+        </div>
+        <div class="field"><label>Data</label><input type="date" id="d-data"></div>
+        <div class="field full"><label>Motivo</label><textarea id="d-motivo"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-demissao')">Cancelar</button>
+      <button class="btn btn-primary" onclick="save('demissao')">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONTRATO -->
+<div class="modal-overlay" id="m-contrato">
+  <div class="modal">
+    <div class="modal-head"><h3>Contrato</h3><button class="close-btn" onclick="closeModal('m-contrato')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full">
+          <label>Colaborador *</label>
+          <select id="ct-colab" onchange="vincularEmpresa('ct-colab','ct-empresa-display')">
+            <option value="">Selecione...</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Empresa</label>
+          <input id="ct-empresa-display" readonly style="opacity:0.6;cursor:not-allowed;">
+          <input type="hidden" id="ct-empresa">
+        </div>
+        <div class="field">
+          <label>Cargo</label>
+          <input id="ct-cargo-display" readonly placeholder="—" style="opacity:0.6;cursor:not-allowed;">
+        </div>
+        <div class="field">
+          <label>Salário</label>
+          <input id="ct-salario-display" readonly placeholder="—" style="opacity:0.6;cursor:not-allowed;">
+        </div>
+        <div class="field"><label>Tipo *</label>
+          <select id="ct-tipo"><option>CLT — Indeterminado</option><option>Experiência 45 dias</option><option>Experiência 90 dias</option><option>Temporário</option><option>Estágio</option></select>
+        </div>
+        <div class="field"><label>Data de Término</label><input type="date" id="ct-fim"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-contrato')">Cancelar</button>
+      <button class="btn btn-primary" onclick="save('contrato')">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ENTREVISTA -->
+<div class="modal-overlay" id="m-entrevista">
+  <div class="modal">
+    <div class="modal-head"><h3>Avaliação de Candidato</h3><button class="close-btn" onclick="closeModal('m-entrevista')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full"><label>Candidato *</label><input id="en-cand" placeholder="Nome do candidato"></div>
+        <div class="field"><label>Vaga</label><input id="en-vaga" placeholder="Ex: Auxiliar de Cozinha"></div>
+        <div class="field"><label>Nota (1–5)</label><select id="en-nota"><option value="">—</option><option value="5">⭐⭐⭐⭐⭐ Excelente</option><option value="4">⭐⭐⭐⭐ Bom</option><option value="3">⭐⭐⭐ Regular</option><option value="2">⭐⭐ Fraco</option><option value="1">⭐ Não recomendado</option></select></div>
+        <div class="field"><label>Recomendação</label><select id="en-rec"><option>✅ Contratar</option><option>⏳ 2ª etapa</option><option>🗂 Banco de talentos</option><option>❌ Não contratar</option></select></div>
+        <div class="field full"><label>Observações</label><textarea id="en-obs" placeholder="Pontos fortes, fracos, impressões..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-entrevista')">Cancelar</button>
+      <button class="btn btn-primary" onclick="save('entrevista')">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL UPLOAD DOCUMENTO -->
 <div class="modal-overlay" id="m-upload">
   <div class="modal">
     <div class="modal-head"><h3>Enviar Documento</h3><button class="close-btn" onclick="closeModal('m-upload')">✕</button></div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="field full"><label>Colaborador *</label><input id="up-colab"></div>
-        <div class="field full"><label>Tipo de Arquivo</label><select id="up-tipo"><option>Contrato Assinado</option><option>Atestado / Exame</option><option>Outro</option></select></div>
         <div class="field full">
+          <label>Colaborador *</label>
+          <!-- dropdown vinculado: selecionar preenche empresa automaticamente -->
+          <select id="up-colab" onchange="vincularEmpresa('up-colab','up-empresa-display')">
+            <option value="">Selecione o colaborador...</option>
+          </select>
+          <div class="field-hint">Empresa, cargo e salário preenchidos automaticamente.</div>
+        </div>
+        <div class="field full">
+          <label>Empresa (preenchida automaticamente)</label>
+          <input id="up-empresa-display" readonly placeholder="Preenchida ao selecionar o colaborador" style="opacity:0.6;cursor:not-allowed;">
+          <input type="hidden" id="up-empresa">
+        </div>
+        <div class="field">
+          <label>Cargo (preenchido automaticamente)</label>
+          <input id="up-cargo-display" readonly placeholder="—" style="opacity:0.6;cursor:not-allowed;">
+        </div>
+        <div class="field">
+          <label>Salário (preenchido automaticamente)</label>
+          <input id="up-salario-display" readonly placeholder="—" style="opacity:0.6;cursor:not-allowed;">
+        </div>
+        <div class="field full">
+          <label>Tipo de Documento</label>
+          <select id="up-tipo">
+            <option>Advertência Assinada</option>
+            <option>Contrato Assinado</option>
+            <option>Atestado Médico</option>
+            <option>Exame Ocupacional</option>
+            <option>Documento Admissional</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label>Arquivo *</label>
           <div class="upload-zone" onclick="document.getElementById('up-file').click()">
-            <span class="uz-icon">📤</span><div>Selecionar Arquivo</div>
-            <button type="button" class="btn btn-ghost mt-8" onclick="event.stopPropagation(); document.getElementById('up-cam').click()">📸 Tirar Foto</button>
+            <span class="uz-icon">📤</span>
+            <div class="uz-text">Clique para selecionar (foto ou PDF)</div>
+            <button type="button" class="btn btn-ghost" style="margin-top:10px;" onclick="event.stopPropagation();document.getElementById('up-cam').click()">📸 Tirar Foto com Câmera</button>
           </div>
-          <input type="file" id="up-file" accept="image/*,.pdf" style="display:none" onchange="document.getElementById('up-prev').innerText = this.files[0].name">
-          <input type="file" id="up-cam" accept="image/*" capture="environment" style="display:none" onchange="document.getElementById('up-prev').innerText = 'Foto capturada!'">
-          <div id="up-prev" style="margin-top:10px; color:var(--green)"></div>
+          <input type="file" id="up-file" accept="image/*,.pdf" style="display:none" onchange="showFileName(this,'up-prev')">
+          <input type="file" id="up-cam" accept="image/*" capture="environment" style="display:none" onchange="showFileName(this,'up-prev')">
+          <div class="file-ok" id="up-prev"></div>
         </div>
       </div>
     </div>
-    <div class="modal-foot"><button class="btn btn-primary" onclick="uploadDoc()">Salvar Arquivo</button></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-upload')">Cancelar</button>
+      <button class="btn btn-primary" onclick="uploadDoc()">Salvar Documento</button>
+    </div>
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT COMPLETO
+══════════════════════════════════════ -->
 <script>
 // ╔═══════════════════════════════════════════════════╗
-//  CONFIGURAÇÃO SUPABASE
+//  ⚠️  CONFIGURE AQUI ANTES DE PUBLICAR
 // ╚═══════════════════════════════════════════════════╝
 const SUPABASE_URL     = 'https://djopojjzuvfdukgglinj.supabase.co';       // https://xxxxx.supabase.co
 const SUPABASE_ANON    = 'sb_publishable_ypgq1IS7TqilRgwg5Gbgwg_xmZxC9ES';  // eyJhbGci...
+// ════════════════════════════════════════════════════
 
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON);
 let SESSION = null, ROLE = 'gerente';
 
+// Mapa em memória: nome_do_colaborador → { empresa, cargo, salario }
+// Carregado uma vez no login, atualizado ao cadastrar novo colaborador
+let COLAB_MAP = {}; // { "NOME COMPLETO": { empresa, cargo, salario } }
+
+// ── AUTH ──────────────────────────────────────────────
 async function init() {
   const { data:{ session } } = await db.auth.getSession();
-  if (session) { SESSION = session; await loadProfile(session.user); showApp(); }
-  else { document.getElementById('login-screen').style.display='flex'; }
+  if (session) { SESSION = session; await onLogin(session.user); }
+  else { show('login-screen'); }
   db.auth.onAuthStateChange(async (_e, s) => {
-    if (s) { SESSION = s; await loadProfile(s.user); showApp(); }
+    if (s) { SESSION = s; await onLogin(s.user); }
     else window.location.reload();
   });
 }
 
-async function loadProfile(user) {
+async function onLogin(user) {
   const { data:p } = await db.from('profiles').select('*').eq('id', user.id).single();
   ROLE = p?.role || 'gerente';
-  document.getElementById('un').textContent = p?.nome || user.email.split('@')[0];
-  document.getElementById('ur').textContent = ROLE.toUpperCase();
-  if(ROLE === 'admin' || ROLE === 'socio') document.querySelectorAll('.admin-only').forEach(e => e.style.display='');
+  const nome = p?.nome || user.email.split('@')[0];
+  q('un').textContent = nome;
+  q('ur').textContent = ROLE.toUpperCase();
+  q('ua').textContent = nome[0].toUpperCase();
+  if (ROLE === 'admin' || ROLE === 'socio') {
+    document.querySelectorAll('.admin-only').forEach(e => e.style.display = '');
+  }
+  // Carregar colaboradores em memória para dropdowns
+  await carregarColaboradoresDropdown();
+  hide('login-screen');
+  show('app');
+  q('dash-date').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  loadPage('dashboard');
 }
 
 async function doLogin() {
-  const { error } = await db.auth.signInWithPassword({ email: v('login-email'), password: v('login-pass') });
-  if (error) { document.getElementById('login-error').style.display='block'; document.getElementById('login-error').innerText='Erro: '+error.message; }
+  const { error } = await db.auth.signInWithPassword({ email:v('login-email'), password:v('login-pass') });
+  if (error) {
+    q('login-error').style.display = 'block';
+    q('login-error').textContent = 'E-mail ou senha incorretos.';
+  }
 }
 async function doLogout() { await db.auth.signOut(); }
 
-function showApp() { document.getElementById('login-screen').style.display='none'; document.getElementById('app').style.display='block'; loadPage('dashboard'); }
-function goPage(id, el) { document.querySelectorAll('.page, .nav-item').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); if(el) el.classList.add('active'); loadPage(id); }
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
-// ── LOADERS ──
+// ── DROPDOWNS DE COLABORADORES (com vínculo empresa) ──
+async function carregarColaboradoresDropdown() {
+  const { data } = await db.from('colaboradores')
+    .select('nome, empresa, cargo, salario')
+    .eq('status','Ativo')
+    .order('nome', { ascending: true });
+
+  COLAB_MAP = {};
+  if (!data) return;
+
+  // Monta o mapa nome → { empresa, cargo, salario }
+  data.forEach(c => {
+    COLAB_MAP[c.nome] = {
+      empresa: c.empresa || '—',
+      cargo:   c.cargo   || '—',
+      salario: c.salario != null
+        ? 'R$ ' + Number(c.salario).toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+        : '—',
+    };
+  });
+
+  // Monta as options HTML
+  const opts = '<option value="">Selecione o colaborador...</option>' +
+    data.map(c => `<option value="${esc(c.nome)}">${esc(c.nome)}</option>`).join('');
+
+  // Aplica em todos os selects de colaborador
+  ['e-colab','a-colab','f-colab','d-colab','ct-colab','up-colab'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = opts;
+  });
+}
+
+// Chamada pelo onchange dos selects — preenche todos os campos vinculados ao colaborador
+// Convenção de IDs:
+//   select:          e-colab   a-colab   f-colab   d-colab   ct-colab   up-colab
+//   empresa display: e-empresa-display   (hidden: e-empresa)
+//   cargo display:   e-cargo-display     (quando existir)
+//   salario display: e-salario-display   (quando existir)
+function vincularEmpresa(selectId, displayId) {
+  const nome   = document.getElementById(selectId)?.value || '';
+  const info   = COLAB_MAP[nome] || { empresa:'', cargo:'', salario:'' };
+
+  // Empresa (display readonly + hidden para salvar)
+  const dispEl = document.getElementById(displayId);
+  if (dispEl) dispEl.value = info.empresa;
+  const hiddenId = displayId.replace('-display','');
+  const hiddenEl = document.getElementById(hiddenId);
+  if (hiddenEl) hiddenEl.value = info.empresa;
+
+  // Cargo display (prefixo = tudo antes de "-empresa-display")
+  const prefix = displayId.replace('-empresa-display','');
+  const cargoDisp = document.getElementById(prefix + '-cargo-display');
+  if (cargoDisp) cargoDisp.value = info.cargo;
+
+  // Salário display
+  const salDisp = document.getElementById(prefix + '-salario-display');
+  if (salDisp) salDisp.value = info.salario;
+}
+
+// ── NAVEGAÇÃO ─────────────────────────────────────────
+function goPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if (el) el.classList.add('active');
+  loadPage(id);
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+// ── LOADERS ───────────────────────────────────────────
 async function loadPage(id) {
-  if(id==='dashboard') loadDash();
-  if(id==='colaboradores') loadTb('colaboradores','tb-colab', d=>d.map(r=>`<tr><td>${r.cpf||'—'}</td><td>${r.nome}</td><td>${r.cargo||'—'}</td><td>${r.empresa||'—'}</td><td>${r.data_admissao||'—'}</td><td><span class="badge ${r.status==='Ativo'?'badge-green':'badge-gray'}">${r.status||'—'}</span></td><td></td></tr>`).join(''));
-  if(id==='exames') loadTb('exames','tb-exames', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.empresa||'—'}</td><td>${r.tipo}</td><td>${r.data_validade||'—'}</td><td>${r.doc_url?`<a href="${r.doc_url}" target="_blank">Ver Doc</a>`:'—'}</td></tr>`).join(''));
-  if(id==='advertencias') loadTb('advertencias','tb-adv', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.empresa||'—'}</td><td>${r.tipo}</td><td>${r.data||'—'}</td><td>${r.motivo}</td><td>${r.doc_url?`<a href="${r.doc_url}" target="_blank">Ver</a>`:'—'}</td></tr>`).join(''));
-  if(id==='faltas') loadTb('faltas','tb-faltas', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.data}</td><td>${r.justificada}</td><td>${r.motivo||'—'}</td></tr>`).join(''));
-  if(id==='demissoes') loadTb('demissoes','tb-demissoes', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.tipo}</td><td>${r.data||'—'}</td></tr>`).join(''));
-  if(id==='contratos') loadTb('contratos','tb-contratos', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.tipo}</td><td>${r.data_termino||'—'}</td></tr>`).join(''));
-  if(id==='entrevistas') loadTb('entrevistas','tb-entrevistas', d=>d.map(r=>`<tr><td>${r.candidato}</td><td>${r.nota}</td><td>${r.recomendacao}</td></tr>`).join(''));
-  if(id==='documentos') loadTb('documentos','tb-docs', d=>d.map(r=>`<tr><td>${r.nome_arquivo}</td><td>${r.tipo}</td><td>${r.colaborador||'—'}</td><td>${r.created_at.split('T')[0]}</td><td><a href="${r.url}" target="_blank">Ver</a></td></tr>`).join(''));
+  if (id === 'dashboard')    return loadDash();
+  if (id === 'colaboradores') return loadColab();
+  if (id === 'exames')       return loadTb('exames','tb-exames', renderExames);
+  if (id === 'advertencias') return loadTb('advertencias','tb-adv', renderAdv);
+  if (id === 'faltas')       return loadTb('faltas','tb-faltas', renderFaltas);
+  if (id === 'demissoes')    return loadTb('demissoes','tb-demissoes', renderDemissoes);
+  if (id === 'contratos')    return loadTb('contratos','tb-contratos', renderContratos);
+  if (id === 'entrevistas')  return loadTb('entrevistas','tb-entrevistas', renderEntrevistas);
+  if (id === 'documentos')   return loadTb('documentos','tb-docs', renderDocs);
 }
 
 async function loadDash() {
-  const {count:a} = await db.from('colaboradores').select('*',{count:'exact',head:true}).eq('status','Ativo');
-  document.getElementById('d-ativos').innerText = a||0;
-}
-async function loadTb(t, id, render) {
-  const {data} = await db.from(t).select('*').order('created_at',{ascending:false});
-  document.getElementById(id).innerHTML = data?.length ? render(data) : '<tr><td colspan="7">Nenhum registro.</td></tr>';
+  const hoje = new Date();
+  const em30 = new Date(hoje); em30.setDate(em30.getDate()+30);
+  const em15 = new Date(hoje); em15.setDate(em15.getDate()+15);
+  const mesIni = new Date(hoje.getFullYear(), hoje.getMonth(), 1).toISOString();
+
+  const [{count:at},{count:ex},{count:adv},{count:flt},{count:ctr},{data:ativs}] = await Promise.all([
+    db.from('colaboradores').select('*',{count:'exact',head:true}).eq('status','Ativo'),
+    db.from('exames').select('*',{count:'exact',head:true}).gte('data_validade',hoje.toISOString().slice(0,10)).lte('data_validade',em30.toISOString().slice(0,10)),
+    db.from('advertencias').select('*',{count:'exact',head:true}).gte('created_at',mesIni),
+    db.from('faltas').select('*',{count:'exact',head:true}).gte('created_at',mesIni),
+    db.from('contratos').select('*',{count:'exact',head:true}).gte('data_termino',hoje.toISOString().slice(0,10)).lte('data_termino',em15.toISOString().slice(0,10)),
+    db.from('atividades').select('*').order('created_at',{ascending:false}).limit(10),
+  ]);
+
+  q('d-ativos').textContent   = at  ?? '—';
+  q('d-exames').textContent   = ex  ?? '—';
+  q('d-adv').textContent      = adv ?? '—';
+  q('d-faltas').textContent   = flt ?? '—';
+  q('d-contratos').textContent= ctr ?? '—';
+
+  q('tb-ativ').innerHTML = ativs?.length
+    ? ativs.map(a=>`<tr><td><span class="badge badge-${tipoBadge(a.tipo)}">${a.tipo||'—'}</span></td><td>${x(a.colaborador)}</td><td>${x(a.empresa)}</td><td>${fd(a.created_at)}</td></tr>`).join('')
+    : '<tr><td colspan="4" class="empty-td">Nenhuma ação registrada ainda.</td></tr>';
 }
 
-// ── SAVE & UPLOAD (COMPLETO E CORRIGIDO) ──
+async function loadColab() {
+  const { data } = await db.from('colaboradores').select('*').order('nome',{ascending:true});
+  q('tb-colab').innerHTML = data?.length
+    ? data.map(r=>`
+        <tr data-s="${x(r.nome+r.empresa+r.cargo).toLowerCase()}">
+          <td style="font-family:monospace;font-size:12px;">${x(r.cpf||'—')}</td>
+          <td>${x(r.nome)}</td>
+          <td>${x(r.cargo||'—')}</td>
+          <td>${x(r.empresa||'—')}</td>
+          <td>${r.data_admissao ? fd(r.data_admissao) : '—'}</td>
+          <td>R$ ${r.salario ? Number(r.salario).toLocaleString('pt-BR',{minimumFractionDigits:2}) : '—'}</td>
+          <td><span class="badge ${r.status==='Ativo'?'badge-green':'badge-gray'}">${r.status||'—'}</span></td>
+        </tr>`).join('')
+    : '<tr><td colspan="7" class="empty-td">Nenhum colaborador cadastrado.</td></tr>';
+}
+
+async function loadTb(table, tbId, renderer) {
+  q(tbId).innerHTML = '<tr><td colspan="9" class="empty-td"><span class="spinner"></span></td></tr>';
+  const { data, error } = await db.from(table).select('*').order('created_at',{ascending:false}).limit(300);
+  if (error) { q(tbId).innerHTML = `<tr><td colspan="9" class="empty-td" style="color:var(--red)">Erro: ${error.message}</td></tr>`; return; }
+  q(tbId).innerHTML = data?.length ? renderer(data) : '<tr><td colspan="9" class="empty-td">Nenhum registro.</td></tr>';
+}
+
+// ── RENDERERS ─────────────────────────────────────────
+function renderExames(d) {
+  return d.map(r=>`
+    <tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
+      <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td><td>${x(r.tipo)}</td>
+      <td>${fd(r.data_validade)}</td>
+      <td>${statusValidade(r.data_validade)}</td>
+      <td>${r.doc_url?`<a href="${r.doc_url}" target="_blank" class="btn btn-ghost btn-sm">Ver 📄</a>`:'—'}</td>
+    </tr>`).join('');
+}
+function renderAdv(d) {
+  return d.map(r=>`
+    <tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
+      <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
+      <td><span class="badge badge-orange">${x(r.tipo)}</span></td>
+      <td>${fd(r.data)}</td><td>${x(r.motivo||'—')}</td>
+      <td>${r.doc_url?`<a href="${r.doc_url}" target="_blank" class="btn btn-ghost btn-sm">Ver 📄</a>`:'—'}</td>
+    </tr>`).join('');
+}
+function renderFaltas(d) {
+  return d.map(r=>`
+    <tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
+      <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
+      <td>${fd(r.data)}</td>
+      <td><span class="badge ${r.justificada==='Sim'?'badge-green':'badge-red'}">${r.justificada||'—'}</span></td>
+      <td>${x(r.motivo||'—')}</td>
+    </tr>`).join('');
+}
+function renderDemissoes(d) {
+  return d.map(r=>`
+    <tr><td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
+    <td><span class="badge badge-red">${x(r.tipo)}</span></td><td>${fd(r.data)}</td></tr>`).join('');
+}
+function renderContratos(d) {
+  return d.map(r=>`
+    <tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
+      <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td><td>${x(r.tipo)}</td>
+      <td>${fd(r.data_termino)}</td>
+      <td>${statusContrato(r.data_termino)}</td>
+    </tr>`).join('');
+}
+function renderEntrevistas(d) {
+  return d.map(r=>`
+    <tr><td>${x(r.candidato)}</td><td>${x(r.vaga||'—')}</td>
+    <td>${'⭐'.repeat(parseInt(r.nota)||0)}</td><td>${x(r.recomendacao||'—')}</td></tr>`).join('');
+}
+function renderDocs(d) {
+  return d.map(r=>`
+    <tr data-s="${x(r.nome_arquivo+r.colaborador+r.empresa).toLowerCase()}">
+      <td>${x(r.nome_arquivo)}</td>
+      <td><span class="badge badge-blue">${x(r.tipo||'—')}</span></td>
+      <td>${x(r.colaborador||'—')}</td><td>${x(r.empresa||'—')}</td>
+      <td>${fd(r.created_at)}</td>
+      <td><a href="${r.url}" target="_blank" class="btn btn-ghost btn-sm">Ver 📄</a></td>
+    </tr>`).join('');
+}
+
+// ── SAVE ──────────────────────────────────────────────
 async function save(tipo) {
-  let table = '', m = '', data = {};
+  const userNome = q('un').textContent;
+  let table='', modal='', data={}, atividade={};
 
-  if (tipo === 'colaborador') {
-    table = 'colaboradores'; m = 'm-colab';
-    data = {
-      nome: v('c-nome'), cpf: v('c-cpf'), cargo: v('c-cargo'), empresa: v('c-empresa'),
-      data_admissao: v('c-admissao') || null, salario: parseFloat(v('c-salario')) || null, status: 'Ativo'
-    };
+  if (tipo==='colaborador') {
+    // Gera código sequencial automático
+    const cod = await proximoCodigo();
+    table='colaboradores'; modal='m-colab';
+    data={ cpf:cod, nome:v('c-nome'), cargo:v('c-cargo'), empresa:v('c-empresa'),
+           data_admissao:v('c-admissao')||null, salario:parseFloat(v('c-salario'))||null, status:'Ativo' };
+    atividade={ tipo:'Admissão', colaborador:v('c-nome'), empresa:v('c-empresa'), user_nome:userNome };
   }
-  else if (tipo === 'exame') {
-    table = 'exames'; m = 'm-exame';
-    data = { colaborador: v('e-colab'), empresa: v('e-empresa'), tipo: v('e-tipo'), data_validade: v('e-validade') || null };
+  else if (tipo==='exame') {
+    table='exames'; modal='m-exame';
+    data={ colaborador:v('e-colab'), empresa:v('e-empresa'), tipo:v('e-tipo'), data_validade:v('e-validade')||null };
     const file = document.getElementById('ex-file').files[0] || document.getElementById('ex-cam').files[0];
-    if (file) { const u = await uploadSupabase(file); if (u) data.doc_url = u; }
+    if (file) { const u = await uploadSupabase(file); if(u) data.doc_url=u; }
+    atividade={ tipo:'Exame', colaborador:v('e-colab'), empresa:v('e-empresa'), user_nome:userNome };
   }
-  else if (tipo === 'advertencia') {
-    table = 'advertencias'; m = 'm-adv';
-    data = { colaborador: v('a-colab'), empresa: v('a-empresa'), tipo: v('a-tipo'), data: v('a-data') || null, motivo: v('a-motivo') };
+  else if (tipo==='advertencia') {
+    table='advertencias'; modal='m-adv';
+    data={ colaborador:v('a-colab'), empresa:v('a-empresa'), tipo:v('a-tipo'),
+           data:v('a-data')||null, motivo:v('a-motivo'), testemunhas:v('a-test'), user_nome:userNome };
     const file = document.getElementById('adv-file').files[0] || document.getElementById('adv-cam').files[0];
-    if (file) { const u = await uploadSupabase(file); if (u) data.doc_url = u; }
+    if (file) { const u = await uploadSupabase(file); if(u) data.doc_url=u; }
+    atividade={ tipo:'Advertência', colaborador:v('a-colab'), empresa:v('a-empresa'), user_nome:userNome };
   }
-  else if (tipo === 'falta') {
-    table = 'faltas'; m = 'm-falta';
-    data = { colaborador: v('f-colab'), data: v('f-data') || null, justificada: v('f-just') };
+  else if (tipo==='falta') {
+    table='faltas'; modal='m-falta';
+    data={ colaborador:v('f-colab'), empresa:v('f-empresa'), data:v('f-data')||null,
+           justificada:v('f-just'), motivo:v('f-motivo'), user_nome:userNome };
+    atividade={ tipo:'Falta', colaborador:v('f-colab'), empresa:v('f-empresa'), user_nome:userNome };
   }
-  else if (tipo === 'demissao') {
-    table = 'demissoes'; m = 'm-demissao';
-    data = { colaborador: v('d-colab'), tipo: v('d-tipo') };
+  else if (tipo==='demissao') {
+    table='demissoes'; modal='m-demissao';
+    data={ colaborador:v('d-colab'), empresa:v('d-empresa'), tipo:v('d-tipo'),
+           data:v('d-data')||null, motivo:v('d-motivo') };
+    atividade={ tipo:'Demissão', colaborador:v('d-colab'), empresa:v('d-empresa'), user_nome:userNome };
+    // Marca colaborador como inativo
+    await db.from('colaboradores').update({status:'Inativo'}).eq('nome', v('d-colab'));
   }
-  else if (tipo === 'contrato') {
-    table = 'contratos'; m = 'm-contrato';
-    data = { colaborador: v('ct-colab'), tipo: v('ct-tipo'), data_termino: v('ct-fim') || null };
+  else if (tipo==='contrato') {
+    table='contratos'; modal='m-contrato';
+    data={ colaborador:v('ct-colab'), empresa:v('ct-empresa'), tipo:v('ct-tipo'), data_termino:v('ct-fim')||null };
+    atividade={ tipo:'Contrato', colaborador:v('ct-colab'), empresa:v('ct-empresa'), user_nome:userNome };
   }
-  else if (tipo === 'entrevista') {
-    table = 'entrevistas'; m = 'm-entrevista';
-    data = { candidato: v('en-cand'), nota: parseInt(v('en-nota')) || null, recomendacao: v('en-rec') };
+  else if (tipo==='entrevista') {
+    table='entrevistas'; modal='m-entrevista';
+    data={ candidato:v('en-cand'), vaga:v('en-vaga'), nota:parseInt(v('en-nota'))||null,
+           recomendacao:v('en-rec'), obs:v('en-obs'), user_nome:userNome };
+    atividade={ tipo:'Entrevista', colaborador:v('en-cand'), empresa:'—', user_nome:userNome };
   }
 
-  // Verifica se o campo chave foi preenchido (Nome/Colaborador/etc)
-  if (!Object.values(data)[0]) return toast('Preencha os campos obrigatórios!', false);
+  // Valida campo principal
+  const chave = Object.values(data)[1] || Object.values(data)[0];
+  if (!chave) return toast('Preencha os campos obrigatórios!', false);
 
   const { error } = await db.from(table).insert(data);
-  if (error) { console.error(error); return toast('Erro: ' + error.message, false); }
+  if (error) return toast('Erro: '+error.message, false);
+
+  // Registra atividade no feed do dashboard
+  if (atividade.colaborador) await db.from('atividades').insert(atividade);
 
   toast('Salvo com sucesso!', true);
-  closeModal(m);
-  loadPage(table);
+  closeModal(modal);
+
+  // Atualiza dropdowns se novo colaborador
+  if (tipo==='colaborador') await carregarColaboradoresDropdown();
+
+  loadPage(table === 'colaboradores' ? 'colaboradores' : table);
 }
 
+// Gera próximo código sequencial sem repetição
+async function proximoCodigo() {
+  const { data } = await db.from('colaboradores').select('cpf').order('created_at',{ascending:false});
+  let max = 0;
+  (data||[]).forEach(r => {
+    const n = parseInt((r.cpf||'').replace(/\D/g,''));
+    if (!isNaN(n) && n > max) max = n;
+  });
+  return String(max + 1).padStart(4, '0');
+}
+
+// ── IMPORTADOR JB CONTÁBIL ────────────────────────────
+//  Formato da linha:
+//  000002 WILLIAN CORREA FRANCO MORAES  DIRETOR ADMINISTRATIVO  1.621,00/Mensal  23/02/2026  0,00/00,00%
+async function processarImportacao() {
+  const texto = v('import-text');
+  const empresa = v('imp-empresa').trim();
+
+  if (!texto) return toast('Cole o texto do PDF primeiro.', false);
+  if (!empresa) return toast('Informe o nome da empresa.', false);
+
+  const log = document.getElementById('import-log');
+  log.style.display = 'block';
+  log.innerHTML = '<div>🔍 Analisando...</div>';
+
+  document.getElementById('btn-importar').disabled = true;
+
+  const linhas = texto.split('\n');
+  // Regex que captura exatamente o padrão JB Contábil:
+  // 6 dígitos + espaço + nome + cargo + valor/Mensal + data dd/mm/aaaa
+  const RE = /^(\d{6})\s+(.+?)\s{2,}(.+?)\s{2,}([\d.,]+)\/Mensal\s+([\d]{2}\/[\d]{2}\/[\d]{4})/;
+
+  let salvos = 0, pulados = 0, erros = 0;
+  const logLines = [];
+
+  // Busca código máximo atual para continuar sequência
+  let proxCod = parseInt(await proximoCodigo());
+
+  for (const linha of linhas) {
+    const m = linha.match(RE);
+    if (!m) continue;
+
+    const [, codPDF, nome, cargo, salarioRaw, dataAdmissaoRaw] = m;
+    const nomeClean = nome.trim();
+    const cargoClean = cargo.trim();
+
+    // Ignora linha de totais
+    if (nomeClean.startsWith('Total')) continue;
+
+    // Converte salário: "1.621,00" → 1621.00
+    const salario = parseFloat(salarioRaw.replace(/\./g,'').replace(',','.'));
+
+    // Converte data: "23/02/2026" → "2026-02-23"
+    const [d,mo,y] = dataAdmissaoRaw.split('/');
+    const dataAdmissao = `${y}-${mo}-${d}`;
+
+    // Gera código interno sequencial
+    const codInterno = String(proxCod).padStart(4,'0');
+
+    try {
+      const { error } = await db.from('colaboradores').insert({
+        cpf: codInterno,
+        nome: nomeClean,
+        cargo: cargoClean,
+        empresa: empresa,
+        salario: salario,
+        data_admissao: dataAdmissao,
+        status: 'Ativo'
+      });
+
+      if (error) {
+        // Se for duplicata de nome na mesma empresa, pula
+        if (error.code === '23505' || error.message.includes('duplicate')) {
+          logLines.push(`<div class="skip-line">⏭ Já existe: ${nomeClean}</div>`);
+          pulados++;
+        } else {
+          logLines.push(`<div class="err-line">❌ Erro em ${nomeClean}: ${error.message}</div>`);
+          erros++;
+        }
+      } else {
+        logLines.push(`<div class="ok-line">✅ ${codInterno} — ${nomeClean} (${cargoClean})</div>`);
+        salvos++;
+        proxCod++;
+      }
+    } catch(e) {
+      logLines.push(`<div class="err-line">❌ ${nomeClean}: ${e.message}</div>`);
+      erros++;
+    }
+  }
+
+  log.innerHTML = logLines.join('') +
+    `<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-weight:600;">
+      ✅ ${salvos} importados · ⏭ ${pulados} já existiam · ❌ ${erros} erros
+    </div>`;
+
+  document.getElementById('btn-importar').disabled = false;
+
+  if (salvos > 0) {
+    toast(`${salvos} colaborador(es) importado(s)!`, true);
+    await carregarColaboradoresDropdown(); // atualiza dropdowns
+    loadPage('colaboradores');
+  } else if (pulados > 0 && salvos === 0) {
+    toast('Todos os registros já estavam cadastrados.', false);
+  } else if (salvos === 0 && erros === 0 && pulados === 0) {
+    toast('Nenhum colaborador encontrado no texto. Verifique se copiou o conteúdo correto.', false);
+  }
+}
+
+// ── UPLOAD DOCUMENTO ──────────────────────────────────
 async function uploadDoc() {
   const file = document.getElementById('up-file').files[0] || document.getElementById('up-cam').files[0];
-  if(!file) return toast('Selecione um arquivo', false);
+  if (!file) return toast('Selecione um arquivo.', false);
+
+  const colabNome = v('up-colab');
+  const empresa = v('up-empresa');
+  if (!colabNome) return toast('Selecione o colaborador.', false);
+
   const url = await uploadSupabase(file);
-  if(url) {
-    await db.from('documentos').insert({nome_arquivo:file.name || 'foto_camera.jpg', tipo:v('up-tipo'), colaborador:v('up-colab'), url});
-    toast('Enviado com sucesso!', true);
-    closeModal('m-upload'); loadPage('documentos');
-  }
+  if (!url) return;
+
+  const { error } = await db.from('documentos').insert({
+    nome_arquivo: file.name || 'foto_camera.jpg',
+    tipo: v('up-tipo'),
+    colaborador: colabNome,
+    empresa: empresa,
+    url,
+    user_nome: q('un').textContent,
+  });
+
+  if (error) return toast('Erro: '+error.message, false);
+
+  toast('Documento enviado com sucesso!', true);
+  closeModal('m-upload');
+  loadPage('documentos');
 }
 
 async function uploadSupabase(file) {
-  const {data, error} = await db.storage.from('rh-documentos').upload('docs/'+Date.now(), file);
+  const path = 'docs/' + Date.now() + '_' + (file.name || 'foto.jpg');
+  const { data, error } = await db.storage.from('rh-documentos').upload(path, file, {upsert:true});
   if (error) { toast('Erro no upload: '+error.message, false); return null; }
   return db.storage.from('rh-documentos').getPublicUrl(data.path).data.publicUrl;
 }
 
-// ── IMPORTADOR INTELIGENTE DE PDF DA CONTABILIDADE ──
-async function processarImportacao() {
-  const texto = document.getElementById('import-text').value;
-  if (!texto) return toast('Cole o texto primeiro.', false);
-
-  const empresaFixa = "WILLIAN CORREA FRANCO MORAES";
-  
-  const { data: ultimos } = await db.from('colaboradores').select('cpf').order('created_at', { ascending: false }).limit(10);
-  let proxId = 1;
-  if (ultimos) { ultimos.forEach(u => { const num = parseInt(u.cpf); if(!isNaN(num) && num >= proxId) proxId = num + 1; }); }
-
-  const blocos = texto.split('/Mensal');
-  let salvos = 0;
-
-  for (let i = 0; i < blocos.length - 1; i++) {
-    const parte1 = blocos[i].split('\n').map(l=>l.trim()).filter(l=>l);
-    const parte2 = blocos[i+1].split('\n').map(l=>l.trim()).filter(l=>l);
-
-    let nome = '';
-    for(let j=parte1.length-1; j>=0; j--){
-      if(/[A-Za-z]/.test(parte1[j]) && !parte1[j].includes(',')) { nome = parte1[j]; break; }
-    }
-
-    let salario = 0;
-    const sMatch = parte1[parte1.length-1]?.match(/([\d\.]+,\d{2})/);
-    if(sMatch) salario = parseFloat(sMatch[1].replace('.','').replace(',','.'));
-
-    let cargo = parte2[0] || '';
-    let dataAdm = null;
-    const dMatch = parte2.find(l => /\d{2}\/\d{2}\/\d{4}/.test(l));
-    if(dMatch) dataAdm = dMatch.match(/\d{2}\/\d{2}\/\d{4}/)[0].split('/').reverse().join('-');
-
-    if (nome && nome.length > 3) {
-      const codigoStr = String(proxId).padStart(4, '0');
-      await db.from('colaboradores').insert({ cpf: codigoStr, nome: nome, cargo: cargo, empresa: empresaFixa, salario: salario, data_admissao: dataAdm, status: 'Ativo' });
-      proxId++; salvos++;
-    }
-  }
-
-  toast(`${salvos} registros importados com sucesso!`, true);
-  closeModal('m-import'); document.getElementById('import-text').value=''; loadPage('colaboradores');
-}
-
-// ── GERADOR DE PDF DA ADVERTÊNCIA ──
+// ── GERADOR DE PDF DE ADVERTÊNCIA ─────────────────────
 function gerarPDFAdvertencia() {
-  const colab = v('a-colab'), empresa = v('a-empresa'), tipo = v('a-tipo'), data = v('a-data'), motivo = v('a-motivo');
-  if(!colab || !motivo || !data) return toast('Preencha Colaborador, Data e Motivo.', false);
+  const colab   = v('a-colab');
+  const empresa = v('a-empresa');
+  const tipo    = v('a-tipo');
+  const data    = v('a-data');
+  const motivo  = v('a-motivo');
+  const test    = v('a-test');
+
+  if (!colab || !motivo || !data) return toast('Preencha Colaborador, Data e Motivo para gerar o PDF.', false);
 
   const df = data.split('-').reverse().join('/');
   const html = `
-    <div style="padding:40px; font-family:Arial; color:#000; background:#fff;">
-      <h2 style="text-align:center;">TERMO DE ADVERTÊNCIA ${tipo.toUpperCase()}</h2>
-      <hr style="margin:20px 0;">
-      <p><strong>Empregador:</strong> ${empresa}</p>
-      <p><strong>Empregado(a):</strong> ${colab}</p>
-      <p><strong>Data da Ocorrência:</strong> ${df}</p><br>
-      <p>Pelo presente instrumento, aplicamos a V. Sa. a presente advertência, pelo seguinte motivo:</p>
-      <div style="padding:15px; border:1px solid #000; min-height:100px; margin:20px 0;">${motivo}</div>
-      <p>Solicitamos que observe as normas da empresa, evitando reincidências que poderão acarretar medidas disciplinares severas, conforme a CLT.</p>
-      <p style="margin-top:30px; text-align:right;">Data de emissão: ${new Date().toLocaleDateString('pt-BR')}</p>
-      <div style="display:flex; justify-content:space-between; margin-top:80px;">
-        <div style="width:45%; border-top:1px solid #000; text-align:center; padding-top:5px;">Empregador</div>
-        <div style="width:45%; border-top:1px solid #000; text-align:center; padding-top:5px;">Empregado(a)</div>
+    <div style="padding:40px;font-family:Arial,sans-serif;color:#000;background:#fff;max-width:700px;margin:auto;">
+      <h2 style="text-align:center;font-size:18px;margin-bottom:4px;">TERMO DE ADVERTÊNCIA ${tipo.toUpperCase()}</h2>
+      <hr style="margin:16px 0;">
+      <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+        <tr><td style="padding:6px 0;width:160px;"><strong>Empresa:</strong></td><td>${empresa}</td></tr>
+        <tr><td style="padding:6px 0;"><strong>Empregado(a):</strong></td><td>${colab}</td></tr>
+        <tr><td style="padding:6px 0;"><strong>Data da Ocorrência:</strong></td><td>${df}</td></tr>
+      </table>
+      <p style="margin-bottom:10px;">Pelo presente instrumento, aplicamos a V. Sa. a presente advertência pelo seguinte motivo:</p>
+      <div style="padding:16px;border:1px solid #000;min-height:80px;margin:10px 0 20px;font-size:13px;">${motivo}</div>
+      <p style="font-size:13px;">Solicitamos que observe as normas internas da empresa, evitando reincidências que poderão acarretar medidas disciplinares mais severas, em conformidade com a Consolidação das Leis do Trabalho (CLT).</p>
+      <p style="margin-top:16px;font-size:12px;"><strong>Testemunhas:</strong> ${test||'_____________________________ / _____________________________'}</p>
+      <p style="margin-top:8px;font-size:12px;text-align:right;">Emitido em: ${new Date().toLocaleDateString('pt-BR')}</p>
+      <div style="display:flex;justify-content:space-between;margin-top:70px;gap:20px;">
+        <div style="width:45%;text-align:center;"><div style="border-top:1px solid #000;padding-top:6px;">Assinatura do Empregador</div><div style="font-size:11px;margin-top:4px;">${empresa}</div></div>
+        <div style="width:45%;text-align:center;"><div style="border-top:1px solid #000;padding-top:6px;">Assinatura do(a) Empregado(a)</div><div style="font-size:11px;margin-top:4px;">${colab}</div></div>
       </div>
-      <div style="width:60%; border-top:1px solid #000; text-align:center; padding-top:5px; margin:60px auto 0;">Testemunha</div>
+      <div style="width:45%;text-align:center;margin:50px auto 0;"><div style="border-top:1px solid #000;padding-top:6px;">Testemunha</div></div>
     </div>`;
 
-  html2pdf().set({ margin:10, filename:`Advertencia_${colab.replace(/\s/g,'_')}.pdf`, html2canvas:{scale:2}, jsPDF:{unit:'mm',format:'a4'} }).from(document.createElement('div')).set({innerHTML:html}).save();
-  toast('PDF Gerado!', true);
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html;
+  html2pdf().set({
+    margin:10, filename:`Advertencia_${colab.replace(/\s/g,'_')}_${df.replace(/\//g,'-')}.pdf`,
+    html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+  }).from(wrapper).save();
+
+  toast('PDF gerado! Verifique os downloads.', true);
 }
 
-// ── UTILS ──
-function v(id){ return document.getElementById(id)?.value||''; }
-function openModal(id){ document.getElementById(id).classList.add('open'); }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-function toast(msg, ok){ const t = document.getElementById('toast'); t.innerText=(ok?'✅ ':'❌ ')+msg; t.className='show '+(ok?'ok':'err'); setTimeout(()=>t.className='',3000); }
+// ── UTILITÁRIOS ───────────────────────────────────────
+function v(id)   { return (document.getElementById(id)?.value||'').trim(); }
+function q(id)   { return document.getElementById(id); }
+function x(s)    { return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+const esc = x; // alias — usado para atributos HTML nos selects
+function show(id){ document.getElementById(id).style.display=''; }
+function hide(id){ document.getElementById(id).style.display='none'; }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m =>
+  m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); })
+);
+function filterRows(tbId, q_) {
+  document.querySelectorAll(`#${tbId} tr`).forEach(r => {
+    const s = r.getAttribute('data-s') || r.textContent;
+    r.style.display = s.toLowerCase().includes(q_.toLowerCase()) ? '' : 'none';
+  });
+}
+function showFileName(input, prevId) {
+  const f = input.files[0];
+  if (!f) return;
+  q(prevId).textContent = '✅ ' + (f.name || 'Foto capturada') + ' (' + (f.size > 1048576 ? (f.size/1048576).toFixed(1)+'MB' : (f.size/1024).toFixed(0)+'KB') + ')';
+}
 
+function fd(d) {
+  if (!d) return '—';
+  const dt = new Date(d); if(isNaN(dt)) return d;
+  return dt.toLocaleDateString('pt-BR');
+}
+
+function statusValidade(d) {
+  if (!d) return '<span class="badge badge-gray">Sem data</span>';
+  const diff = Math.ceil((new Date(d) - new Date()) / 86400000);
+  if (diff < 0)  return '<span class="badge badge-red">🔴 Vencido</span>';
+  if (diff <= 30) return `<span class="badge badge-yellow">🟡 ${diff}d</span>`;
+  return '<span class="badge badge-green">🟢 Em dia</span>';
+}
+function statusContrato(d) {
+  if (!d) return '<span class="badge badge-green">Vigente</span>';
+  const diff = Math.ceil((new Date(d) - new Date()) / 86400000);
+  if (diff < 0)  return '<span class="badge badge-gray">Encerrado</span>';
+  if (diff <= 15) return `<span class="badge badge-yellow">Vence ${diff}d</span>`;
+  return '<span class="badge badge-green">Vigente</span>';
+}
+function tipoBadge(t) {
+  return {Admissão:'green',Advertência:'orange',Demissão:'red',Exame:'blue',Falta:'red',Contrato:'gray',Entrevista:'blue'}[t]||'gray';
+}
+
+let _tt;
+function toast(msg, ok) {
+  const t = q('toast');
+  t.textContent = (ok ? '✅ ' : '❌ ') + msg;
+  t.className = 'show ' + (ok ? 'ok' : 'err');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => t.className = '', 3500);
+}
+
+// ── START ──────────────────────────────────────────────
 init();
 </script>
 </body>
