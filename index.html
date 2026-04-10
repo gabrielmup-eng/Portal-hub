@@ -61,18 +61,9 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 .w-full { width: 100%; }
 
 /* ══ TELA DE LOGIN ══ */
-#login-screen {
-  min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
-}
-#login-screen::before {
-  content: ''; position: absolute; inset: 0;
-  background-image: linear-gradient(rgba(249,115,22,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.04) 1px, transparent 1px);
-  background-size: 48px 48px; mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%);
-}
-.login-box {
-  position: relative; z-index: 1; background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-lg);
-  padding: 44px 40px; width: 420px; max-width: 95vw; box-shadow: 0 0 0 1px rgba(249,115,22,0.08), 0 32px 64px rgba(0,0,0,0.6);
-}
+#login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+#login-screen::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(249,115,22,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(249,115,22,0.04) 1px, transparent 1px); background-size: 48px 48px; mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%); }
+.login-box { position: relative; z-index: 1; background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 44px 40px; width: 420px; max-width: 95vw; box-shadow: 0 0 0 1px rgba(249,115,22,0.08), 0 32px 64px rgba(0,0,0,0.6); }
 .login-header { text-align: center; margin-bottom: 32px; }
 .login-tagline { font-size: 11.5px; color: var(--text3); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 10px; font-family: var(--font-display); }
 .form-group { margin-bottom: 16px; }
@@ -247,7 +238,7 @@ tbody td:first-child { color: var(--text); font-weight: 500; }
     <div class="flex gap-8"><button class="btn btn-primary" onclick="openModal('m-exame')">＋ Registrar</button></div>
   </div>
   <div class="table-card">
-    <table><thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Validade</th><th>Status</th></tr></thead><tbody id="tb-exames"></tbody></table>
+    <table><thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Validade</th><th>Doc.</th></tr></thead><tbody id="tb-exames"></tbody></table>
   </div>
 </div>
 
@@ -261,13 +252,13 @@ tbody td:first-child { color: var(--text); font-weight: 500; }
   </div>
 </div>
 
-<div id="page-faltas" class="page"><div class="topbar"><div><div class="page-title">Faltas</div></div><button class="btn btn-primary" onclick="openModal('m-falta')">＋ Registrar</button></div><div class="table-card"><table><thead><tr><th>Colaborador</th><th>Empresa</th><th>Data</th><th>Justificada</th><th>Motivo</th></tr></thead><tbody id="tb-faltas"></tbody></table></div></div>
+<div id="page-faltas" class="page"><div class="topbar"><div><div class="page-title">Faltas</div></div><button class="btn btn-primary" onclick="openModal('m-falta')">＋ Registrar</button></div><div class="table-card"><table><thead><tr><th>Colaborador</th><th>Data</th><th>Justificada</th><th>Motivo</th></tr></thead><tbody id="tb-faltas"></tbody></table></div></div>
 
-<div id="page-demissoes" class="page"><div class="topbar"><div><div class="page-title">Demissões</div></div><button class="btn btn-primary admin-only" onclick="openModal('m-demissao')">＋ Registrar</button></div><div class="table-card"><table><thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data</th></tr></thead><tbody id="tb-demissoes"></tbody></table></div></div>
+<div id="page-demissoes" class="page"><div class="topbar"><div><div class="page-title">Demissões</div></div><button class="btn btn-primary admin-only" onclick="openModal('m-demissao')">＋ Registrar</button></div><div class="table-card"><table><thead><tr><th>Colaborador</th><th>Tipo</th><th>Data</th></tr></thead><tbody id="tb-demissoes"></tbody></table></div></div>
 
-<div id="page-contratos" class="page"><div class="topbar"><div><div class="page-title">Contratos</div></div><button class="btn btn-primary admin-only" onclick="openModal('m-contrato')">＋ Novo</button></div><div class="table-card"><table><thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Início</th><th>Término</th><th>Status</th></tr></thead><tbody id="tb-contratos"></tbody></table></div></div>
+<div id="page-contratos" class="page"><div class="topbar"><div><div class="page-title">Contratos</div></div><button class="btn btn-primary admin-only" onclick="openModal('m-contrato')">＋ Novo</button></div><div class="table-card"><table><thead><tr><th>Colaborador</th><th>Tipo</th><th>Término</th></tr></thead><tbody id="tb-contratos"></tbody></table></div></div>
 
-<div id="page-entrevistas" class="page"><div class="topbar"><div><div class="page-title">Entrevistas</div></div><button class="btn btn-primary" onclick="openModal('m-entrevista')">＋ Avaliar</button></div><div class="table-card"><table><thead><tr><th>Candidato</th><th>Vaga</th><th>Empresa</th><th>Nota</th><th>Recomendação</th></tr></thead><tbody id="tb-entrevistas"></tbody></table></div></div>
+<div id="page-entrevistas" class="page"><div class="topbar"><div><div class="page-title">Entrevistas</div></div><button class="btn btn-primary" onclick="openModal('m-entrevista')">＋ Avaliar</button></div><div class="table-card"><table><thead><tr><th>Candidato</th><th>Nota</th><th>Recomendação</th></tr></thead><tbody id="tb-entrevistas"></tbody></table></div></div>
 
 <div id="page-documentos" class="page"><div class="topbar"><div><div class="page-title">Documentos</div></div><button class="btn btn-primary" onclick="openModal('m-upload')">📎 Enviar</button></div><div class="table-card"><table><thead><tr><th>Arquivo</th><th>Tipo</th><th>Colaborador</th><th>Data</th><th></th></tr></thead><tbody id="tb-docs"></tbody></table></div></div>
 
@@ -293,7 +284,33 @@ tbody td:first-child { color: var(--text); font-weight: 500; }
 
 <div class="modal-overlay" id="m-colab"><div class="modal"><div class="modal-head"><h3>Colaborador</h3><button class="close-btn" onclick="closeModal('m-colab')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Nome *</label><input id="c-nome"></div><div class="field"><label>Código Próprio (ID)</label><input id="c-cpf" placeholder="Ex: 0001"></div><div class="field"><label>Cargo *</label><input id="c-cargo"></div><div class="field"><label>Empresa *</label><select id="c-empresa"><option value="WILLIAN CORREA FRANCO MORAES">WILLIAN CORREA FRANCO MORAES</option></select></div><div class="field"><label>Admissão</label><input type="date" id="c-admissao"></div><div class="field"><label>Salário</label><input type="number" id="c-salario"></div></div></div><div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-colab')">Cancelar</button><button class="btn btn-primary" onclick="save('colaborador')">Salvar</button></div></div></div>
 
-<div class="modal-overlay" id="m-exame"><div class="modal"><div class="modal-head"><h3>Exame</h3><button class="close-btn" onclick="closeModal('m-exame')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Colaborador *</label><input id="e-colab"></div><div class="field"><label>Empresa</label><select id="e-empresa"><option value="WILLIAN CORREA FRANCO MORAES">WILLIAN CORREA</option></select></div><div class="field"><label>Tipo *</label><select id="e-tipo"><option>Admissional</option><option>Periódico</option><option>Demissional</option></select></div><div class="field"><label>Validade *</label><input type="date" id="e-validade"></div></div></div><div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('m-exame')">Cancelar</button><button class="btn btn-primary" onclick="save('exame')">Salvar</button></div></div></div>
+<div class="modal-overlay" id="m-exame">
+  <div class="modal">
+    <div class="modal-head"><h3>Registrar Exame</h3><button class="close-btn" onclick="closeModal('m-exame')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full"><label>Colaborador *</label><input id="e-colab"></div>
+        <div class="field"><label>Empresa</label><select id="e-empresa"><option value="WILLIAN CORREA FRANCO MORAES">WILLIAN CORREA</option></select></div>
+        <div class="field"><label>Tipo *</label><select id="e-tipo"><option>Admissional</option><option>Periódico</option><option>Demissional</option></select></div>
+        <div class="field full"><label>Validade *</label><input type="date" id="e-validade"></div>
+        <div class="field full">
+          <label>Anexar Exame (Foto / PDF)</label>
+          <div class="upload-zone" onclick="document.getElementById('ex-file').click()">
+            <span class="uz-icon">📎</span><div>Escolher Arquivo do Celular/PC</div>
+            <button type="button" class="btn btn-ghost mt-8" onclick="event.stopPropagation(); document.getElementById('ex-cam').click()">📸 Tirar Foto Agora</button>
+          </div>
+          <input type="file" id="ex-file" accept="image/*,.pdf" style="display:none" onchange="document.getElementById('ex-prev').innerText = this.files[0].name">
+          <input type="file" id="ex-cam" accept="image/*" capture="environment" style="display:none" onchange="document.getElementById('ex-prev').innerText = 'Foto capturada!'">
+          <div id="ex-prev" style="margin-top:10px; color:var(--green)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('m-exame')">Cancelar</button>
+      <button class="btn btn-primary" onclick="save('exame')">Salvar no Sistema</button>
+    </div>
+  </div>
+</div>
 
 <div class="modal-overlay" id="m-adv">
   <div class="modal">
@@ -324,17 +341,17 @@ tbody td:first-child { color: var(--text); font-weight: 500; }
   </div>
 </div>
 
-<div class="modal-overlay" id="m-falta"><div class="modal"><div class="modal-head"><h3>Falta</h3><button class="close-btn" onclick="closeModal('m-falta')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>Colaborador</label><input id="f-colab"></div><div class="field"><label>Data</label><input type="date" id="f-data"></div><div class="field full"><label>Justificada?</label><select id="f-just"><option>Sim</option><option>Não</option></select></div></div></div><div class="modal-foot"><button class="btn btn-primary" onclick="save('falta')">Salvar</button></div></div></div>
-<div class="modal-overlay" id="m-demissao"><div class="modal"><div class="modal-head"><h3>Demissão</h3><button class="close-btn" onclick="closeModal('m-demissao')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>Colaborador</label><input id="d-colab"></div><div class="field"><label>Tipo</label><select id="d-tipo"><option>Sem justa causa</option><option>Pedido</option></select></div></div></div><div class="modal-foot"><button class="btn btn-primary" onclick="save('demissao')">Salvar</button></div></div></div>
-<div class="modal-overlay" id="m-contrato"><div class="modal"><div class="modal-head"><h3>Contrato</h3><button class="close-btn" onclick="closeModal('m-contrato')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>Colaborador</label><input id="ct-colab"></div><div class="field"><label>Tipo</label><input id="ct-tipo"></div><div class="field"><label>Término</label><input type="date" id="ct-fim"></div></div></div><div class="modal-foot"><button class="btn btn-primary" onclick="save('contrato')">Salvar</button></div></div></div>
-<div class="modal-overlay" id="m-entrevista"><div class="modal"><div class="modal-head"><h3>Entrevista</h3><button class="close-btn" onclick="closeModal('m-entrevista')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>Candidato</label><input id="en-cand"></div><div class="field"><label>Nota (1-5)</label><input type="number" id="en-nota"></div><div class="field full"><label>Recomendação</label><input id="en-rec"></div></div></div><div class="modal-foot"><button class="btn btn-primary" onclick="save('entrevista')">Salvar</button></div></div></div>
+<div class="modal-overlay" id="m-falta"><div class="modal"><div class="modal-head"><h3>Falta</h3><button class="close-btn" onclick="closeModal('m-falta')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Colaborador *</label><input id="f-colab"></div><div class="field"><label>Data *</label><input type="date" id="f-data"></div><div class="field"><label>Justificada?</label><select id="f-just"><option>Sim</option><option>Não</option></select></div></div></div><div class="modal-foot"><button class="btn btn-primary" onclick="save('falta')">Salvar</button></div></div></div>
+<div class="modal-overlay" id="m-demissao"><div class="modal"><div class="modal-head"><h3>Demissão</h3><button class="close-btn" onclick="closeModal('m-demissao')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Colaborador *</label><input id="d-colab"></div><div class="field full"><label>Tipo *</label><select id="d-tipo"><option>Sem justa causa</option><option>Pedido</option></select></div></div></div><div class="modal-foot"><button class="btn btn-primary" onclick="save('demissao')">Salvar</button></div></div></div>
+<div class="modal-overlay" id="m-contrato"><div class="modal"><div class="modal-head"><h3>Contrato</h3><button class="close-btn" onclick="closeModal('m-contrato')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Colaborador *</label><input id="ct-colab"></div><div class="field"><label>Tipo *</label><input id="ct-tipo"></div><div class="field"><label>Término *</label><input type="date" id="ct-fim"></div></div></div><div class="modal-foot"><button class="btn btn-primary" onclick="save('contrato')">Salvar</button></div></div></div>
+<div class="modal-overlay" id="m-entrevista"><div class="modal"><div class="modal-head"><h3>Entrevista</h3><button class="close-btn" onclick="closeModal('m-entrevista')">✕</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Candidato *</label><input id="en-cand"></div><div class="field"><label>Nota (1-5)</label><input type="number" id="en-nota"></div><div class="field"><label>Recomendação</label><input id="en-rec"></div></div></div><div class="modal-foot"><button class="btn btn-primary" onclick="save('entrevista')">Salvar</button></div></div></div>
 
 <div class="modal-overlay" id="m-upload">
   <div class="modal">
-    <div class="modal-head"><h3>Enviar Documento / Contrato / Exame</h3><button class="close-btn" onclick="closeModal('m-upload')">✕</button></div>
+    <div class="modal-head"><h3>Enviar Documento</h3><button class="close-btn" onclick="closeModal('m-upload')">✕</button></div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="field full"><label>Colaborador</label><input id="up-colab"></div>
+        <div class="field full"><label>Colaborador *</label><input id="up-colab"></div>
         <div class="field full"><label>Tipo de Arquivo</label><select id="up-tipo"><option>Contrato Assinado</option><option>Atestado / Exame</option><option>Outro</option></select></div>
         <div class="field full">
           <div class="upload-zone" onclick="document.getElementById('up-file').click()">
@@ -393,12 +410,12 @@ function goPage(id, el) { document.querySelectorAll('.page, .nav-item').forEach(
 async function loadPage(id) {
   if(id==='dashboard') loadDash();
   if(id==='colaboradores') loadTb('colaboradores','tb-colab', d=>d.map(r=>`<tr><td>${r.cpf||'—'}</td><td>${r.nome}</td><td>${r.cargo||'—'}</td><td>${r.empresa||'—'}</td><td>${r.data_admissao||'—'}</td><td><span class="badge ${r.status==='Ativo'?'badge-green':'badge-gray'}">${r.status||'—'}</span></td><td></td></tr>`).join(''));
-  if(id==='exames') loadTb('exames','tb-exames', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.empresa||'—'}</td><td>${r.tipo}</td><td>${r.data_validade||'—'}</td><td></td></tr>`).join(''));
+  if(id==='exames') loadTb('exames','tb-exames', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.empresa||'—'}</td><td>${r.tipo}</td><td>${r.data_validade||'—'}</td><td>${r.doc_url?`<a href="${r.doc_url}" target="_blank">Ver Doc</a>`:'—'}</td></tr>`).join(''));
   if(id==='advertencias') loadTb('advertencias','tb-adv', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.empresa||'—'}</td><td>${r.tipo}</td><td>${r.data||'—'}</td><td>${r.motivo}</td><td>${r.doc_url?`<a href="${r.doc_url}" target="_blank">Ver</a>`:'—'}</td></tr>`).join(''));
-  if(id==='faltas') loadTb('faltas','tb-faltas', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.empresa||'—'}</td><td>${r.data}</td><td>${r.justificada}</td><td>${r.motivo||'—'}</td></tr>`).join(''));
-  if(id==='demissoes') loadTb('demissoes','tb-demissoes', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.empresa||'—'}</td><td>${r.tipo}</td><td>${r.data||'—'}</td></tr>`).join(''));
-  if(id==='contratos') loadTb('contratos','tb-contratos', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.empresa||'—'}</td><td>${r.tipo}</td><td>${r.data_inicio||'—'}</td><td>${r.data_termino||'—'}</td><td></td></tr>`).join(''));
-  if(id==='entrevistas') loadTb('entrevistas','tb-entrevistas', d=>d.map(r=>`<tr><td>${r.candidato}</td><td>${r.vaga||'—'}</td><td>${r.empresa||'—'}</td><td>${r.nota}</td><td>${r.recomendacao}</td></tr>`).join(''));
+  if(id==='faltas') loadTb('faltas','tb-faltas', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.data}</td><td>${r.justificada}</td><td>${r.motivo||'—'}</td></tr>`).join(''));
+  if(id==='demissoes') loadTb('demissoes','tb-demissoes', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.tipo}</td><td>${r.data||'—'}</td></tr>`).join(''));
+  if(id==='contratos') loadTb('contratos','tb-contratos', d=>d.map(r=>`<tr><td>${r.colaborador}</td><td>${r.tipo}</td><td>${r.data_termino||'—'}</td></tr>`).join(''));
+  if(id==='entrevistas') loadTb('entrevistas','tb-entrevistas', d=>d.map(r=>`<tr><td>${r.candidato}</td><td>${r.nota}</td><td>${r.recomendacao}</td></tr>`).join(''));
   if(id==='documentos') loadTb('documentos','tb-docs', d=>d.map(r=>`<tr><td>${r.nome_arquivo}</td><td>${r.tipo}</td><td>${r.colaborador||'—'}</td><td>${r.created_at.split('T')[0]}</td><td><a href="${r.url}" target="_blank">Ver</a></td></tr>`).join(''));
 }
 
@@ -411,33 +428,72 @@ async function loadTb(t, id, render) {
   document.getElementById(id).innerHTML = data?.length ? render(data) : '<tr><td colspan="7">Nenhum registro.</td></tr>';
 }
 
-// ── SAVE & UPLOAD ──
+// ── SAVE & UPLOAD (COMPLETO E CORRIGIDO) ──
 async function save(tipo) {
-  let table='', m='', data={};
-  if(tipo==='colaborador'){ table='colaboradores'; m='m-colab'; data={nome:v('c-nome'), cpf:v('c-cpf'), cargo:v('c-cargo'), empresa:v('c-empresa'), data_admissao:v('c-admissao'), salario:v('c-salario'), status:'Ativo'};}
-  if(tipo==='advertencia'){ 
-    table='advertencias'; m='m-adv'; data={colaborador:v('a-colab'), empresa:v('a-empresa'), tipo:v('a-tipo'), data:v('a-data'), motivo:v('a-motivo')};
-    const file = document.getElementById('adv-file').files[0] || document.getElementById('adv-cam').files[0];
-    if(file){ const u = await uploadSupabase(file); if(u) data.doc_url = u; }
+  let table = '', m = '', data = {};
+
+  if (tipo === 'colaborador') {
+    table = 'colaboradores'; m = 'm-colab';
+    data = {
+      nome: v('c-nome'), cpf: v('c-cpf'), cargo: v('c-cargo'), empresa: v('c-empresa'),
+      data_admissao: v('c-admissao') || null, salario: parseFloat(v('c-salario')) || null, status: 'Ativo'
+    };
   }
-  // Implementação padrão pros demais (exame, falta, etc) segue a mesma lógica...
-  
-  if(!Object.values(data)[0]) return toast('Preencha os campos', false);
-  await db.from(table).insert(data);
-  toast('Salvo!', true); closeModal(m); loadPage(table);
+  else if (tipo === 'exame') {
+    table = 'exames'; m = 'm-exame';
+    data = { colaborador: v('e-colab'), empresa: v('e-empresa'), tipo: v('e-tipo'), data_validade: v('e-validade') || null };
+    const file = document.getElementById('ex-file').files[0] || document.getElementById('ex-cam').files[0];
+    if (file) { const u = await uploadSupabase(file); if (u) data.doc_url = u; }
+  }
+  else if (tipo === 'advertencia') {
+    table = 'advertencias'; m = 'm-adv';
+    data = { colaborador: v('a-colab'), empresa: v('a-empresa'), tipo: v('a-tipo'), data: v('a-data') || null, motivo: v('a-motivo') };
+    const file = document.getElementById('adv-file').files[0] || document.getElementById('adv-cam').files[0];
+    if (file) { const u = await uploadSupabase(file); if (u) data.doc_url = u; }
+  }
+  else if (tipo === 'falta') {
+    table = 'faltas'; m = 'm-falta';
+    data = { colaborador: v('f-colab'), data: v('f-data') || null, justificada: v('f-just') };
+  }
+  else if (tipo === 'demissao') {
+    table = 'demissoes'; m = 'm-demissao';
+    data = { colaborador: v('d-colab'), tipo: v('d-tipo') };
+  }
+  else if (tipo === 'contrato') {
+    table = 'contratos'; m = 'm-contrato';
+    data = { colaborador: v('ct-colab'), tipo: v('ct-tipo'), data_termino: v('ct-fim') || null };
+  }
+  else if (tipo === 'entrevista') {
+    table = 'entrevistas'; m = 'm-entrevista';
+    data = { candidato: v('en-cand'), nota: parseInt(v('en-nota')) || null, recomendacao: v('en-rec') };
+  }
+
+  // Verifica se o campo chave foi preenchido (Nome/Colaborador/etc)
+  if (!Object.values(data)[0]) return toast('Preencha os campos obrigatórios!', false);
+
+  const { error } = await db.from(table).insert(data);
+  if (error) { console.error(error); return toast('Erro: ' + error.message, false); }
+
+  toast('Salvo com sucesso!', true);
+  closeModal(m);
+  loadPage(table);
 }
 
 async function uploadDoc() {
   const file = document.getElementById('up-file').files[0] || document.getElementById('up-cam').files[0];
-  if(!file) return;
+  if(!file) return toast('Selecione um arquivo', false);
   const url = await uploadSupabase(file);
-  await db.from('documentos').insert({nome_arquivo:file.name, tipo:v('up-tipo'), colaborador:v('up-colab'), url});
-  closeModal('m-upload'); loadPage('documentos');
+  if(url) {
+    await db.from('documentos').insert({nome_arquivo:file.name || 'foto_camera.jpg', tipo:v('up-tipo'), colaborador:v('up-colab'), url});
+    toast('Enviado com sucesso!', true);
+    closeModal('m-upload'); loadPage('documentos');
+  }
 }
 
 async function uploadSupabase(file) {
-  const {data} = await db.storage.from('rh-documentos').upload('docs/'+Date.now(), file);
-  return data ? db.storage.from('rh-documentos').getPublicUrl(data.path).data.publicUrl : null;
+  const {data, error} = await db.storage.from('rh-documentos').upload('docs/'+Date.now(), file);
+  if (error) { toast('Erro no upload: '+error.message, false); return null; }
+  return db.storage.from('rh-documentos').getPublicUrl(data.path).data.publicUrl;
 }
 
 // ── IMPORTADOR INTELIGENTE DE PDF DA CONTABILIDADE ──
@@ -447,64 +503,40 @@ async function processarImportacao() {
 
   const empresaFixa = "WILLIAN CORREA FRANCO MORAES";
   
-  // Pega o último código gerado para continuar (1 a 1000)
   const { data: ultimos } = await db.from('colaboradores').select('cpf').order('created_at', { ascending: false }).limit(10);
   let proxId = 1;
-  if (ultimos) {
-    ultimos.forEach(u => { const num = parseInt(u.cpf); if(!isNaN(num) && num >= proxId) proxId = num + 1; });
-  }
+  if (ultimos) { ultimos.forEach(u => { const num = parseInt(u.cpf); if(!isNaN(num) && num >= proxId) proxId = num + 1; }); }
 
-  // Divisão Inteligente de Blocos (usando a tag /Mensal do seu PDF)
   const blocos = texto.split('/Mensal');
   let salvos = 0;
 
   for (let i = 0; i < blocos.length - 1; i++) {
-    // Bloco atual tem o Nome. O próximo bloco tem o Cargo e a Data.
     const parte1 = blocos[i].split('\n').map(l=>l.trim()).filter(l=>l);
     const parte2 = blocos[i+1].split('\n').map(l=>l.trim()).filter(l=>l);
 
-    // O Nome costuma ser a última ou penúltima linha válida antes do "/Mensal" (excluindo os números do salário)
     let nome = '';
     for(let j=parte1.length-1; j>=0; j--){
       if(/[A-Za-z]/.test(parte1[j]) && !parte1[j].includes(',')) { nome = parte1[j]; break; }
     }
 
-    // O Salário geralmente está grudado no final da parte1
     let salario = 0;
     const sMatch = parte1[parte1.length-1]?.match(/([\d\.]+,\d{2})/);
     if(sMatch) salario = parseFloat(sMatch[1].replace('.','').replace(',','.'));
 
-    // O Cargo é a primeira linha da parte2
     let cargo = parte2[0] || '';
-
-    // A Data de Admissão é a primeira data que aparece na parte2
     let dataAdm = null;
     const dMatch = parte2.find(l => /\d{2}\/\d{2}\/\d{4}/.test(l));
-    if(dMatch) {
-       const dateStr = dMatch.match(/\d{2}\/\d{2}\/\d{4}/)[0];
-       dataAdm = dateStr.split('/').reverse().join('-');
-    }
+    if(dMatch) dataAdm = dMatch.match(/\d{2}\/\d{2}\/\d{4}/)[0].split('/').reverse().join('-');
 
     if (nome && nome.length > 3) {
       const codigoStr = String(proxId).padStart(4, '0');
-      await db.from('colaboradores').insert({
-        cpf: codigoStr, // Usando cpf como Código Interno
-        nome: nome,
-        cargo: cargo,
-        empresa: empresaFixa,
-        salario: salario,
-        data_admissao: dataAdm,
-        status: 'Ativo'
-      });
-      proxId++;
-      salvos++;
+      await db.from('colaboradores').insert({ cpf: codigoStr, nome: nome, cargo: cargo, empresa: empresaFixa, salario: salario, data_admissao: dataAdm, status: 'Ativo' });
+      proxId++; salvos++;
     }
   }
 
   toast(`${salvos} registros importados com sucesso!`, true);
-  closeModal('m-import');
-  document.getElementById('import-text').value='';
-  loadPage('colaboradores');
+  closeModal('m-import'); document.getElementById('import-text').value=''; loadPage('colaboradores');
 }
 
 // ── GERADOR DE PDF DA ADVERTÊNCIA ──
