@@ -244,7 +244,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
     </div>
   </div>
   <div class="tc"><table>
-    <thead><tr><th>Cód.</th><th>Nome</th><th>Cargo</th><th>Empresa</th><th>Admissão</th><th>Salário</th><th>Status</th><th></th></tr></thead>
+    <thead><tr><th>Cód.</th><th>Nome</th><th>Cargo</th><th>Empresa</th><th>Nascimento</th><th>Admissão</th><th>Salário</th><th>Status</th><th></th></tr></thead>
     <tbody id="tb-colab"><tr class="erow"><td colspan="8"><span class="spin"></span></td></tr></tbody>
   </table></div>
 </div>
@@ -379,6 +379,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
         <div class="fi full"><label>Nome Completo *</label><input id="c-nome" placeholder="Nome completo"></div>
         <div class="fi"><label>Cargo / Função</label><input id="c-cargo" placeholder="Ex: Operador de Caixa"></div>
         <div class="fi"><label>Empresa *</label><input id="c-empresa" placeholder="Ex: FNP SANTA ROSA"></div>
+        <div class="fi"><label>Data de Nascimento</label><input type="date" id="c-nasc"></div>
         <div class="fi"><label>Data de Admissão</label><input type="date" id="c-adm"></div>
         <div class="fi"><label>Salário (R$)</label><input type="number" id="c-sal" step="0.01" placeholder="0,00"></div>
       </div>
@@ -556,6 +557,62 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
       </div>
     </div>
     <div class="md-f"><button class="btn btn-gh" onclick="closeMo('mo-up')">Cancelar</button><button class="btn btn-or" onclick="saveUpload()">Salvar</button></div>
+  </div>
+</div>
+
+
+<!-- DOCUMENTOS DO COLABORADOR -->
+<div class="mo" id="mo-docs-colab">
+  <div class="md" style="width:680px">
+    <div class="md-h">
+      <h3>📁 Documentos de <span id="docs-colab-nome" style="color:var(--or)"></span></h3>
+      <button class="xbtn" onclick="closeMo('mo-docs-colab')">✕</button>
+    </div>
+    <div class="md-b">
+      <!-- Upload rápido -->
+      <div style="background:var(--bg3);border:1px solid var(--bd);border-radius:var(--r);padding:16px;margin-bottom:18px;">
+        <div style="font-weight:600;font-size:13px;margin-bottom:12px;font-family:'Outfit',sans-serif;">➕ Adicionar Documento</div>
+        <div class="fg2">
+          <div class="fi">
+            <label>Tipo de Documento</label>
+            <select id="dc-tipo">
+              <option>RG</option>
+              <option>CPF</option>
+              <option>Comprovante de Residência</option>
+              <option>Carteira de Trabalho (CTPS)</option>
+              <option>ASO — Exame Admissional</option>
+              <option>Contrato Assinado</option>
+              <option>Advertência Assinada</option>
+              <option>Atestado Médico</option>
+              <option>Declaração</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="fi">
+            <label>Arquivo (foto ou PDF)</label>
+            <div style="display:flex;gap:8px;">
+              <button type="button" class="btn btn-gh btn-sm" style="flex:1" onclick="document.getElementById('dc-file').click()">📎 Selecionar</button>
+              <button type="button" class="btn btn-gh btn-sm" onclick="document.getElementById('dc-cam').click()">📸</button>
+            </div>
+            <input type="file" id="dc-file" accept="image/*,.pdf" style="display:none" onchange="fileOk(this,'dc-ok')">
+            <input type="file" id="dc-cam" accept="image/*" capture="environment" style="display:none" onchange="fileOk(this,'dc-ok')">
+            <div class="fok" id="dc-ok"></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;text-align:right;">
+          <button class="btn btn-or btn-sm" onclick="salvarDocColab()">Salvar Documento</button>
+        </div>
+      </div>
+
+      <!-- Lista de documentos -->
+      <div style="font-weight:600;font-size:13px;margin-bottom:10px;font-family:'Outfit',sans-serif;">Documentos cadastrados</div>
+      <div id="docs-colab-lista">
+        <div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px;"><span class="spin"></span></div>
+      </div>
+    </div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-docs-colab')">Fechar</button>
+    </div>
   </div>
 </div>
 
@@ -770,10 +827,14 @@ async function loadColab() {
           <td>${x(r.nome)}</td>
           <td>${x(r.cargo || '—')}</td>
           <td>${x(r.empresa || '—')}</td>
+          <td>${r.data_nascimento ? fd(r.data_nascimento) : '—'}</td>
           <td>${r.data_admissao ? fd(r.data_admissao) : '—'}</td>
           <td>${r.salario != null ? 'R$ ' + Number(r.salario).toLocaleString('pt-BR',{minimumFractionDigits:2}) : '—'}</td>
           <td><span class="bx ${r.status === 'Ativo' ? 'gn' : 'gr'}">${r.status || '—'}</span></td>
-          <td>${isAdm ? `<button class="btn btn-rd btn-sm" onclick="pedirExclusao('${r.id}','${esc(r.nome)}')">🗑 Excluir</button>` : ''}</td>
+          <td style="display:flex;gap:6px;align-items:center;">
+            <button class="btn btn-gh btn-sm" onclick="abrirDocsColab('${r.id}','${esc(r.nome)}')">📁 Docs</button>
+            ${isAdm ? `<button class="btn btn-rd btn-sm" onclick="pedirExclusao('${r.id}','${esc(r.nome)}')">🗑</button>` : ''}
+          </td>
         </tr>`).join('')
     : '<tr class="erow"><td colspan="8">Nenhum colaborador cadastrado.</td></tr>';
 }
@@ -874,13 +935,14 @@ async function saveColab() {
 
   const cod = await proximoCod();
   const payload = {
-    cpf:          cod,
-    nome:         nome,
-    cargo:        v('c-cargo') || null,
-    empresa:      empresa,
-    data_admissao:v('c-adm') || null,
-    salario:      v('c-sal') ? parseFloat(v('c-sal')) : null,
-    status:       'Ativo',
+    cpf:            cod,
+    nome:           nome,
+    cargo:          v('c-cargo') || null,
+    empresa:        empresa,
+    data_nascimento:v('c-nasc') || null,
+    data_admissao:  v('c-adm') || null,
+    salario:        v('c-sal') ? parseFloat(v('c-sal')) : null,
+    status:         'Ativo',
   };
 
   const { error } = await db.from('colaboradores').insert(payload);
@@ -894,7 +956,7 @@ async function saveColab() {
   toast('Colaborador salvo!', true);
   closeMo('mo-colab');
   // Limpa campos
-  ['c-nome','c-cargo','c-empresa','c-adm','c-sal'].forEach(id => { if(el(id)) el(id).value = ''; });
+  ['c-nome','c-cargo','c-empresa','c-nasc','c-adm','c-sal'].forEach(id => { if(el(id)) el(id).value = ''; });
   await reloadCMAP();
   loadColab();
 }
@@ -907,6 +969,91 @@ async function proximoCod() {
     if (!isNaN(n) && n > max) max = n;
   });
   return String(max + 1).padStart(4, '0');
+}
+
+
+// ─── DOCUMENTOS DO COLABORADOR ────────────────────────────
+let DOCS_COLAB_ID   = null;
+let DOCS_COLAB_NOME = null;
+
+function abrirDocsColab(id, nome) {
+  DOCS_COLAB_ID   = id;
+  DOCS_COLAB_NOME = nome;
+  el('docs-colab-nome').textContent = nome;
+  el('dc-ok').textContent = '';
+  el('dc-file').value = '';
+  openMo('mo-docs-colab');
+  carregarDocsColab();
+}
+
+async function carregarDocsColab() {
+  const lista = el('docs-colab-lista');
+  lista.innerHTML = '<div style="text-align:center;padding:20px;color:var(--tx3)"><span class="spin"></span></div>';
+
+  const { data, error } = await db.from('documentos')
+    .select('*')
+    .eq('colaborador_id', DOCS_COLAB_ID)
+    .order('created_at', { ascending: false });
+
+  if (error || !data?.length) {
+    lista.innerHTML = '<div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px;">Nenhum documento cadastrado ainda.</div>';
+    return;
+  }
+
+  lista.innerHTML = data.map(d => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;">
+      <span style="font-size:22px">${docIcon(d.tipo)}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:13px">${x(d.tipo)}</div>
+        <div style="font-size:11.5px;color:var(--tx3)">${x(d.nome_arquivo)} · ${fd(d.created_at)}</div>
+      </div>
+      <a href="${d.url}" target="_blank" class="btn btn-gh btn-sm">Ver 📄</a>
+      <button class="btn btn-rd btn-sm" onclick="excluirDocColab('${d.id}', this)">🗑</button>
+    </div>`).join('');
+}
+
+async function salvarDocColab() {
+  if (!DOCS_COLAB_ID) return;
+  const file = el('dc-file').files[0] || el('dc-cam').files[0];
+  if (!file) return toast('Selecione um arquivo.', false);
+
+  const url = await uploadFile(file);
+  if (!url) return;
+
+  const { error } = await db.from('documentos').insert({
+    nome_arquivo:   file.name || 'foto.jpg',
+    tipo:           v('dc-tipo'),
+    colaborador:    DOCS_COLAB_NOME,
+    colaborador_id: DOCS_COLAB_ID,
+    empresa:        CMAP[DOCS_COLAB_NOME]?.empresa || '',
+    url,
+    user_nome:      el('un').textContent,
+  });
+
+  if (error) return toast('Erro: ' + error.message, false);
+  toast('Documento salvo!', true);
+  el('dc-ok').textContent = '';
+  el('dc-file').value = '';
+  carregarDocsColab();
+}
+
+async function excluirDocColab(id, btn) {
+  if (!confirm('Excluir este documento?')) return;
+  btn.disabled = true;
+  const { error } = await db.from('documentos').delete().eq('id', id);
+  if (error) { toast('Erro: ' + error.message, false); btn.disabled = false; return; }
+  toast('Documento removido.', true);
+  carregarDocsColab();
+}
+
+function docIcon(tipo) {
+  const map = {
+    'RG':'🪪', 'CPF':'🪪', 'Comprovante de Residência':'🏠',
+    'Carteira de Trabalho (CTPS)':'📒', 'ASO — Exame Admissional':'🏥',
+    'Contrato Assinado':'📄', 'Advertência Assinada':'⚠️',
+    'Atestado Médico':'🩺', 'Declaração':'📋',
+  };
+  return map[tipo] || '📎';
 }
 
 // ─── EXCLUSÃO DE COLABORADOR ──────────────────────────
@@ -1096,21 +1243,43 @@ async function extrairDoBase64(b64) {
     for (let p = 1; p <= pdf.numPages; p++) {
       const page    = await pdf.getPage(p);
       const content = await page.getTextContent();
-      let lastY = null, linha = '';
+
+      // Agrupa itens por linha (mesmo Y), reconstrói com espaços por posição X
+      const linhas = {};
       for (const item of content.items) {
-        if (lastY !== null && Math.abs(item.transform[5] - lastY) > 3) {
-          textoTotal += linha + '\n';
-          linha = '';
-        }
-        linha += item.str;
-        lastY  = item.transform[5];
+        const y = Math.round(item.transform[5]);
+        const x = Math.round(item.transform[4]);
+        if (!linhas[y]) linhas[y] = [];
+        linhas[y].push({ x, str: item.str });
       }
-      if (linha) textoTotal += linha + '\n';
+
+      // Ordena linhas de cima para baixo (Y decrescente em PDF)
+      const ysOrdenados = Object.keys(linhas).map(Number).sort((a,b) => b - a);
+
+      for (const y of ysOrdenados) {
+        const itens = linhas[y].sort((a,b) => a.x - b.x);
+        // Reconstrói linha inserindo espaços proporcional à distância X
+        let linha = '';
+        let xAnterior = null;
+        for (const it of itens) {
+          if (xAnterior !== null) {
+            const gap = it.x - xAnterior;
+            // Cada ~6px = 1 espaço (fonte 10pt em 72dpi)
+            const espacos = Math.max(1, Math.round(gap / 6));
+            linha += ' '.repeat(espacos);
+          }
+          linha += it.str;
+          xAnterior = it.x + (it.str.length * 6);
+        }
+        textoTotal += linha.trimEnd() + '\n';
+      }
     }
+
+    console.log('PDF.js extraiu:', textoTotal.substring(0, 500));
     return parsearTexto(textoTotal);
   } catch(err) {
     console.error('PDF.js erro:', err);
-    toast('Erro ao ler o PDF: ' + err.message, false);
+    toast('Erro ao ler PDF: ' + err.message, false);
     return [];
   }
 }
