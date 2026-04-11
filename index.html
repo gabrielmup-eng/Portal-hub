@@ -2497,49 +2497,48 @@ async function loadEmpresas() {
 
 async function loadOperacional() {
   const tb = el('tb-operacional');
+  if (!tb) return;
   tb.innerHTML = '<tr class="erow"><td colspan="7"><span class="spin"></span></td></tr>';
 
-  // Buscar execuções de checklist
+  // Busca os dados da tabela que criamos no SQL anteriormente
   const { data, error } = await db.from('checklist_execucoes')
     .select('*, checklist_modelos(nome)')
     .order('created_at', { ascending: false });
 
   if (error || !data || data.length === 0) {
-    tb.innerHTML = '<tr class="erow"><td colspan="7">Nenhum checklist registrado.</td></tr>';
+    tb.innerHTML = '<tr class="erow"><td colspan="7">Nenhuma auditoria registrada.</td></tr>';
     return;
   }
 
-  let totalMinutos = 0;
-  let inconformidades = 0;
-  let concluidos = 0;
+  let totalMin = 0, inconf = 0, concluidos = 0;
 
   tb.innerHTML = data.map(r => {
-    // Cálculo de tempo
     let duracao = "—";
     if (r.inicio_em && r.fim_em) {
-        const diff = (new Date(r.fim_em) - new Date(r.inicio_em)) / 60000;
-        duracao = Math.round(diff) + " min";
-        totalMinutos += diff;
-        concluidos++;
+      const diff = (new Date(r.fim_em) - new Date(r.inicio_em)) / 60000;
+      duracao = Math.round(diff) + " min";
+      totalMin += diff;
+      concluidos++;
     }
-    if (r.status === 'Inconformidade') inconformidades++;
+    if (r.status === 'Inconformidade') inconf++;
 
-    return `<tr>
-      <td>${fd(r.created_at)} <small style="display:block;color:var(--tx3)">${new Date(r.created_at).toLocaleTimeString()}</small></td>
-      <td><strong>${x(r.loja)}</strong></td>
-      <td>${x(r.checklist_modelos?.nome || 'Geral')}</td>
-      <td>${duracao}</td>
-      <td><span class="bx ${r.status === 'Concluído' ? 'gn' : 'rd'}">${x(r.status)}</span></td>
-      <td>${r.fotos_url ? `<button class="btn btn-gh btn-sm" onclick="verEvidencias('${esc(JSON.stringify(r.fotos_url))}')">🖼️ Ver Fotos</button>` : '—'}</td>
-      <td><button class="btn btn-gh btn-sm" onclick="verDetalhesIA('${esc(r.inconformidades || 'Sem observações.')}')">📝 Feedback</button></td>
-    </tr>`;
+    return `
+      <tr>
+        <td>${fd(r.created_at)} <small style="display:block;color:var(--tx3)">${new Date(r.created_at).toLocaleTimeString()}</small></td>
+        <td><strong>${x(r.loja)}</strong></td>
+        <td>${x(r.checklist_modelos?.nome || 'Geral')}</td>
+        <td>${duracao}</td>
+        <td><span class="bx ${r.status === 'Concluído' ? 'gn' : 'rd'}">${x(r.status)}</span></td>
+        <td><button class="btn btn-gh btn-sm" onclick="window.open('${r.fotos_url?.[0]}', '_blank')">🖼️ Ver</button></td>
+        <td><button class="btn btn-gh btn-sm" onclick="alert('${esc(r.inconformidades || 'Tudo OK!')}')">📝 Info</button></td>
+      </tr>`;
   }).join('');
 
-  // Atualizar Cards
+  // Atualiza os Cards de Resumo
   el('op-total').textContent = data.length;
-  el('op-inconf').textContent = inconformidades;
-  el('op-tempo-medio').textContent = concluidos > 0 ? Math.round(totalMinutos / concluidos) + " min" : "0 min";
-  el('op-taxa').textContent = data.length > 0 ? Math.round(((data.length - inconformidades) / data.length) * 100) + "%" : "0%";
+  el('op-inconf').textContent = inconf;
+  el('op-tempo-medio').textContent = concluidos > 0 ? Math.round(totalMin / concluidos) + " min" : "0 min";
+  el('op-taxa').textContent = data.length > 0 ? Math.round(((data.length - inconf) / data.length) * 100) + "%" : "0%";
 }
 
 function verEvidencias(jsonFotos) {
@@ -3033,6 +3032,44 @@ function entrarModulo(mod) {
       <div class="sec-lbl">Gestão</div>
       <div class="ni" onclick="goPage('empresas',this)">🏢 Empresas</div>
       <div class="ni" onclick="goPage('relatorios',this)">📊 Relatórios</div>
+      <div id="page-operacional" class="pg">
+  <div class="tb">
+    <div>
+      <div class="pt">Gestão Operacional</div>
+      <div class="ps">Monitoramento de checklists e auditoria de conformidade</div>
+    </div>
+    <div class="row">
+        <button class="btn btn-gh btn-sm" onclick="loadOperacional()">↻ Atualizar</button>
+    </div>
+  </div>
+
+  <div class="sg">
+    <div class="sc bl"><div class="sv" id="op-tempo-medio">0 min</div><div class="sl">Tempo Médio</div></div>
+    <div class="sc rd"><div class="sv" id="op-inconf">0</div><div class="sl">Inconformidades</div></div>
+    <div class="sc gn"><div class="sv" id="op-taxa">0%</div><div class="sl">Conformidade</div></div>
+    <div class="sc pu"><div class="sv" id="op-total">0</div><div class="sl">Total Realizado</div></div>
+  </div>
+
+  <div class="tc">
+    <div class="tc-h">Auditorias em Tempo Real (WhatsApp Bot)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Data/Hora</th>
+          <th>Loja</th>
+          <th>Checklist</th>
+          <th>Duração</th>
+          <th>Status</th>
+          <th>Fotos</th>
+          <th>Feedback IA</th>
+        </tr>
+      </thead>
+      <tbody id="tb-operacional">
+        <tr class="erow"><td colspan="7">Aguardando dados da operação...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>		
     `;
     goPage('dashboard', nav.querySelector('.ni'));
   } 
