@@ -258,6 +258,12 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 <div class="shell">
 
 <aside class="sb" id="sb">
+  <div class="sb-head">
+    <div class="logo" style="cursor:pointer" onclick="voltarHub()" title="Voltar ao Hub">
+      Hub<span>On</span>
+    </div>
+  </div>
+
   <nav id="nav-menu">
     </nav>
   
@@ -1107,17 +1113,8 @@ function entrarModulo(mod) {
   hub.style.display = 'none';
   app.style.display = 'block';
 
-  // Definimos o cabeçalho que contém o Logótipo e a lógica de voltar
-  const header = `
-    <div class="sb-head">
-      <div class="logo" style="cursor:pointer" onclick="voltarHub()" title="Voltar ao Hub">
-        Hub<span>On</span>
-      </div>
-    </div>
-  `;
-
   if (mod === 'rh') {
-    nav.innerHTML = header + `
+    nav.innerHTML = `
       <div class="sec-lbl">Visão Geral</div>
       <div class="ni" onclick="goPage('dashboard',this)">📊 Dashboard</div>
       <div class="sec-lbl">Pessoas</div>
@@ -1135,7 +1132,7 @@ function entrarModulo(mod) {
     goPage('dashboard', nav.querySelector('.ni'));
   } 
   else if (mod === 'ops') {
-    nav.innerHTML = header + `
+    nav.innerHTML = `
       <div class="sec-lbl">Operação</div>
       <div class="ni" onclick="goPage('operacional',this)">📊 Dashboard Ops</div>
       <div class="sec-lbl">Checklists</div>
