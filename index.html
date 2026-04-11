@@ -280,8 +280,8 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   <div class="tb"><div><div class="pt">Faltas</div></div>
   <button class="btn btn-or" onclick="openMo('mo-falta')">＋ Registrar</button></div>
   <div class="tc"><table>
-    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Data</th><th>Justificada</th><th>Motivo</th></tr></thead>
-    <tbody id="tb-faltas"><tr class="erow"><td colspan="5"><span class="spin"></span></td></tr></tbody>
+    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Data</th><th>Justificada</th><th>Motivo</th><th>Ações</th></tr></thead>
+    <tbody id="tb-faltas"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
   </table></div>
 </div>
 
@@ -1179,6 +1179,9 @@ function rFaltas(d) {
     <td>${fd(r.data)}</td>
     <td><span class="bx ${r.justificada==='Sim'?'gn':'rd'}">${r.justificada||'—'}</span></td>
     <td>${x(r.motivo||'—')}</td>
+    <td>
+      <button class="btn btn-rd btn-sm" onclick="excluirFalta('${r.id}', '${esc(r.colaborador)}', this)">🗑</button>
+    </td>
   </tr>`).join('');
 }
 function rDem(d) {
