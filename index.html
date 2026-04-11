@@ -2157,9 +2157,21 @@ function preencherCNPJAdv() {
 
 async function loadEmpresas() {
   el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6"><span class="spin"></span></td></tr>';
+  
   const { data, error } = await db.from('empresas').select('*').order('razao_social');
-  if (error) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6" style="color:var(--rd)">Aguardando tabela empresas no Supabase.</td></tr>'; return; }
-  if (!data?.length) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6">Nenhuma empresa registada.</td></tr>'; return; }
+  
+  // AQUI ESTÁ A MUDANÇA: Vamos mostrar o erro real!
+  if (error) { 
+    console.error("ERRO SUPABASE:", error);
+    el('tb-empresas').innerHTML = `<tr class="erow"><td colspan="6" style="color:var(--rd); font-weight:bold;">ERRO REAL: ${error.message}</td></tr>`; 
+    return; 
+  }
+  
+  if (!data?.length) { 
+    el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6">Nenhuma empresa registada.</td></tr>'; 
+    return; 
+  }
+  
   el('tb-empresas').innerHTML = data.map(e => `
     <tr>
       <td>${x(e.razao_social)}</td>
@@ -2172,9 +2184,9 @@ async function loadEmpresas() {
         <button class="btn btn-rd btn-sm" onclick="excluirEmpresa('${e.id}',this)">🗑</button>
       </td>
     </tr>`).join('');
+    
   await carregarEmpresasMap();
 }
-
 async function salvarEmpresa() {
   const razao = v('emp-razao');
   if (!razao) return toast('Razão Social é obrigatória.', false);
