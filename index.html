@@ -820,18 +820,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
         <div class="fg2">
           <div class="fi">
             <label>Tipo de Documento</label>
-            <select id="dc-tipo">
-              <option>RG</option>
-              <option>CPF</option>
-              <option>Comprovante de Residência</option>
-              <option>Carteira de Trabalho (CTPS)</option>
-              <option>ASO — Exame Admissional</option>
-              <option>Contrato Assinado</option>
-              <option>Advertência Assinada</option>
-              <option>Atestado Médico</option>
-              <option>Declaração</option>
-              <option>Outro</option>
-            </select>
+            <select id="dc-tipo"></select>
           </div>
           <div class="fi">
             <label>Arquivo (foto ou PDF)</label>
@@ -1235,29 +1224,6 @@ async function concluirDemissao(id, colab) {
   await reloadCMAP();
 }
 
-let DEM_ID_ATUAL = null;
-function abrirDocsDem(id, nome) {
-  DEM_ID_ATUAL = id;
-  el('docs-colab-nome').textContent = nome + ' (Rescisão)';
-  DOCS_COLAB_ID   = null; 
-  openMo('mo-docs-colab');
-  carregarDocsDem(id);
-}
-
-async function carregarDocsDem(demId) {
-  const lista = el('docs-colab-lista');
-  lista.innerHTML = '<div style="text-align:center;padding:20px"><span class="spin"></span></div>';
-  const { data } = await db.from('documentos').select('*').eq('demissao_id', demId).order('created_at', {ascending:false});
-  if (!data?.length) { lista.innerHTML = '<div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px;">Nenhum documento da rescisão.</div>'; return; }
-  lista.innerHTML = data.map(d => `
-    <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;">
-      <span style="font-size:20px">📄</span>
-      <div style="flex:1"><div style="font-weight:600;font-size:13px">${x(d.tipo)}</div><div style="font-size:11.5px;color:var(--tx3)">${x(d.nome_arquivo)} · ${fd(d.created_at)}</div></div>
-      <a href="${d.url}" target="_blank" class="btn btn-gh btn-sm">Ver 📄</a>
-      <button class="btn btn-rd btn-sm" onclick="excluirDocColab('${d.id}',this)">🗑</button>
-    </div>`).join('');
-}
-
 function rCt(d) {
   return d.map(r => `<tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
     <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td><td>${x(r.tipo)}</td>
@@ -1442,18 +1408,58 @@ async function proximoCod() {
 }
 
 
-// ─── DOCUMENTOS DO COLABORADOR ────────────────────────────
+// ─── GESTÃO DE DOCUMENTOS (COLABORADOR E DEMISSÃO) ───────────────
+let DOCS_CONTEXT    = 'colaborador'; // 'colaborador' ou 'demissao'
 let DOCS_COLAB_ID   = null;
+let CURRENT_DEM_ID  = null;
 let DOCS_COLAB_NOME = null;
 
 function abrirDocsColab(id, nome) {
-  DOCS_COLAB_ID   = id;
+  DOCS_CONTEXT = 'colaborador';
+  DOCS_COLAB_ID = id;
   DOCS_COLAB_NOME = nome;
   el('docs-colab-nome').textContent = nome;
+  
+  el('dc-tipo').innerHTML = `
+    <option>RG</option>
+    <option>CPF</option>
+    <option>Comprovante de Residência</option>
+    <option>Carteira de Trabalho (CTPS)</option>
+    <option>ASO — Exame Admissional</option>
+    <option>Contrato Assinado</option>
+    <option>Advertência Assinada</option>
+    <option>Atestado Médico</option>
+    <option>Declaração</option>
+    <option>Outro</option>
+  `;
+
   el('dc-ok').textContent = '';
   el('dc-file').value = '';
   openMo('mo-docs-colab');
   carregarDocsColab();
+}
+
+function abrirDocsDem(id, nome) {
+  DOCS_CONTEXT = 'demissao';
+  CURRENT_DEM_ID = id;
+  DOCS_COLAB_NOME = nome;
+  el('docs-colab-nome').textContent = nome + ' (Rescisão)';
+  
+  el('dc-tipo').innerHTML = `
+    <option>Aviso Prévio Assinado</option>
+    <option>Termo de Quitação</option>
+    <option>Espelho da Rescisão</option>
+    <option>TRCT Assinado</option>
+    <option>Comprovante FGTS</option>
+    <option>Chave FGTS</option>
+    <option>Guia Seguro-Desemprego</option>
+    <option>Outro</option>
+  `;
+
+  el('dc-ok').textContent = '';
+  el('dc-file').value = '';
+  openMo('mo-docs-colab');
+  carregarDocsDem(id);
 }
 
 async function carregarDocsColab() {
@@ -1482,29 +1488,52 @@ async function carregarDocsColab() {
     </div>`).join('');
 }
 
+async function carregarDocsDem(demId) {
+  const lista = el('docs-colab-lista');
+  lista.innerHTML = '<div style="text-align:center;padding:20px"><span class="spin"></span></div>';
+  const { data } = await db.from('documentos').select('*').eq('demissao_id', demId).order('created_at', {ascending:false});
+  if (!data?.length) { lista.innerHTML = '<div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px;">Nenhum documento da rescisão anexado.</div>'; return; }
+  lista.innerHTML = data.map(d => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;">
+      <span style="font-size:20px">📄</span>
+      <div style="flex:1"><div style="font-weight:600;font-size:13px">${x(d.tipo)}</div><div style="font-size:11.5px;color:var(--tx3)">${x(d.nome_arquivo)} · ${fd(d.created_at)}</div></div>
+      <a href="${d.url}" target="_blank" class="btn btn-gh btn-sm">Ver 📄</a>
+      <button class="btn btn-rd btn-sm" onclick="excluirDocColab('${d.id}',this)">🗑</button>
+    </div>`).join('');
+}
+
 async function salvarDocColab() {
-  if (!DOCS_COLAB_ID) return;
   const file = el('dc-file').files[0] || el('dc-cam').files[0];
   if (!file) return toast('Selecione um ficheiro.', false);
 
   const url = await uploadFile(file);
   if (!url) return;
 
-  const { error } = await db.from('documentos').insert([{
+  let payload = {
     nome_arquivo:   file.name || 'foto.jpg',
     tipo:           v('dc-tipo'),
     colaborador:    DOCS_COLAB_NOME,
-    colaborador_id: DOCS_COLAB_ID,
     empresa:        CMAP[DOCS_COLAB_NOME]?.empresa || '',
     url,
     user_nome:      el('un').textContent,
-  }]);
+  };
+
+  // Aqui está o truque: Guardar o ID certo dependendo de onde o modal abriu
+  if (DOCS_CONTEXT === 'demissao') {
+    payload.demissao_id = CURRENT_DEM_ID;
+  } else {
+    payload.colaborador_id = DOCS_COLAB_ID;
+  }
+
+  const { error } = await db.from('documentos').insert([payload]);
 
   if (error) return toast('Erro: ' + error.message, false);
   toast('Documento salvo!', true);
   el('dc-ok').textContent = '';
   el('dc-file').value = '';
-  carregarDocsColab();
+  
+  if (DOCS_CONTEXT === 'demissao') carregarDocsDem(CURRENT_DEM_ID);
+  else carregarDocsColab();
 }
 
 async function excluirDocColab(id, btn) {
@@ -1513,7 +1542,9 @@ async function excluirDocColab(id, btn) {
   const { error } = await db.from('documentos').delete().eq('id', id);
   if (error) { toast('Erro: ' + error.message, false); btn.disabled = false; return; }
   toast('Documento removido.', true);
-  carregarDocsColab();
+  
+  if (DOCS_CONTEXT === 'demissao') carregarDocsDem(CURRENT_DEM_ID);
+  else carregarDocsColab();
 }
 
 function docIcon(tipo) {
@@ -1588,20 +1619,19 @@ async function saveReg(tipo) {
     };
     ativ = { tipo:'Demissão', colaborador:colab, empresa:v('d-emp'), user_nome:userName };
     
-    // Atualiza status do colaborador dependendo do andamento
     const novoStatusColab = statusDem === 'Aviso Prévio' ? 'Aviso Prévio' : 'Inativo';
     await db.from('colaboradores').update({ status: novoStatusColab }).eq('nome', colab);
     
-    // Inserimos a demissão com .select() para garantir que temos o ID logo para salvar os documentos
+    // ATENÇÃO: Salvando com .select() para obter o ID da demissão gerado e associar aos documentos!
     const { data: demCriada, error } = await db.from('demissoes').insert([payload]).select();
-    if (error) return toast('Erro: ' + error.message, false);
+    if (error) return toast('Erro ao criar demissão: ' + error.message, false);
     
     if (DEM_DOCS_PENDENTES.length > 0 && demCriada && demCriada[0]) {
       const demId = demCriada[0].id;
       for (const doc of DEM_DOCS_PENDENTES) {
         const url = await uploadFile(doc.file);
         if (url) {
-          await db.from('documentos').insert([{ 
+          const resDoc = await db.from('documentos').insert([{ 
             nome_arquivo: doc.file.name||'doc.pdf', 
             tipo: doc.tipo, 
             colaborador: colab, 
@@ -1610,6 +1640,7 @@ async function saveReg(tipo) {
             url, 
             user_nome: userName 
           }]);
+          if(resDoc.error) console.error("Erro no doc da rescisão:", resDoc.error);
         }
       }
     }
@@ -1621,7 +1652,7 @@ async function saveReg(tipo) {
     closeMo(modal);
     await reloadCMAP();
     loadPage('demissoes');
-    return; // Paramos aqui porque o INSERT já foi feito manualmente com .select()
+    return; // Para não duplicar o insert
   }
   else if (tipo === 'contrato') {
     const colab = v('ct-colab');
@@ -1907,7 +1938,7 @@ function gerarPDF() {
   const emp    = v('a-emp');
   const cnpj   = v('a-cnpj') || '';
   const tipo   = v('a-tipo');
-  const data   = v('a-data'); // Agora permite múltiplas datas em formato texto
+  const data   = v('a-data'); // Permite múltiplas datas
   const motivo = v('a-motivo');
   const modelo = v('a-modelo-pdf');
   
