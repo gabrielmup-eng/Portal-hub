@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -172,7 +172,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="lbox">
     <h1>Hub<span>On</span></h1>
@@ -191,11 +190,9 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 <div id="toast"></div>
 <button class="mob-btn" onclick="document.getElementById('sb').classList.toggle('open')">☰</button>
 
-<!-- APP -->
 <div id="app" style="display:none">
 <div class="shell">
 
-<!-- SIDEBAR -->
 <aside class="sb" id="sb">
   <div class="sb-head"><div class="logo">Hub<span>On</span></div></div>
   <nav>
@@ -224,10 +221,8 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </aside>
 
-<!-- MAIN -->
 <main class="main">
 
-<!-- DASHBOARD -->
 <div id="page-dashboard" class="pg active">
   <div class="tb"><div><div class="pt">Dashboard</div><div class="ps" id="dash-date"></div></div>
   <button class="btn btn-gh btn-sm" onclick="loadDash()">↻ Atualizar</button></div>
@@ -243,7 +238,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   <tbody id="tb-ativ"><tr class="erow"><td colspan="4"><span class="spin"></span></td></tr></tbody></table></div>
 </div>
 
-<!-- COLABORADORES -->
 <div id="page-colaboradores" class="pg">
   <div class="tb">
     <div><div class="pt">Colaboradores</div><div class="ps">Cadastro geral da rede</div></div>
@@ -262,7 +256,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </table></div>
 </div>
 
-<!-- EXAMES -->
 <div id="page-exames" class="pg">
   <div class="tb"><div><div class="pt">Exames Ocupacionais</div></div>
   <button class="btn btn-or" onclick="openMo('mo-exame')">＋ Registrar</button></div>
@@ -272,7 +265,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </table></div>
 </div>
 
-<!-- ADVERTÊNCIAS -->
 <div id="page-advertencias" class="pg">
   <div class="tb">
     <div><div class="pt">Advertências</div><div class="ps">Geração e controle de advertências</div></div>
@@ -284,7 +276,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </table></div>
 </div>
 
-<!-- FALTAS -->
 <div id="page-faltas" class="pg">
   <div class="tb"><div><div class="pt">Faltas</div></div>
   <button class="btn btn-or" onclick="openMo('mo-falta')">＋ Registrar</button></div>
@@ -294,7 +285,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </table></div>
 </div>
 
-<!-- DEMISSÕES -->
 <div id="page-demissoes" class="pg">
   <div class="tb"><div><div class="pt">Demissões</div></div>
   <button class="btn btn-or admin-only" onclick="openMo('mo-dem')">＋ Registrar</button></div>
@@ -304,7 +294,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </table></div>
 </div>
 
-<!-- CONTRATOS -->
 <div id="page-contratos" class="pg">
   <div class="tb"><div><div class="pt">Contratos</div></div>
   <button class="btn btn-or admin-only" onclick="openMo('mo-ct')">＋ Novo</button></div>
@@ -314,24 +303,20 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </table></div>
 </div>
 
-<!-- ENTREVISTAS -->
 <div id="page-entrevistas" class="pg">
   <div class="tb">
     <div><div class="pt">Entrevistas</div><div class="ps">Triagem e seleção de candidatos</div></div>
     <button class="btn btn-or" onclick="openMo('mo-ent')">＋ Nova Entrevista</button>
   </div>
 
-  <!-- TABS -->
   <div style="display:flex;gap:4px;background:var(--bg3);padding:4px;border-radius:8px;margin-bottom:20px;width:fit-content;">
     <button class="btn-tab active" id="tab-triagem" onclick="showEntTab('triagem',this)">📋 Script de Triagem</button>
     <button class="btn-tab" id="tab-candidatos" onclick="showEntTab('candidatos',this)">👥 Candidatos</button>
     <button class="btn-tab" id="tab-vaga" onclick="showEntTab('vaga',this)">📌 Informações da Vaga</button>
   </div>
 
-  <!-- TAB: SCRIPT DE TRIAGEM -->
   <div id="ent-tab-triagem">
 
-    <!-- SELETOR CANDIDATO -->
     <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:16px;">
       <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">👤 Candidato em Triagem</div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
@@ -353,7 +338,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
       </div>
     </div>
 
-    <!-- MENSAGEM 1: ABORDAGEM INICIAL -->
     <div class="script-bloco" style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--or);">💬 MENSAGEM 1 — Abordagem Inicial</div>
@@ -362,7 +346,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
       <div id="msg1" class="script-txt" style="background:var(--bg3);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;"></div>
     </div>
 
-    <!-- MENSAGEM 2: PERGUNTAS -->
     <div class="script-bloco" style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--or);">💬 MENSAGEM 2 — Perguntas de Triagem</div>
@@ -371,7 +354,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
       <div id="msg2" class="script-txt" style="background:var(--bg3);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;"></div>
     </div>
 
-    <!-- MENSAGEM 3: INFORMAÇÕES DA VAGA -->
     <div class="script-bloco" style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--or);">💬 MENSAGEM 3 — Apresentação da Vaga</div>
@@ -380,7 +362,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
       <div id="msg3" class="script-txt" style="background:var(--bg3);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;"></div>
     </div>
 
-    <!-- MENSAGEM 4: ORIENTAÇÕES PARA O DIA -->
     <div class="script-bloco" style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--or);">💬 MENSAGEM 4 — Orientações para o Dia de Teste</div>
@@ -389,7 +370,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
       <div id="msg4" class="script-txt" style="background:var(--bg3);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;"></div>
     </div>
 
-    <!-- CHECKLIST DE RESPOSTA -->
     <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:16px;">
       <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;margin-bottom:14px;">✅ Checklist — Respostas Recebidas</div>
       <div id="triagem-checklist" style="display:flex;flex-direction:column;gap:8px;"></div>
@@ -399,14 +379,12 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
       </div>
     </div>
 
-    <!-- RESPOSTAS DO CANDIDATO -->
     <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;">
       <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;margin-bottom:14px;">📝 Anotar Respostas do Candidato</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="campos-respostas"></div>
     </div>
   </div>
 
-  <!-- TAB: CANDIDATOS -->
   <div id="ent-tab-candidatos" style="display:none;">
     <div class="tc"><table>
       <thead><tr><th>Candidato</th><th>Vaga</th><th>Empresa</th><th>Data</th><th>Status</th><th>Ações</th></tr></thead>
@@ -414,11 +392,9 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
     </table></div>
   </div>
 
-  <!-- TAB: INFORMAÇÕES DA VAGA -->
   <div id="ent-tab-vaga" style="display:none;">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
 
-      <!-- Card vaga -->
       <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;">
         <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:16px;color:var(--or);margin-bottom:16px;">🍜 AUXILIAR DE COZINHA I & ATENDENTE I</div>
         <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--tx2);">
@@ -434,7 +410,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
         </div>
       </div>
 
-      <!-- Card empresa / produto -->
       <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;">
         <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:16px;color:var(--or);margin-bottom:16px;">🥗 Sobre o Restaurante</div>
         <div style="font-size:13px;color:var(--tx2);line-height:1.8;">
@@ -444,7 +419,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
         </div>
       </div>
 
-      <!-- Processo seletivo -->
       <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;grid-column:1/-1;">
         <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:14px;color:var(--or);margin-bottom:14px;">📅 Processo Seletivo</div>
         <div style="font-size:13px;color:var(--tx2);margin-bottom:14px;">
@@ -467,7 +441,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- DOCUMENTOS -->
 <div id="page-documentos" class="pg">
   <div class="tb"><div><div class="pt">Documentos</div></div>
   <button class="btn btn-or" onclick="openMo('mo-up')">📎 Enviar</button></div>
@@ -477,7 +450,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </table></div>
 </div>
 
-<!-- EMPRESAS -->
 <div id="page-empresas" class="pg">
   <div class="tb">
     <div><div class="pt">Empresas</div><div class="ps">Dados cadastrais de cada unidade</div></div>
@@ -489,27 +461,40 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </table></div>
 </div>
 
-<!-- RELATÓRIOS -->
 <div id="page-relatorios" class="pg">
-  <div class="tb"><div><div class="pt">Relatórios</div><div class="ps">Salários, advertências e faltas</div></div></div>
+  <div class="tb"><div><div class="pt">Relatórios</div><div class="ps">Salários, advertências, faltas e histórico</div></div></div>
 
-  <!-- Seletor de empresa para relatório -->
-  <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;margin-bottom:20px;">
-    <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-      <div class="fi" style="flex:1;min-width:180px;">
-        <label>Empresa</label>
-        <select id="rel-empresa" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13.5px;outline:none;">
-          <option value="">Todas as empresas</option>
-        </select>
+  <div class="fg2" style="margin-bottom:20px;">
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--or);">🏢 Relatório Geral (Empresa)</div>
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+        <div class="fi" style="flex:1;">
+          <label>Selecione a Empresa</label>
+          <select id="rel-empresa" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13.5px;outline:none;">
+            <option value="">Todas as empresas</option>
+          </select>
+        </div>
+        <button class="btn btn-or" onclick="gerarRelatorio()">📊 Gerar Relatório</button>
       </div>
-      <button class="btn btn-or" onclick="gerarRelatorio()">📊 Gerar Relatório</button>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--bl);">👤 Relatório Individual</div>
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+        <div class="fi" style="flex:1;">
+          <label>Selecione o Colaborador</label>
+          <select id="rel-colab" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13.5px;outline:none;">
+            <option value="">Selecione...</option>
+          </select>
+        </div>
+        <button class="btn btn-bl" onclick="gerarRelatorioIndDireto()">📄 Ver Histórico</button>
+      </div>
     </div>
   </div>
 
   <div id="rel-conteudo"></div>
 </div>
 
-<!-- USUÁRIOS -->
 <div id="page-usuarios" class="pg">
   <div class="tb">
     <div><div class="pt">Usuários</div><div class="ps">Controle de acesso e permissões</div></div>
@@ -518,14 +503,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 </div>
 
 </main>
-</div><!-- /shell -->
-</div><!-- /app -->
-
-
-<!-- ═══════════ MODAIS ═══════════ -->
-
-<!-- IMPORTAR PDF -->
-<div class="mo" id="mo-import">
+</div></div><div class="mo" id="mo-import">
   <div class="md">
     <div class="md-h"><h3>📥 Importar Relação de Empregados (JB Contábil)</h3><button class="xbtn" onclick="closeMo('mo-import')">✕</button></div>
     <div class="md-b">
@@ -562,7 +540,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- NOVO COLABORADOR -->
 <div class="mo" id="mo-colab">
   <div class="md">
     <div class="md-h"><h3>Novo Colaborador</h3><button class="xbtn" onclick="closeMo('mo-colab')">✕</button></div>
@@ -584,7 +561,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- EXAME -->
 <div class="mo" id="mo-exame">
   <div class="md">
     <div class="md-h"><h3>Registrar Exame</h3><button class="xbtn" onclick="closeMo('mo-exame')">✕</button></div>
@@ -613,7 +589,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- ADVERTÊNCIA -->
 <div class="mo" id="mo-adv">
   <div class="md">
     <div class="md-h">
@@ -650,7 +625,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- FALTA -->
 <div class="mo" id="mo-falta">
   <div class="md">
     <div class="md-h"><h3>Registrar Falta</h3><button class="xbtn" onclick="closeMo('mo-falta')">✕</button></div>
@@ -670,7 +644,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- DEMISSÃO -->
 <div class="mo" id="mo-dem">
   <div class="md" style="width:640px">
     <div class="md-h"><h3>Registrar Demissão</h3><button class="xbtn" onclick="closeMo('mo-dem')">✕</button></div>
@@ -720,7 +693,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- CONTRATO -->
 <div class="mo" id="mo-ct">
   <div class="md">
     <div class="md-h"><h3>Contrato</h3><button class="xbtn" onclick="closeMo('mo-ct')">✕</button></div>
@@ -739,7 +711,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- ENTREVISTA / CANDIDATO -->
 <div class="mo" id="mo-ent">
   <div class="md" style="width:640px">
     <div class="md-h"><h3>Registrar Candidato</h3><button class="xbtn" onclick="closeMo('mo-ent')">✕</button></div>
@@ -789,7 +760,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- UPLOAD DOCUMENTO -->
 <div class="mo" id="mo-up">
   <div class="md">
     <div class="md-h"><h3>Enviar Documento</h3><button class="xbtn" onclick="closeMo('mo-up')">✕</button></div>
@@ -818,7 +788,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 </div>
 
 
-<!-- DOCUMENTOS DO COLABORADOR -->
 <div class="mo" id="mo-docs-colab">
   <div class="md" style="width:680px">
     <div class="md-h">
@@ -826,7 +795,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
       <button class="xbtn" onclick="closeMo('mo-docs-colab')">✕</button>
     </div>
     <div class="md-b">
-      <!-- Upload rápido -->
       <div style="background:var(--bg3);border:1px solid var(--bd);border-radius:var(--r);padding:16px;margin-bottom:18px;">
         <div style="font-weight:600;font-size:13px;margin-bottom:12px;font-family:'Outfit',sans-serif;">➕ Adicionar Documento</div>
         <div class="fg2">
@@ -861,7 +829,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
         </div>
       </div>
 
-      <!-- Lista de documentos -->
       <div style="font-weight:600;font-size:13px;margin-bottom:10px;font-family:'Outfit',sans-serif;">Documentos cadastrados</div>
       <div id="docs-colab-lista">
         <div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px;"><span class="spin"></span></div>
@@ -873,7 +840,6 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- EMPRESA -->
 <div class="mo" id="mo-empresa">
   <div class="md">
     <div class="md-h"><h3 id="emp-modal-titulo">Nova Empresa</h3><button class="xbtn" onclick="closeMo('mo-empresa');EMP_EDIT_ID=null;">✕</button></div>
@@ -903,13 +869,12 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- CONVIDAR USUÁRIO -->
 <div class="mo" id="mo-invite">
   <div class="md" style="width:480px">
     <div class="md-h"><h3>✉️ Convidar Novo Usuário</h3><button class="xbtn" onclick="closeMo('mo-invite')">✕</button></div>
     <div class="md-b">
       <div style="background:var(--bl-bg);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:12px 14px;font-size:12.5px;color:var(--bl);margin-bottom:16px;">
-        💡 O usuário receberá um e-mail com link para criar a senha e acessar o sistema.
+        💡 O usuário receberá um e-mail com link para criar a senha e aceder ao sistema.
       </div>
       <div class="fg2">
         <div class="fi full"><label>Nome *</label><input id="inv-nome" placeholder="Nome completo"></div>
@@ -933,12 +898,11 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- CONFIRMAR EXCLUSÃO -->
 <div class="mo" id="mo-del">
   <div class="md" style="width:420px">
     <div class="md-h"><h3>Confirmar Exclusão</h3><button class="xbtn" onclick="closeMo('mo-del')">✕</button></div>
     <div class="md-b">
-      <p style="color:var(--tx2);line-height:1.6;">Tem certeza que deseja excluir o colaborador <strong id="del-nome" style="color:var(--tx)"></strong>?</p>
+      <p style="color:var(--tx2);line-height:1.6;">Tem a certeza que deseja excluir o colaborador <strong id="del-nome" style="color:var(--tx)"></strong>?</p>
       <p style="color:var(--rd);font-size:12.5px;margin-top:10px;">⚠️ Esta ação não pode ser desfeita.</p>
     </div>
     <div class="md-f">
@@ -949,36 +913,10 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 </div>
 
 
-<!-- ═══════════ JAVASCRIPT ═══════════ -->
 <script>
 // ╔══════════════════════════════════════╗
 //   CONFIGURAÇÃO — preencha antes de publicar
 // ╚══════════════════════════════════════╝
-// SQL ADICIONAL necessário no Supabase:
-// CREATE TABLE IF NOT EXISTS empresas (
-//   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-//   razao_social TEXT NOT NULL,
-//   nome_fantasia TEXT,
-//   cnpj TEXT,
-//   inscricao_estadual TEXT,
-//   endereco TEXT,
-//   bairro TEXT,
-//   cidade TEXT,
-//   estado TEXT,
-//   cep TEXT,
-//   telefone TEXT,
-//   email TEXT,
-//   responsavel TEXT,
-//   ramo TEXT,
-//   data_abertura DATE,
-//   created_at TIMESTAMPTZ DEFAULT NOW()
-// );
-// ALTER TABLE empresas ENABLE ROW LEVEL SECURITY;
-// CREATE POLICY "emp_all" ON empresas FOR ALL TO authenticated USING (true) WITH CHECK (true);
-// ALTER TABLE documentos ADD COLUMN IF NOT EXISTS colaborador_id UUID;
-// ALTER TABLE documentos ADD COLUMN IF NOT EXISTS demissao_id UUID;
-// ALTER TABLE advertencias ADD COLUMN IF NOT EXISTS cargo TEXT;
-// Habilitar RLS na tabela empresas com política de leitura para usuários autenticados.
 const SUPABASE_URL     = 'https://djopojjzuvfdukgglinj.supabase.co';       // https://xxxxx.supabase.co
 const SUPABASE_ANON    = 'sb_publishable_ypgq1IS7TqilRgwg5Gbgwg_xmZxC9ES';  // eyJhbGci...
 // ═══════════════════════════════════════
@@ -986,7 +924,7 @@ const SUPABASE_ANON    = 'sb_publishable_ypgq1IS7TqilRgwg5Gbgwg_xmZxC9ES';  // e
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON, {
   auth: {
-    persistSession: true,          // mantém sessão entre abas
+    persistSession: true,
     autoRefreshToken: true,
     storageKey: 'hubon-session',
   }
@@ -1029,18 +967,17 @@ async function onLogin(user) {
   await popularFiltroEmpresas();
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
-  el('dash-date').textContent = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  el('dash-date').textContent = new Date().toLocaleDateString('pt-PT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   loadDash();
 }
 
 async function doLogin() {
   const btn = el('lbtn');
-  btn.disabled = true; btn.textContent = 'Entrando…';
+  btn.disabled = true; btn.textContent = 'A entrar…';
   const lembrar = el('li-lembrar')?.checked !== false;
   
-  // Se não quer lembrar: configura sessão sem persistência
   if (!lembrar) {
-    await db.auth.signOut(); // limpa qualquer sessão anterior
+    await db.auth.signOut();
   }
 
   const { error } = await db.auth.signInWithPassword({
@@ -1049,11 +986,10 @@ async function doLogin() {
   btn.disabled = false; btn.textContent = 'Entrar';
   if (error) {
     const e = el('lerr');
-    e.textContent = 'E-mail ou senha incorretos.';
+    e.textContent = 'E-mail ou palavra-passe incorretos.';
     e.style.display = 'block';
     return;
   }
-  // Se não quer lembrar, limpa ao fechar a aba
   if (!lembrar) {
     window.addEventListener('beforeunload', async () => {
       await db.auth.signOut();
@@ -1078,13 +1014,15 @@ async function reloadCMAP() {
       empresa: r.empresa || '',
       cargo:   r.cargo   || '',
       salario: r.salario != null
-        ? 'R$ ' + Number(r.salario).toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+        ? 'R$ ' + Number(r.salario).toLocaleString('pt-PT', { minimumFractionDigits: 2 })
         : '',
     };
   });
   const opts = '<option value="">Selecione...</option>' +
     data.map(r => `<option>${esc(r.nome)}</option>`).join('');
-  ['e-colab','a-colab','f-colab','d-colab','ct-colab','up-colab'].forEach(id => {
+  
+  // Inclui o rel-colab na atualização das listas
+  ['e-colab','a-colab','f-colab','d-colab','ct-colab','up-colab','rel-colab'].forEach(id => {
     const s = el(id); if (s) s.innerHTML = opts;
   });
 }
@@ -1121,7 +1059,6 @@ function loadPage(id) {
       buildChecklist();
       popularTriagemEmpresas();
       popularEntEmpresas();
-      // Não carregar candidatos até clicar na tab
     },
     documentos:   () => loadTb('documentos','tb-docs', rDocs),
     empresas:     loadEmpresas,
@@ -1164,7 +1101,7 @@ async function loadDash() {
         <td><span class="bx ${tipoCor(a.tipo)}">${x(a.tipo)}</span></td>
         <td>${x(a.colaborador)}</td><td>${x(a.empresa)}</td><td>${fd(a.created_at)}</td>
       </tr>`).join('')
-    : '<tr class="erow"><td colspan="4">Nenhuma ação registrada.</td></tr>';
+    : '<tr class="erow"><td colspan="4">Nenhuma ação registada.</td></tr>';
 }
 
 async function loadColab() {
@@ -1180,7 +1117,7 @@ async function loadColab() {
           <td>${x(r.empresa || '—')}</td>
           <td>${r.data_nascimento ? fd(r.data_nascimento) : '—'}</td>
           <td>${r.data_admissao ? fd(r.data_admissao) : '—'}</td>
-          <td>${r.salario != null ? 'R$ ' + Number(r.salario).toLocaleString('pt-BR',{minimumFractionDigits:2}) : '—'}</td>
+          <td>${r.salario != null ? 'R$ ' + Number(r.salario).toLocaleString('pt-PT',{minimumFractionDigits:2}) : '—'}</td>
           <td><span class="bx ${r.status === 'Ativo' ? 'gn' : 'gr'}">${r.status || '—'}</span></td>
           <td style="display:flex;gap:6px;align-items:center;">
             <button class="btn btn-gh btn-sm" onclick="abrirDocsColab('${r.id}','${esc(r.nome)}')">📁</button>
@@ -1188,14 +1125,14 @@ async function loadColab() {
             ${isAdm ? `<button class="btn btn-rd btn-sm" onclick="pedirExclusao('${r.id}','${esc(r.nome)}')">🗑</button>` : ''}
           </td>
         </tr>`).join('')
-    : '<tr class="erow"><td colspan="8">Nenhum colaborador cadastrado.</td></tr>';
+    : '<tr class="erow"><td colspan="8">Nenhum colaborador registado.</td></tr>';
 }
 
 async function loadTb(table, tbId, renderer) {
   el(tbId).innerHTML = '<tr class="erow"><td colspan="9"><span class="spin"></span></td></tr>';
   const { data, error } = await db.from(table).select('*').order('created_at', { ascending:false }).limit(300);
   if (error) { el(tbId).innerHTML = `<tr class="erow"><td colspan="9" style="color:var(--rd)">Erro: ${error.message}</td></tr>`; return; }
-  el(tbId).innerHTML = data?.length ? renderer(data) : '<tr class="erow"><td colspan="9">Nenhum registro.</td></tr>';
+  el(tbId).innerHTML = data?.length ? renderer(data) : '<tr class="erow"><td colspan="9">Nenhum registo.</td></tr>';
 }
 
 // ─── RENDERERS ────────────────────────────────────────
@@ -1206,6 +1143,8 @@ function rExames(d) {
     <td>${r.doc_url ? `<a href="${r.doc_url}" target="_blank" class="btn btn-gh btn-sm">Ver</a>` : '—'}</td>
   </tr>`).join('');
 }
+
+// Limpa o dashboard quando a advertência é excluída
 function rAdv(d) {
   return d.map(r => `<tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
     <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
@@ -1213,19 +1152,27 @@ function rAdv(d) {
     <td>${fd(r.data)}</td><td>${x(r.motivo||'—')}</td>
     <td style="display:flex;gap:5px;align-items:center;">
       <button class="btn btn-gh btn-sm" onclick="abrirEditarAdv('${r.id}')">✏️</button>
-      <button class="btn btn-rd btn-sm" onclick="excluirAdv('${r.id}',this)">🗑</button>
+      <button class="btn btn-rd btn-sm" onclick="excluirAdv('${r.id}', '${esc(r.colaborador)}', this)">🗑</button>
     </td>
   </tr>`).join('');
 }
 
-async function excluirAdv(id, btn) {
+async function excluirAdv(id, nomeColab, btn) {
   if (!confirm('Excluir esta advertência?')) return;
   btn.disabled = true;
+  
+  // Apaga a advertência
   const { error } = await db.from('advertencias').delete().eq('id', id);
   if (error) { toast('Erro: '+error.message, false); btn.disabled=false; return; }
+  
+  // Apaga a marcação do Dashboard (tabela atividades)
+  await db.from('atividades').delete().eq('tipo', 'Advertência').eq('colaborador', nomeColab);
+  
   toast('Advertência excluída.', true);
   loadTb('advertencias','tb-adv', rAdv);
+  loadDash();
 }
+
 function rFaltas(d) {
   return d.map(r => `<tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
     <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
@@ -1245,9 +1192,8 @@ function rDem(d) {
 let DEM_ID_ATUAL = null;
 function abrirDocsDem(id, nome) {
   DEM_ID_ATUAL = id;
-  // Reusar modal de docs do colaborador adaptado
   el('docs-colab-nome').textContent = nome + ' (Rescisão)';
-  DOCS_COLAB_ID   = null; // não é por colaborador_id, é por demissao_id
+  DOCS_COLAB_ID   = null; 
   openMo('mo-docs-colab');
   carregarDocsDem(id);
 }
@@ -1329,21 +1275,20 @@ async function loadUsuarios() {
     return;
   }
 
-  // Header com botão convidar
   const header = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
       <div style="font-family:'Outfit',sans-serif;font-size:13px;color:var(--tx2);">
-        Gerencie papéis e empresas. Para convidar novos usuários use o botão abaixo.
+        Gerir papéis e empresas. Para convidar novos utilizadores use o botão abaixo.
       </div>
-      <button class="btn btn-or btn-sm" onclick="openMo('mo-invite')">✉️ Convidar Usuário</button>
+      <button class="btn btn-or btn-sm" onclick="openMo('mo-invite')">✉️ Convidar Utilizador</button>
     </div>`;
 
   const { data } = await db.from('profiles').select('*').order('created_at');
-  if (!data?.length) { el('lista-usuarios').innerHTML = header + '<p style="color:var(--tx3);padding:20px">Nenhum usuário cadastrado.</p>'; return; }
+  if (!data?.length) { el('lista-usuarios').innerHTML = header + '<p style="color:var(--tx3);padding:20px">Nenhum utilizador registado.</p>'; return; }
 
   const papeis = {
     admin:   { label:'Admin',   desc:'Acesso total — ver, criar, editar e excluir tudo', cor:'#F97316' },
-    socio:   { label:'Sócio',   desc:'Ver tudo e criar registros — não exclui nem gerencia usuários', cor:'#8B5CF6' },
+    socio:   { label:'Sócio',   desc:'Ver tudo e criar registos — não exclui nem gere utilizadores', cor:'#8B5CF6' },
     gerente: { label:'Gerente', desc:'Acesso restrito à empresa vinculada — advertências, faltas e entrevistas', cor:'#10B981' },
   };
 
@@ -1397,14 +1342,13 @@ async function updEmp(id, emp) {
   toast('Empresa atualizada.', true);
 }
 async function desativarUsuario(id, nome) {
-  if (!confirm(`Remover acesso de ${nome}? O usuário não conseguirá mais entrar no sistema.`)) return;
-  // Não deleta — apenas remove o papel (vira gerente sem empresa = acesso vazio)
+  if (!confirm(`Remover acesso de ${nome}? O utilizador não conseguirá mais entrar no sistema.`)) return;
   await db.from('profiles').update({ role:'gerente', empresa:null }).eq('id',id);
   toast('Acesso removido.', true);
   loadUsuarios();
 }
 
-// ─── SAVE COLABORADOR (separado, simples, sem validação complicada) ──
+// ─── SAVE COLABORADOR ──
 async function saveColab() {
   const nome = v('c-nome');
   const empresa = v('c-empresa');
@@ -1433,7 +1377,6 @@ async function saveColab() {
 
   toast('Colaborador salvo!', true);
   closeMo('mo-colab');
-  // Limpa campos
   ['c-nome','c-cargo','c-empresa','c-nasc','c-adm','c-sal'].forEach(id => { if(el(id)) el(id).value = ''; });
   await reloadCMAP();
   loadColab();
@@ -1474,7 +1417,7 @@ async function carregarDocsColab() {
     .order('created_at', { ascending: false });
 
   if (error || !data?.length) {
-    lista.innerHTML = '<div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px;">Nenhum documento cadastrado ainda.</div>';
+    lista.innerHTML = '<div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px;">Nenhum documento registado ainda.</div>';
     return;
   }
 
@@ -1493,7 +1436,7 @@ async function carregarDocsColab() {
 async function salvarDocColab() {
   if (!DOCS_COLAB_ID) return;
   const file = el('dc-file').files[0] || el('dc-cam').files[0];
-  if (!file) return toast('Selecione um arquivo.', false);
+  if (!file) return toast('Selecione um ficheiro.', false);
 
   const url = await uploadFile(file);
   if (!url) return;
@@ -1535,7 +1478,6 @@ function docIcon(tipo) {
 }
 
 function verHistoricoColab(nome, empresa) {
-  // Navega para relatórios e gera relatório individual
   goPage('relatorios', document.querySelector('.ni'));
   setTimeout(() => relatorioIndividual(nome, empresa), 300);
 }
@@ -1602,11 +1544,8 @@ async function saveReg(tipo) {
     payload = { colaborador:colab, empresa:v('d-emp'), tipo:v('d-tipo'),
                 data:v('d-data')||null, motivo:v('d-motivo')||null };
     ativ = { tipo:'Demissão', colaborador:colab, empresa:v('d-emp'), user_nome:userName };
-    // Marca colaborador como inativo
     await db.from('colaboradores').update({ status:'Inativo' }).eq('nome', colab);
-    // Subir documentos da rescisão pendentes
     if (DEM_DOCS_PENDENTES.length > 0) {
-      // Precisamos do ID da demissão recém-criada
       const { data: demCriada } = await db.from('demissoes').select('id').eq('colaborador', colab).order('created_at', {ascending:false}).limit(1).single();
       if (demCriada) {
         for (const doc of DEM_DOCS_PENDENTES) {
@@ -1651,7 +1590,7 @@ async function saveUpload() {
   const colab = v('up-colab');
   if (!colab) return toast('Selecione o colaborador.', false);
   const file = el('up-file').files[0] || el('up-cam').files[0];
-  if (!file) return toast('Selecione um arquivo.', false);
+  if (!file) return toast('Selecione um ficheiro.', false);
 
   const url = await uploadFile(file);
   if (!url) return;
@@ -1679,7 +1618,6 @@ async function uploadFile(file) {
 }
 
 // ─── IMPORTADOR JB CONTÁBIL ───────────────────────────
-// Suporta DOIS modos: PDF (FileReader → base64 → Claude API) ou texto colado
 let IMP_PDF_B64 = null;
 
 function onImpPdf(input) {
@@ -1688,7 +1626,6 @@ function onImpPdf(input) {
   el('imp-pdf-ok').textContent = '✅ ' + file.name;
   const reader = new FileReader();
   reader.onload = e => {
-    // Salva base64 sem o prefixo "data:application/pdf;base64,"
     IMP_PDF_B64 = e.target.result.split(',')[1];
   };
   reader.readAsDataURL(file);
@@ -1699,12 +1636,11 @@ async function importar() {
   if (!empresa) return toast('Informe o nome da empresa.', false);
 
   const btn = el('imp-btn');
-  btn.disabled = true; btn.textContent = '⏳ Importando…';
+  btn.disabled = true; btn.textContent = '⏳ A importar…';
 
   let linhas = [];
 
   if (IMP_PDF_B64) {
-    // Modo 1: extrai do PDF via regex (sem chamar API externa)
     linhas = await extrairDoBase64(IMP_PDF_B64);
   } else {
     const texto = v('imp-txt').trim();
@@ -1717,14 +1653,13 @@ async function importar() {
 
   if (!linhas.length) {
     btn.disabled = false; btn.textContent = '▶ Importar';
-    return toast('Nenhum colaborador encontrado. Verifique o arquivo.', false);
+    return toast('Nenhum colaborador encontrado. Verifique o ficheiro.', false);
   }
 
   await salvarLinhas(linhas, empresa);
   btn.disabled = false; btn.textContent = '▶ Importar';
 }
 
-// Extrai texto do PDF via FileReader (decodifica base64 para string)
 async function extrairDoBase64(b64) {
   try {
     pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -1741,7 +1676,6 @@ async function extrairDoBase64(b64) {
       const page    = await pdf.getPage(p);
       const content = await page.getTextContent();
 
-      // Agrupar itens por Y arredondado (mesma linha)
       const linhas = {};
       for (const item of content.items) {
         if (!item.str.trim()) continue;
@@ -1750,24 +1684,14 @@ async function extrairDoBase64(b64) {
         linhas[y].push({ x: item.transform[4], str: item.str.trim() });
       }
 
-      // Processar linhas de cima para baixo
       const ys = Object.keys(linhas).map(Number).sort((a, b) => b - a);
 
       for (const y of ys) {
         const itens = linhas[y].sort((a, b) => a.x - b.x);
         if (!itens.length) continue;
 
-        // Só processar linhas que começam com código de 6 dígitos (X < 50)
         const primeiro = itens[0];
         if (primeiro.x > 50 || !/^\d{6}$/.test(primeiro.str)) continue;
-
-        // Separação por colunas X confirmadas com pdftotext -bbox:
-        // Código:  X < 50      → ignorar (já confirmamos que é linha de colab)
-        // Nome:    50 ≤ X < 200 → palavras do nome completo
-        // Cargo:   200 ≤ X < 350 → palavras do cargo
-        // Salário: X ≥ 350    → salário + "/Mensal" (podem vir juntos ou separados)
-        // Data:    padrão dd/mm/aaaa
-        // Periculosidade: ignorar
 
         const nome_parts  = [];
         const cargo_parts = [];
@@ -1776,14 +1700,8 @@ async function extrairDoBase64(b64) {
 
         for (const it of itens) {
           const s = it.str;
-
-          // Pular código (6 dígitos, X < 50)
           if (/^\d{6}$/.test(s)) continue;
-
-          // Capturar data dd/mm/aaaa (qualquer posição)
           if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) { dataAdm = s; continue; }
-
-          // Capturar salário: pode vir como "1.860,00/Mensal" (junto) ou "1.860,00" + "/Mensal"
           if (/^[\d]+\.[\d]{3},[\d]{2}\/Mensal$/.test(s)) {
             salario = parseFloat(s.replace('/Mensal','').replace(/\./g,'').replace(',','.'));
             continue;
@@ -1793,18 +1711,14 @@ async function extrairDoBase64(b64) {
             continue;
           }
           if (s === '/Mensal') continue;
-
-          // Pular periculosidade (padrão "0,00/00,00%")
           if (/^\d+,\d{2}\/\d{2},\d{2}%$/.test(s)) continue;
           if (s.includes('%') && it.x > 450) continue;
 
-          // Classificar por posição X
           if (it.x < 200) {
-            nome_parts.push(s);         // Nome: X 60–175
+            nome_parts.push(s);         
           } else if (it.x < 350) {
-            cargo_parts.push(s);        // Cargo: X 214–275
+            cargo_parts.push(s);        
           }
-          // X ≥ 350 não capturado acima = ignorar (salário já capturado, data já capturada)
         }
 
         const nome  = nome_parts.join(' ').trim();
@@ -1823,23 +1737,18 @@ async function extrairDoBase64(b64) {
       }
     }
 
-    console.log('PDF.js extraiu', colaboradores.length, 'colaboradores:', colaboradores);
     if (!colaboradores.length) {
       toast('Nenhum colaborador encontrado. Tente colar o texto (Opção 2).', false);
     }
     return colaboradores;
   } catch(err) {
-    console.error('PDF.js erro:', err);
     toast('Erro ao ler PDF: ' + err.message, false);
     return [];
   }
 }
 
-// Regex precisa para o formato JB Contábil
-// Linha: 000002 NOME COMPLETO            CARGO               1.860,00/Mensal  01/03/2025  0,00/00,00%
 function parsearTexto(texto) {
   const resultados = [];
-  // Regex principal: funciona com espaços duplos (texto colado do PDF)
   const RE = /(\d{6})\s+([A-ZÀ-Ú][A-ZÀ-Ú\s]{2,}?)\s{2,}([A-ZÀ-Ú][A-ZÀ-Ú\s/º°ª\-]+?)\s{2,}([\d.,]+)\/Mensal\s+(\d{2}\/\d{2}\/\d{4})/g;
   let m;
   while ((m = RE.exec(texto)) !== null) {
@@ -1854,7 +1763,6 @@ function parsearTexto(texto) {
     });
   }
 
-  // Fallback: ancora pelo padrão do salário (funciona com espaço simples)
   if (!resultados.length) {
     const linhas = texto.split('\n');
     for (const linha of linhas) {
@@ -1864,8 +1772,6 @@ function parsearTexto(texto) {
       if (!salM || !codM) continue;
       const meio = l.slice(codM[0].length, l.indexOf(salM[0])).trim();
       if (!meio || meio.startsWith('Total')) continue;
-      // Sem espaços duplos não conseguimos separar nome/cargo com segurança
-      // Salvar tudo como nome, cargo vazio
       const [d, mo, y] = salM[2].split('/');
       resultados.push({
         nome:         meio,
@@ -1888,7 +1794,6 @@ async function salvarLinhas(linhas, empresa) {
   const html = [];
 
   for (const linha of linhas) {
-    // Verifica duplicata por nome + empresa
     const { data: existe } = await db.from('colaboradores')
       .select('id').eq('nome', linha.nome).eq('empresa', empresa).maybeSingle();
 
@@ -1927,7 +1832,7 @@ async function salvarLinhas(linhas, empresa) {
     await reloadCMAP();
     loadColab();
   } else {
-    toast('Nenhum novo registro importado.', false);
+    toast('Nenhum novo registo importado.', false);
   }
 }
 
@@ -1956,7 +1861,7 @@ function gerarPDF() {
       <div style="padding:16px;border:1px solid #000;min-height:80px;margin:12px 0;">${motivo}</div>
       <p style="font-size:13px;">Solicitamos que observe as normas internas, evitando reincidências que poderão acarretar medidas disciplinares mais severas, conforme a CLT.</p>
       <p style="margin-top:10px;font-size:12px;"><strong>Testemunhas:</strong> ${test||'_______________________  /  _______________________'}</p>
-      <p style="text-align:right;font-size:12px;margin-top:8px;">Emitido em: ${new Date().toLocaleDateString('pt-BR')}</p>
+      <p style="text-align:right;font-size:12px;margin-top:8px;">Emitido em: ${new Date().toLocaleDateString('pt-PT')}</p>
       <div style="display:flex;justify-content:space-between;margin-top:70px;gap:20px;">
         <div style="width:45%;text-align:center;border-top:1px solid #000;padding-top:6px;">Empregador<br><small>${emp}</small></div>
         <div style="width:45%;text-align:center;border-top:1px solid #000;padding-top:6px;">Empregado(a)<br><small>${colab}</small></div>
@@ -1999,13 +1904,12 @@ function fileOk(input, prevId) {
 
 function fd(d) {
   if (!d) return '—';
-  // Evita bug de timezone: "2026-04-07" em UTC vira 06/04 no fuso -3h
   if (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)) {
     const [y,m,dd] = d.split('-');
     return `${dd}/${m}/${y}`;
   }
   const dt = new Date(d); if (isNaN(dt)) return String(d);
-  return dt.toLocaleDateString('pt-BR');
+  return dt.toLocaleDateString('pt-PT');
 }
 
 function sVal(d) {
@@ -2057,21 +1961,21 @@ function gerarScripts() {
   const vaga   = el('triagem-vaga')?.value || 'Atendente';
   const emp    = el('triagem-empresa')?.value || 'nossa empresa';
 
-  const msg1 = `Bom dia, tudo bem? 😊 Sou Gabriel da ${emp}!
+  const msg1 = `Bom dia, tudo bem? 😊 Sou da equipa da ${emp}!
 
-Recebi seu currículo para a vaga de ${vaga}, confirma?
+Recebi o seu currículo para a vaga de ${vaga}, confirma?
 
-Podemos conversar mais sobre isso? Já te passo mais informações!`;
+Podemos conversar mais sobre isso? Já lhe passo mais informações!`;
 
-  const msg2 = `Para agilizarmos a conversa e deixar registrado aqui no WhatsApp, consegue me responder umas perguntas rapidinho?
+  const msg2 = `Para agilizarmos a conversa e deixar registado aqui no WhatsApp, consegue responder-me a umas perguntas rapidinho?
 
 📝 *Nome completo:*
 📅 *Idade:*
-📍 *Cidade e bairro:*
-🚌 *Utiliza transporte público?*
-👨‍🍳 *Tem experiência na área de restaurante?*
-💼 *Qual sua última experiência de trabalho e por quanto tempo?*
-📆 *Disponível para teste a partir de qual data?*`;
+📍 *Localidade e freguesia:*
+🚌 *Utiliza transportes públicos?*
+👨‍🍳 *Tem experiência na área de restauração?*
+💼 *Qual a sua última experiência de trabalho e por quanto tempo?*
+📆 *Disponível para teste a partir de que data?*`;
 
   const msg3 = `Ótimo! Aqui vão as informações da vaga de *${vaga}*:
 
@@ -2080,26 +1984,26 @@ Podemos conversar mais sobre isso? Já te passo mais informações!`;
 💰 *Salário:* R$ 1.830,00
 🎁 *Benefícios:* Assiduidade + Sacolão + Folga Aniversário + Auxílio Transporte + Refeição no Local
 
-Nosso restaurante é especializado em *Poke* 🥗 — é como um sushi/temaki na tigela, ou uma salada com vários itens do sushi, onde a pessoa monta como quiser.
+O nosso restaurante é especializado em *Poke* 🥗 — é como um sushi/temaki na tigela, ou uma salada com vários itens de sushi, onde a pessoa monta como quiser.
 
-A cozinha é de pratos frios. Uma pessoa cuida do arroz de sushi, salmão e itens mais delicados. Os demais auxiliares ficam com a parte mais simples: picar frutas e legumes, grelhar alguns itens, preparar sucos e molhos.
+A cozinha é de pratos frios. Uma pessoa cuida do arroz de sushi, salmão e itens mais delicados. Os restantes auxiliares ficam com a parte mais simples: picar frutas e legumes, grelhar alguns itens, preparar sumos e molhos.
 
 A tarefa mais importante é *montar os Pokes* junto ao atendimento — precisa de muita atenção e delicadeza para evitar erros e apresentar um prato bonito. Temos manuais que mostram como tudo deve ser feito! 📖`;
 
-  const msg4 = `Nossa vaga é para contratação imediata! Inicialmente marcamos *2 a 3 dias de teste/free* das 10h às 22h para avaliar a adaptação e o desempenho.
+  const msg4 = `A nossa vaga é para contratação imediata! Inicialmente marcamos *2 a 3 dias de teste/free* das 10h às 22h para avaliar a adaptação e o desempenho.
 
 💵 O pagamento é de *R$ 120,00 por dia*, pago no final do expediente. Após o free, iniciamos os trâmites de contratação.
 
 Para o dia do teste, as recomendações são:
 
 👕 Roupa preta ou escura
-👖 Calça e camiseta (sem decote ou regata)
+👖 Calças e t-shirt (sem decote ou alças)
 👟 Calçado fechado
-💇 Cabelo preso
-✨ Sem adereços chamativos (colar, brincos...)
-💄 Sem maquiagem ou maquiagem leve
+💇 Cabelo apanhado
+✨ Sem adereços chamativos (colares, brincos...)
+💄 Sem maquilhagem ou maquilhagem leve
 
-Ficou alguma dúvida? 😊`;
+Ficou com alguma dúvida? 😊`;
 
   ['msg1','msg2','msg3','msg4'].forEach((id, i) => {
     const el_msg = document.getElementById(id);
@@ -2123,8 +2027,8 @@ function buildChecklist() {
   const items = [
     'Nome completo recebido',
     'Idade informada',
-    'Cidade e bairro informados',
-    'Transporte público respondido',
+    'Localidade e bairro informados',
+    'Transportes públicos respondido',
     'Experiência na área confirmada',
     'Última experiência informada',
     'Data de disponibilidade confirmada',
@@ -2137,8 +2041,8 @@ function buildChecklist() {
   const campos = [
     {label:'Nome Completo', id:'resp-nome', type:'text'},
     {label:'Idade', id:'resp-idade', type:'text'},
-    {label:'Cidade / Bairro', id:'resp-local', type:'text'},
-    {label:'Usa Transporte Público?', id:'resp-transp', type:'text'},
+    {label:'Localidade / Bairro', id:'resp-local', type:'text'},
+    {label:'Usa Transportes Públicos?', id:'resp-transp', type:'text'},
     {label:'Experiência na área?', id:'resp-exp', type:'text'},
     {label:'Última experiência / tempo', id:'resp-ult', type:'text'},
     {label:'Disponível a partir de', id:'resp-data', type:'date'},
@@ -2242,20 +2146,20 @@ async function carregarEmpresasMap() {
     const { data, error } = await db.from('empresas').select('razao_social, cnpj, nome_fantasia');
     EMPRESA_MAP = {};
     if (data && !error) data.forEach(e => { EMPRESA_MAP[e.razao_social] = e; });
-  } catch(e) { console.warn('Tabela empresas ainda não criada:', e.message); }
+  } catch(e) { console.warn('Tabela empresas não encontrada:', e.message); }
 }
 
 function preencherCNPJAdv() {
   const empresa = el('a-emp')?.value || '';
   const emp = EMPRESA_MAP[empresa];
-  if (el('a-cnpj')) el('a-cnpj').value = emp?.cnpj || '(não cadastrado)';
+  if (el('a-cnpj')) el('a-cnpj').value = emp?.cnpj || '(não registado)';
 }
 
 async function loadEmpresas() {
   el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6"><span class="spin"></span></td></tr>';
   const { data, error } = await db.from('empresas').select('*').order('razao_social');
-  if (error) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6" style="color:var(--rd)">Execute o SQL no Supabase para criar a tabela empresas.</td></tr>'; return; }
-  if (!data?.length) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6">Nenhuma empresa cadastrada.</td></tr>'; return; }
+  if (error) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6" style="color:var(--rd)">Aguardando tabela empresas no Supabase.</td></tr>'; return; }
+  if (!data?.length) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6">Nenhuma empresa registada.</td></tr>'; return; }
   el('tb-empresas').innerHTML = data.map(e => `
     <tr>
       <td>${x(e.razao_social)}</td>
@@ -2297,7 +2201,7 @@ async function salvarEmpresa() {
     ({ error } = await db.from('empresas').insert(payload));
   }
   if (error) return toast('Erro: ' + error.message, false);
-  toast(EMP_EDIT_ID ? 'Empresa atualizada!' : 'Empresa cadastrada!', true);
+  toast(EMP_EDIT_ID ? 'Empresa atualizada!' : 'Empresa registada!', true);
   EMP_EDIT_ID = null;
   closeMo('mo-empresa');
   ['emp-razao','emp-fantasia','emp-cnpj','emp-ie','emp-end','emp-bairro','emp-cidade','emp-estado','emp-cep','emp-tel','emp-email','emp-resp','emp-ramo','emp-abertura'].forEach(id => { if(el(id)) el(id).value=''; });
@@ -2337,7 +2241,7 @@ async function excluirEmpresa(id, btn) {
 }
 
 // ══════════════════════════════════════════════════════
-// FILTRO DE EMPRESA NA ABA COLABORADORES
+// FILTRO DE EMPRESA NA ABA COLABORADORES E RELATÓRIOS
 // ══════════════════════════════════════════════════════
 async function popularFiltroEmpresas() {
   try {
@@ -2345,7 +2249,6 @@ async function popularFiltroEmpresas() {
   const filtro = el('filtro-empresa');
   if (!filtro || !data) return;
   const unicas = [...new Set(data.map(r => r.empresa).filter(Boolean))].sort();
-  // Também popula o select de relatório
   const relEmp = el('rel-empresa');
   const opts = '<option value="">Todas as empresas</option>' + unicas.map(e => `<option>${x(e)}</option>`).join('');
   filtro.innerHTML = opts;
@@ -2395,7 +2298,6 @@ async function abrirEditarAdv(id) {
   if(el('a-data'))  el('a-data').value  = data.data||'';
   if(el('a-motivo'))el('a-motivo').value= data.motivo||'';
   if(el('a-test'))  el('a-test').value  = data.testemunhas||'';
-  // Preencher CNPJ
   preencherCNPJAdv();
   openMo('mo-adv');
 }
@@ -2432,12 +2334,12 @@ async function salvarAdvertencia() {
 // ══════════════════════════════════════════════════════
 // DOCUMENTOS DA DEMISSÃO
 // ══════════════════════════════════════════════════════
-let DEM_DOCS_PENDENTES = []; // docs a subir junto com a demissão
+let DEM_DOCS_PENDENTES = []; 
 
 function adicionarDocDemissao() {
   const file = el('dem-file').files[0] || el('dem-cam').files[0];
   const tipo  = v('dem-doc-tipo');
-  if (!file) return toast('Selecione um arquivo primeiro.', false);
+  if (!file) return toast('Selecione um ficheiro primeiro.', false);
   DEM_DOCS_PENDENTES.push({ file, tipo });
   const prev = el('dem-docs-preview');
   const div = document.createElement('div');
@@ -2448,29 +2350,33 @@ function adicionarDocDemissao() {
 }
 
 // ══════════════════════════════════════════════════════
-// RELATÓRIOS
+// RELATÓRIOS E HISTÓRICO
 // ══════════════════════════════════════════════════════
+
+function gerarRelatorioIndDireto() {
+  const nome = v('rel-colab');
+  if (!nome) return toast('Selecione um colaborador.', false);
+  const empresa = CMAP[nome]?.empresa || '';
+  relatorioIndividual(nome, empresa);
+}
+
 async function gerarRelatorio() {
   const empresa = v('rel-empresa');
   const cont = el('rel-conteudo');
   cont.innerHTML = '<div style="text-align:center;padding:32px"><span class="spin"></span></div>';
 
-  // Buscar colaboradores
   let qColab = db.from('colaboradores').select('*').eq('status','Ativo').order('empresa').order('nome');
   if (empresa) qColab = qColab.eq('empresa', empresa);
   const { data: colabs } = await qColab;
 
-  // Buscar advertências do período
   let qAdv = db.from('advertencias').select('*').order('empresa').order('colaborador');
   if (empresa) qAdv = qAdv.eq('empresa', empresa);
   const { data: advs } = await qAdv;
 
-  // Buscar faltas
   let qFlt = db.from('faltas').select('*').order('empresa').order('colaborador');
   if (empresa) qFlt = qFlt.eq('empresa', empresa);
   const { data: faltas } = await qFlt;
 
-  // Agrupar por empresa
   const porEmpresa = {};
   (colabs||[]).forEach(c => {
     if (!porEmpresa[c.empresa]) porEmpresa[c.empresa] = { colabs:[], adv:[], flt:[] };
@@ -2491,9 +2397,8 @@ async function gerarRelatorio() {
   for (const [emp, dados] of Object.entries(porEmpresa)) {
     const totalSal = dados.colabs.reduce((s,c) => s + (Number(c.salario)||0), 0);
     totalGeralSal += totalSal;
-    const fmt = n => 'R$ ' + Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2});
+    const fmt = n => 'R$ ' + Number(n).toLocaleString('pt-PT',{minimumFractionDigits:2});
 
-    // Cabeçalho empresa
     html_rel += `
       <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;margin-bottom:20px;">
         <div style="background:var(--or-bg);border-bottom:1px solid var(--bd);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;">
@@ -2501,7 +2406,6 @@ async function gerarRelatorio() {
           <div style="font-size:12.5px;color:var(--tx2)">${dados.colabs.length} colaborador(es) · Folha: <strong style="color:var(--gn)">${fmt(totalSal)}</strong></div>
         </div>`;
 
-    // Tabela salários
     if (dados.colabs.length) {
       html_rel += `
         <div style="padding:14px 18px 6px;font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em">Salários</div>
@@ -2530,7 +2434,6 @@ async function gerarRelatorio() {
         </table>`;
     }
 
-    // Advertências
     if (dados.adv.length) {
       html_rel += `
         <div style="padding:10px 18px 6px;font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-top:1px solid var(--bd)">Advertências (${dados.adv.length})</div>
@@ -2553,7 +2456,6 @@ async function gerarRelatorio() {
         </table>`;
     }
 
-    // Faltas
     if (dados.flt.length) {
       const justif = dados.flt.filter(f => f.justificada === 'Sim').length;
       const injust = dados.flt.length - justif;
@@ -2581,23 +2483,20 @@ async function gerarRelatorio() {
     html_rel += `</div>`;
   }
 
-  // Total geral
   if (Object.keys(porEmpresa).length > 1) {
     html_rel += `
       <div style="background:var(--gn-bg);border:1px solid rgba(16,185,129,.3);border-radius:var(--r);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
         <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:15px">Total Geral da Folha</div>
-        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:22px;color:var(--gn)">R$ ${Number(totalGeralSal).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
+        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:22px;color:var(--gn)">R$ ${Number(totalGeralSal).toLocaleString('pt-PT',{minimumFractionDigits:2})}</div>
       </div>`;
   }
 
-  // Botão de impressão
   const btnPrint = `<div style="text-align:right;margin-bottom:16px;">
     <button class="btn btn-gh" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
   </div>`;
   cont.innerHTML = btnPrint + (html_rel || '<div class="erow">Nenhum dado encontrado.</div>');
 }
 
-// ─── RELATÓRIO INDIVIDUAL POR COLABORADOR ─────────────
 async function relatorioIndividual(nome, empresa) {
   const cont = el('rel-conteudo');
   if (!cont) return;
@@ -2622,16 +2521,15 @@ async function relatorioIndividual(nome, empresa) {
   const colab = adms?.[0];
   if (!colab) { cont.innerHTML = '<div class="erow">Colaborador não encontrado.</div>'; return; }
 
-  const fmt = n => n != null ? 'R$ ' + Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2}) : '—';
+  const fmt = n => n != null ? 'R$ ' + Number(n).toLocaleString('pt-PT',{minimumFractionDigits:2}) : '—';
   const suspensoes = (advs||[]).filter(a => a.tipo === 'Suspensão').length;
 
   let html_ind = `
     <div style="text-align:right;margin-bottom:16px;">
-      <button class="btn btn-gh btn-sm" onclick="goPage('relatorios',document.querySelector('.ni.active'))">← Voltar</button>
+      <button class="btn btn-gh btn-sm" onclick="el('rel-conteudo').innerHTML='';el('rel-colab').value='';">← Voltar</button>
       <button class="btn btn-gh btn-sm" style="margin-left:8px" onclick="window.print()">🖨️ Imprimir</button>
     </div>
 
-    <!-- Cabeçalho do colaborador -->
     <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;margin-bottom:16px;">
       <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
         <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--or),#c2410c);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:20px;color:#fff;flex-shrink:0;">${x(colab.nome[0])}</div>
@@ -2680,20 +2578,8 @@ async function relatorioIndividual(nome, empresa) {
       </div>`;
   }
 
-  cont.innerHTML = '<div style="text-align:right;margin-bottom:16px;"><button class="btn btn-gh btn-sm" onclick="window.print()">🖨️ Imprimir</button></div>' + html_ind;
+  cont.innerHTML = html_ind;
 }
-
-// ══════════════════════════════════════════════════════
-// RENDERER: advertências com botão editar
-// ══════════════════════════════════════════════════════
-
-// ══════════════════════════════════════════════════════
-// RENDERER: demissões com botão docs
-// ══════════════════════════════════════════════════════
-
-// ══════════════════════════════════════════════════════
-// RENDERER: documentos com botão excluir
-// ══════════════════════════════════════════════════════
 
 // ─── CONVIDAR USUÁRIO ─────────────────────────────────
 async function convidarUsuario() {
@@ -2703,10 +2589,8 @@ async function convidarUsuario() {
   const empresa = v('inv-empresa');
   if (!nome || !email) return toast('Preencha nome e e-mail.', false);
   const btn = el('inv-btn');
-  btn.disabled = true; btn.textContent = 'Enviando…';
+  btn.disabled = true; btn.textContent = 'A enviar…';
 
-  // Supabase Admin API — requer service_role key (disponível apenas no backend)
-  // Como estamos no frontend, usamos a função de signUp com confirmação de e-mail
   const { data, error } = await db.auth.admin?.inviteUserByEmail
     ? await db.auth.admin.inviteUserByEmail(email, {
         data: { nome, role, empresa: empresa || null }
@@ -2720,16 +2604,13 @@ async function convidarUsuario() {
   btn.disabled = false; btn.textContent = 'Enviar Convite';
 
   if (error) {
-    // Instrução alternativa para admin via Dashboard
     toast('Use o Supabase Dashboard → Auth → Users → Invite user para convidar.', false);
-    // Mas salvamos o perfil para quando ele acessar
     if (data?.user?.id) {
       await db.from('profiles').upsert({ id: data.user.id, nome, email, role, empresa: empresa||null });
     }
     return;
   }
 
-  // Salvar perfil com papel e empresa já definidos
   if (data?.user?.id) {
     await db.from('profiles').upsert({ id: data.user.id, nome, email, role, empresa: empresa||null });
   }
