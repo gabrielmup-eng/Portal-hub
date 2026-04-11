@@ -1207,12 +1207,31 @@ function rDem(d) {
   return d.map(r => `<tr>
     <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
     <td><span class="bx rd">${x(r.tipo)}</span></td><td>${fd(r.data)}</td>
-    <td><span class="bx ${r.status === 'Aviso Prévio' ? 'yl' : 'rd'}">${x(r.status || 'Concluída')}</span></td>
+    <td><span class="bx ${r.status === 'Aviso Prévio' ? 'yl' : (r.status === 'Cancelada' ? 'gr' : 'rd')}">${x(r.status || 'Concluída')}</span></td>
     <td style="display:flex;gap:5px;">
       <button class="btn btn-gh btn-sm" onclick="abrirDocsDem('${r.id}','${esc(r.colaborador)}')">📁 Docs</button>
       ${r.status === 'Aviso Prévio' ? `<button class="btn btn-gn btn-sm" onclick="concluirDemissao('${r.id}', '${esc(r.colaborador)}')">✔️ Concluir</button>` : ''}
+      ${r.status !== 'Cancelada' ? `<button class="btn btn-bl btn-sm" onclick="reativarColaborador('${r.id}', '${esc(r.colaborador)}')">🔄 Reativar</button>` : ''}
     </td>
   </tr>`).join('');
+}
+
+async function reativarColaborador(idDemissao, colab) {
+  if(!confirm(`Deseja CANCELAR a rescisão e reativar o colaborador(a) ${colab}?`)) return;
+  
+  const btn = event.currentTarget;
+  btn.disabled = true;
+  btn.textContent = '⏳...';
+
+  // Altera o status da demissão para "Cancelada"
+  await db.from('demissoes').update({status: 'Cancelada'}).eq('id', idDemissao);
+  
+  // Retorna o status do colaborador de volta para Ativo
+  await db.from('colaboradores').update({status: 'Ativo'}).eq('nome', colab);
+  
+  toast('Rescisão cancelada e colaborador reativado!', true);
+  loadTb('demissoes','tb-dem', rDem);
+  await reloadCMAP(); // Garante que ele volta a aparecer nas listas do sistema
 }
 
 async function concluirDemissao(id, colab) {
