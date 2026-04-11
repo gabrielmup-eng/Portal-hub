@@ -1241,6 +1241,7 @@ function loadPage(id) {
       popularEntEmpresas();
     },
     documentos:   () => loadTb('documentos','tb-docs', rDocs),
+    operacional:  loadOperacional,	
     empresas:     loadEmpresas,
     relatorios:   () => { popularFiltroEmpresas(); if(el('rel-conteudo')) el('rel-conteudo').innerHTML=''; },
     usuarios:     loadUsuarios,
@@ -2500,13 +2501,18 @@ async function loadOperacional() {
   if (!tb) return;
   tb.innerHTML = '<tr class="erow"><td colspan="7"><span class="spin"></span></td></tr>';
 
-  // Busca os dados da tabela que criamos no SQL anteriormente
+  // Busca os dados na tabela do Supabase
   const { data, error } = await db.from('checklist_execucoes')
     .select('*, checklist_modelos(nome)')
     .order('created_at', { ascending: false });
 
   if (error || !data || data.length === 0) {
-    tb.innerHTML = '<tr class="erow"><td colspan="7">Nenhuma auditoria registrada.</td></tr>';
+    tb.innerHTML = '<tr class="erow"><td colspan="7">Nenhuma auditoria registada. Aguardando dados do Bot...</td></tr>';
+    // Zera os cards se não houver dados
+    el('op-total').textContent = '0';
+    el('op-inconf').textContent = '0';
+    el('op-tempo-medio').textContent = '0 min';
+    el('op-taxa').textContent = '0%';
     return;
   }
 
@@ -2529,18 +2535,16 @@ async function loadOperacional() {
         <td>${x(r.checklist_modelos?.nome || 'Geral')}</td>
         <td>${duracao}</td>
         <td><span class="bx ${r.status === 'Concluído' ? 'gn' : 'rd'}">${x(r.status)}</span></td>
-        <td><button class="btn btn-gh btn-sm" onclick="window.open('${r.fotos_url?.[0]}', '_blank')">🖼️ Ver</button></td>
-        <td><button class="btn btn-gh btn-sm" onclick="alert('${esc(r.inconformidades || 'Tudo OK!')}')">📝 Info</button></td>
+        <td>${r.fotos_url ? `<button class="btn btn-gh btn-sm" onclick="window.open('${r.fotos_url[0]}', '_blank')">🖼️ Ver</button>` : '—'}</td>
+        <td><button class="btn btn-gh btn-sm" onclick="alert('Detalhes: ${esc(r.inconformidades || 'Nenhuma observação.')}')">📝 Info</button></td>
       </tr>`;
   }).join('');
 
-  // Atualiza os Cards de Resumo
   el('op-total').textContent = data.length;
   el('op-inconf').textContent = inconf;
   el('op-tempo-medio').textContent = concluidos > 0 ? Math.round(totalMin / concluidos) + " min" : "0 min";
   el('op-taxa').textContent = data.length > 0 ? Math.round(((data.length - inconf) / data.length) * 100) + "%" : "0%";
 }
-
 function verEvidencias(jsonFotos) {
     const fotos = JSON.parse(jsonFotos);
     // Aqui você pode abrir um modal com um carrossel de imagens
