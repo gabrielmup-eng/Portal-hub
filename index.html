@@ -1187,12 +1187,30 @@ function autoFill(selId, empId, cargoId, salId) {
 
 // ─── NAVEGAÇÃO ────────────────────────────────────────
 function goPage(id, elem) {
+  // Esconde todas as páginas e remove classes active
   document.querySelectorAll('.pg').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
-  el('page-' + id).classList.add('active');
-  if (elem) elem.classList.add('active');
+  
+  // Mostra a página correta
+  const targetPage = el('page-' + id);
+  if (targetPage) targetPage.classList.add('active');
+  
+  // Marca o item do menu como ativo, se ele existir
+  if (elem) {
+    elem.classList.add('active');
+  } else {
+    // Tenta encontrar o link correspondente no menu dinâmico
+    const menuLinks = document.querySelectorAll('.ni');
+    menuLinks.forEach(link => {
+      if (link.getAttribute('onclick')?.includes(`'${id}'`)) {
+        link.classList.add('active');
+      }
+    });
+  }
+  
   loadPage(id);
-  document.getElementById('sb').classList.remove('open');
+  const sb = el('sb');
+  if (sb) sb.classList.remove('open');
 }
 
 // ─── LOADERS ──────────────────────────────────────────
