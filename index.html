@@ -3097,6 +3097,66 @@ function voltarHub() {
 
 // ─── START ────────────────────────────────────────────
 init();
+// ══════════════════════════════════════════════════════
+// MÓDULO OPERACIONAL - LÓGICA DE DADOS
+// ══════════════════════════════════════════════════════
+
+async function loadOperacional() {
+  const tb = el('tb-operacional');
+  if (!tb) return;
+  
+  tb.innerHTML = '<tr class="erow"><td colspan="7"><span class="spin"></span> Carregando auditorias...</td></tr>';
+
+  try {
+    const { data, error } = await db.from('checklist_execucoes')
+      .select('*, checklist_modelos(nome)')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      tb.innerHTML = '<tr class="erow"><td colspan="7">Nenhuma auditoria registada. Aguardando dados do Bot...</td></tr>';
+      el('op-total').textContent = '0';
+      el('op-inconf').textContent = '0';
+      el('op-tempo-medio').textContent = '0 min';
+      el('op-taxa').textContent = '0%';
+      return;
+    }
+
+    let totalMin = 0, inconf = 0, concluidos = 0;
+
+    tb.innerHTML = data.map(r => {
+      let duracao = "—";
+      if (r.inicio_em && r.fim_em) {
+        const diff = (new Date(r.fim_em) - new Date(r.inicio_em)) / 60000;
+        duracao = Math.round(diff) + " min";
+        totalMin += diff;
+        concluidos++;
+      }
+      if (r.status === 'Inconformidade') inconf++;
+
+      return `
+        <tr>
+          <td>${fd(r.created_at)} <small style="display:block;color:var(--tx3)">${new Date(r.created_at).toLocaleTimeString()}</small></td>
+          <td><strong>${x(r.loja)}</strong></td>
+          <td>${x(r.checklist_modelos?.nome || 'Geral')}</td>
+          <td>${duracao}</td>
+          <td><span class="bx ${r.status === 'Concluído' ? 'gn' : 'rd'}">${x(r.status)}</span></td>
+          <td>${r.fotos_url ? `<button class="btn btn-gh btn-sm" onclick="window.open('${r.fotos_url[0]}', '_blank')">🖼️ Ver</button>` : '—'}</td>
+          <td><button class="btn btn-gh btn-sm" onclick="alert('Detalhes: ${esc(r.inconformidades || 'Nenhuma observação.')}')">📝 Info</button></td>
+        </tr>`;
+    }).join('');
+
+    el('op-total').textContent = data.length;
+    el('op-inconf').textContent = inconf;
+    el('op-tempo-medio').textContent = concluidos > 0 ? Math.round(totalMin / concluidos) + " min" : "0 min";
+    el('op-taxa').textContent = data.length > 0 ? Math.round(((data.length - inconf) / data.length) * 100) + "%" : "0%";
+
+  } catch (err) {
+    console.error("Erro no Operacional:", err);
+    tb.innerHTML = `<tr class="erow"><td colspan="7" style="color:var(--or)">Erro ao carregar: ${err.message}</td></tr>`;
+  }
+}
 </script>
 </body>
 </html>
