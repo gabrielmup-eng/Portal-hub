@@ -2991,21 +2991,62 @@ async function convidarUsuario() {
   btn.disabled = false; btn.textContent = 'Enviar Convite';
 
   if (error) {
-    toast('Use o Supabase Dashboard → Auth → Users → Invite user para convidar.', false);
-    if (data?.user?.id) {
-      await db.from('profiles').upsert({ id: data.user.id, nome, email, role, empresa: empresa||null });
-    }
+    toast('Erro no convite: ' + error.message, false);
     return;
   }
-
-  if (data?.user?.id) {
-    await db.from('profiles').upsert({ id: data.user.id, nome, email, role, empresa: empresa||null });
-  }
-
-  toast('Convite enviado para ' + email, true);
+  toast('Convite enviado!', true);
   closeMo('mo-invite');
-  ['inv-nome','inv-email','inv-empresa'].forEach(id => { if(el(id)) el(id).value=''; });
   loadUsuarios();
+}
+
+// ══════════════════════════════════════════════════════
+// NAVEGAÇÃO ENTRE MÓDULOS (HUB)
+// ══════════════════════════════════════════════════════
+
+function entrarModulo(mod) {
+  const nav = el('nav-menu');
+  const hub = el('hub-screen');
+  const app = el('app');
+
+  if (!nav || !hub || !app) return;
+
+  hub.style.display = 'none';
+  app.style.display = 'block';
+
+  if (mod === 'rh') {
+    nav.innerHTML = `
+      <div class="sec-lbl">Visão Geral</div>
+      <div class="ni" onclick="goPage('dashboard',this)">📊 Dashboard</div>
+      <div class="sec-lbl">Pessoas</div>
+      <div class="ni" onclick="goPage('colaboradores',this)">👥 Colaboradores</div>
+      <div class="ni" onclick="goPage('exames',this)">🏥 Exames</div>
+      <div class="ni" onclick="goPage('advertencias',this)">⚠️ Advertências</div>
+      <div class="ni" onclick="goPage('faltas',this)">📅 Faltas</div>
+      <div class="ni" onclick="goPage('demissoes',this)">🚪 Demissões</div>
+      <div class="sec-lbl">Arquivos</div>
+      <div class="ni" onclick="goPage('documentos',this)">📁 Documentos</div>
+      <div class="sec-lbl">Gestão</div>
+      <div class="ni" onclick="goPage('empresas',this)">🏢 Empresas</div>
+      <div class="ni" onclick="goPage('relatorios',this)">📊 Relatórios</div>
+    `;
+    goPage('dashboard', nav.querySelector('.ni'));
+  } 
+  else if (mod === 'ops') {
+    nav.innerHTML = `
+      <div class="sec-lbl">Operação</div>
+      <div class="ni" onclick="goPage('operacional',this)">📊 Dashboard Ops</div>
+      <div class="sec-lbl">Checklists</div>
+      <div class="ni" onclick="toast('Módulo em desenvolvimento', true)">⚙️ Modelos</div>
+    `;
+    goPage('operacional', nav.querySelector('.ni'));
+    if (typeof loadOperacional === 'function') loadOperacional();
+  }
+}
+
+function voltarHub() {
+  el('app').style.display = 'none';
+  el('hub-screen').style.display = 'block';
+  el('nav-menu').innerHTML = ''; // Limpa para a próxima entrada
 }
 
 // ─── START ────────────────────────────────────────────
