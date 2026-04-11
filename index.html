@@ -159,6 +159,24 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 .spin{width:18px;height:18px;border:2px solid var(--bd2);border-top-color:var(--or);border-radius:50%;animation:sp .6s linear infinite;display:inline-block;vertical-align:middle;}
 @keyframes sp{to{transform:rotate(360deg);}}
 
+/* HUB SCREEN */
+#hub-screen { display:none; min-height:100vh; padding:40px 20px; background:var(--bg); }
+.hub-top { max-width:1100px; margin:0 auto 40px; display:flex; justify-content:space-between; align-items:center; }
+.hub-user { display:flex; align-items:center; gap:12px; }
+.hub-head { text-align:center; margin-bottom:50px; }
+.hub-head h1 { font-family:'Outfit',sans-serif; font-weight:800; font-size:42px; letter-spacing:-0.03em; }
+.hub-head h1 span { color:var(--or); }
+.hub-head p { color:var(--tx2); margin-top:8px; font-size:15px; }
+.hub-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:24px; max-width:1100px; margin:0 auto; }
+.hub-card { background:var(--bg2); border:1px solid var(--bd); border-radius:var(--rl); padding:36px 24px; text-align:center; cursor:pointer; transition:all 0.25s; position:relative; overflow:hidden; }
+.hub-card:hover { border-color:var(--or); transform:translateY(-6px); box-shadow:0 20px 40px rgba(0,0,0,0.4); background:var(--bg3); }
+.hub-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--bd); transition:all 0.3s; }
+.hub-card:hover::before { background:var(--or); }
+.hub-ic { font-size:48px; margin-bottom:20px; display:inline-block; transition:transform 0.3s; }
+.hub-card:hover .hub-ic { transform:scale(1.1); }
+.hub-title { font-family:'Outfit',sans-serif; font-size:22px; font-weight:700; color:var(--tx); margin-bottom:10px; }
+.hub-desc { font-size:13.5px; color:var(--tx2); line-height:1.6; }
+
 /* MOBILE */
 .mob-btn{display:none;position:fixed;top:13px;left:13px;z-index:60;background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:17px;color:var(--tx);}
 @media(max-width:800px){
@@ -187,6 +205,52 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
+<div id="hub-screen">
+  <div class="hub-top">
+    <div class="hub-user">
+      <div class="av" id="hub-av">H</div>
+      <div>
+        <div style="font-weight:600;font-size:14px;color:var(--tx)" id="hub-un">Usuário</div>
+        <div style="font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:0.05em" id="hub-ur">Role</div>
+      </div>
+    </div>
+    <button class="btn btn-gh" onclick="doLogout()">Sair</button>
+  </div>
+
+  <div class="hub-head">
+    <h1>Hub<span>On</span></h1>
+    <p>Selecione o módulo que deseja aceder</p>
+  </div>
+
+  <div class="hub-grid">
+    <div class="hub-card" onclick="entrarModulo('rh')">
+      <div class="hub-ic">👥</div>
+      <div class="hub-title">Departamento Pessoal</div>
+      <div class="hub-desc">Gestão de colaboradores, faltas, advertências, demissões, relatórios e admissões.</div>
+    </div>
+    <div class="hub-card" onclick="entrarModulo('fin')">
+      <div class="hub-ic">💰</div>
+      <div class="hub-title">Financeiro</div>
+      <div class="hub-desc">Faturamento, fluxo de caixa, contas a pagar, DRE e conciliação bancária.</div>
+    </div>
+    <div class="hub-card" onclick="entrarModulo('ops')">
+      <div class="hub-ic">📋</div>
+      <div class="hub-title">Operacional</div>
+      <div class="hub-desc">Checklists de loja, auditorias de qualidade, manutenção e processos diários.</div>
+    </div>
+    <div class="hub-card" onclick="entrarModulo('mkt')">
+      <div class="hub-ic">🚀</div>
+      <div class="hub-title">Marketing</div>
+      <div class="hub-desc">Campanhas, gestão de redes sociais, materiais gráficos e promoções.</div>
+    </div>
+    <div class="hub-card" onclick="entrarModulo('trein')">
+      <div class="hub-ic">🎓</div>
+      <div class="hub-title">Treinamentos</div>
+      <div class="hub-desc">Integração de novos colaboradores, manuais de operação e cursos em vídeo.</div>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 <button class="mob-btn" onclick="document.getElementById('sb').classList.toggle('open')">☰</button>
 
@@ -194,7 +258,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 <div class="shell">
 
 <aside class="sb" id="sb">
-  <div class="sb-head"><div class="logo">Hub<span>On</span></div></div>
+  <div class="sb-head"><div class="logo" style="cursor:pointer;" onclick="voltarHub()" title="Voltar ao Hub">Hub<span>On</span></div></div>
   <nav>
     <div class="sec-lbl">Visão Geral</div>
     <div class="ni active" onclick="goPage('dashboard',this)">📊 Dashboard</div>
@@ -965,19 +1029,29 @@ async function onLogin(user) {
   const { data: p } = await db.from('profiles').select('*').eq('id', user.id).single();
   ROLE = p?.role || 'gerente';
   const nome = p?.nome || user.email.split('@')[0];
-  el('ua').textContent = nome[0].toUpperCase();
+  
+  // Atualiza avatar no Sidebar e no Hub
+  const inits = nome[0].toUpperCase();
+  el('ua').textContent = inits;
+  el('hub-av').textContent = inits;
+  
   el('un').textContent = nome;
+  el('hub-un').textContent = nome;
+  
   el('ur').textContent = ROLE.toUpperCase();
+  el('hub-ur').textContent = ROLE.toUpperCase();
+
   if (ROLE === 'admin' || ROLE === 'socio') {
     document.querySelectorAll('.admin-only').forEach(e => e.style.display = '');
   }
   await reloadCMAP();
   await carregarEmpresasMap();
   await popularFiltroEmpresas();
+  
+  // NAVEGAÇÃO: Esconde login, mostra o HUB, esconde o APP (RH)
   document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  el('dash-date').textContent = new Date().toLocaleDateString('pt-PT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  loadDash();
+  document.getElementById('hub-screen').style.display = 'block';
+  document.getElementById('app').style.display = 'none';
 }
 
 async function doLogin() {
@@ -1009,6 +1083,26 @@ async function doLogout() { await db.auth.signOut(); }
 
 el('li-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 el('li-email').addEventListener('keydown', e => { if (e.key === 'Enter') el('li-pass').focus(); });
+
+function entrarModulo(mod) {
+  if (mod === 'rh') {
+    // Entra no Departamento Pessoal
+    document.getElementById('hub-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    
+    // Inicia os dados do dashboard de RH
+    el('dash-date').textContent = new Date().toLocaleDateString('pt-PT', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    goPage('dashboard', document.querySelector('.ni')); // Garante que a primeira aba ativa é o Dashboard
+  } else {
+    // Bloqueia módulos não desenvolvidos
+    toast('Este módulo ainda está em desenvolvimento! 🚧', false);
+  }
+}
+
+function voltarHub() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('hub-screen').style.display = 'block';
+}
 
 // ─── COLAB MAP ────────────────────────────────────────
 async function reloadCMAP() {
