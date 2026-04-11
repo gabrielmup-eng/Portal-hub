@@ -259,7 +259,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 
 <aside class="sb" id="sb">
   <div class="sb-head"><div class="logo" style="cursor:pointer;" onclick="voltarHub()" title="Voltar ao Hub">Hub<span>On</span></div></div>
-<nav id="nav-menu"> </nav> 
+<nav id="nav-menu" style="display: block !important; min-height: 10px;"></nav> 
   <div class="sb-foot">
     <div class="av" id="ua">H</div>
     <div class="ui"><div class="un" id="un">—</div><div class="ur" id="ur">—</div></div>
@@ -1094,53 +1094,49 @@ el('li-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(
 el('li-email').addEventListener('keydown', e => { if (e.key === 'Enter') el('li-pass').focus(); });
 
 function entrarModulo(mod) {
-  const nav = document.getElementById('nav-menu');
   const hub = document.getElementById('hub-screen');
   const app = document.getElementById('app');
+  const nav = document.getElementById('nav-menu');
 
-  if (!nav) {
-    console.error("Erro: Elemento nav-menu não encontrado!");
-    return;
-  }
+  if (!hub || !app || !nav) return;
 
-  // 1. Limpa e reconstrói o HTML do menu lateral
-  if (mod === 'rh') {
-    nav.innerHTML = `
-      <div class="sec-lbl">Visão Geral</div>
-      <div class="ni" onclick="goPage('dashboard',this)">📊 Dashboard</div>
-      <div class="sec-lbl">Pessoas</div>
-      <div class="ni" onclick="goPage('colaboradores',this)">👥 Colaboradores</div>
-      <div class="ni" onclick="goPage('exames',this)">🏥 Exames</div>
-      <div class="ni" onclick="goPage('advertencias',this)">⚠️ Advertências</div>
-      <div class="ni" onclick="goPage('faltas',this)">📅 Faltas</div>
-      <div class="ni" onclick="goPage('demissoes',this)">🚪 Demissões</div>
-      <div class="sec-lbl">Arquivos</div>
-      <div class="ni" onclick="goPage('documentos',this)">📁 Documentos</div>
-      <div class="sec-lbl">Gestão</div>
-      <div class="ni" onclick="goPage('empresas',this)">🏢 Empresas</div>
-      <div class="ni" onclick="goPage('relatorios',this)">📊 Relatórios</div>
-    `;
-    hub.style.display = 'none';
-    app.style.display = 'block';
-    // Força a navegação para o Dashboard de RH
-    goPage('dashboard', nav.querySelector('.ni'));
-  } 
-  else if (mod === 'ops') {
-    nav.innerHTML = `
-      <div class="sec-lbl">Operação</div>
-      <div class="ni" onclick="goPage('operacional',this)">📊 Dashboard Ops</div>
-      <div class="sec-lbl">Checklists</div>
-      <div class="ni" onclick="toast('Em breve: Configurar novos Checklists', true)">⚙️ Modelos</div>
-      <div class="ni" onclick="toast('Em breve: Histórico de Fotos', true)">🖼️ Galeria</div>
-    `;
-    hub.style.display = 'none';
-    app.style.display = 'block';
-    // Força a navegação para o Dashboard Operacional
-    goPage('operacional', nav.querySelector('.ni'));
-    loadOperacional();
-  }
+  // Esconde o Hub e mostra o App
+  hub.style.display = 'none';
+  app.style.display = 'block';
+
+  // Pequeno atraso para garantir que o DOM está pronto
+  setTimeout(() => {
+    if (mod === 'rh') {
+      nav.innerHTML = `
+        <div class="sec-lbl">Visão Geral</div>
+        <div class="ni" onclick="goPage('dashboard',this)">📊 Dashboard</div>
+        <div class="sec-lbl">Pessoas</div>
+        <div class="ni" onclick="goPage('colaboradores',this)">👥 Colaboradores</div>
+        <div class="ni" onclick="goPage('exames',this)">🏥 Exames</div>
+        <div class="ni" onclick="goPage('advertencias',this)">⚠️ Advertências</div>
+        <div class="ni" onclick="goPage('faltas',this)">📅 Faltas</div>
+        <div class="ni" onclick="goPage('demissoes',this)">🚪 Demissões</div>
+        <div class="sec-lbl">Arquivos</div>
+        <div class="ni" onclick="goPage('documentos',this)">📁 Documentos</div>
+        <div class="sec-lbl">Gestão</div>
+        <div class="ni" onclick="goPage('empresas',this)">🏢 Empresas</div>
+        <div class="ni" onclick="goPage('relatorios',this)">📊 Relatórios</div>
+      `;
+      goPage('dashboard', nav.querySelector('.ni'));
+    } 
+    else if (mod === 'ops') {
+      nav.innerHTML = `
+        <div class="sec-lbl">Operação</div>
+        <div class="ni" onclick="goPage('operacional',this)">📊 Dashboard Ops</div>
+        <div class="sec-lbl">Checklists</div>
+        <div class="ni" onclick="toast('Em breve: Configurar novos Checklists', true)">⚙️ Modelos</div>
+        <div class="ni" onclick="toast('Em breve: Histórico de Fotos', true)">🖼️ Galeria</div>
+      `;
+      goPage('operacional', nav.querySelector('.ni'));
+      if (typeof loadOperacional === 'function') loadOperacional();
+    }
+  }, 50);
 }
-
 function entrarModulo(mod) {
   if (mod === 'rh') {
     document.getElementById('hub-screen').style.display = 'none';
