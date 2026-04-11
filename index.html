@@ -1095,40 +1095,53 @@ el('li-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(
 el('li-email').addEventListener('keydown', e => { if (e.key === 'Enter') el('li-pass').focus(); });
 
 function entrarModulo(mod) {
-  const nav = el('nav-menu');
-  
+  const nav = document.getElementById('nav-menu');
+  const hub = document.getElementById('hub-screen');
+  const app = document.getElementById('app');
+
+  if (!nav) {
+    console.error("Erro: Elemento nav-menu não encontrado!");
+    return;
+  }
+
+  // 1. Limpa e reconstrói o HTML do menu lateral
   if (mod === 'rh') {
-    // Menu específico para Departamento Pessoal
     nav.innerHTML = `
       <div class="sec-lbl">Visão Geral</div>
-      <div class="ni active" onclick="goPage('dashboard',this)">📊 Dashboard</div>
+      <div class="ni" onclick="goPage('dashboard',this)">📊 Dashboard</div>
       <div class="sec-lbl">Pessoas</div>
       <div class="ni" onclick="goPage('colaboradores',this)">👥 Colaboradores</div>
       <div class="ni" onclick="goPage('exames',this)">🏥 Exames</div>
       <div class="ni" onclick="goPage('advertencias',this)">⚠️ Advertências</div>
       <div class="ni" onclick="goPage('faltas',this)">📅 Faltas</div>
       <div class="ni" onclick="goPage('demissoes',this)">🚪 Demissões</div>
-      <div class="sec-lbl">Contratação</div>
-      <div class="ni" onclick="goPage('entrevistas',this)">🎙️ Entrevistas</div>
+      <div class="sec-lbl">Arquivos</div>
+      <div class="ni" onclick="goPage('documentos',this)">📁 Documentos</div>
+      <div class="sec-lbl">Gestão</div>
+      <div class="ni" onclick="goPage('empresas',this)">🏢 Empresas</div>
+      <div class="ni" onclick="goPage('relatorios',this)">📊 Relatórios</div>
     `;
-    document.getElementById('hub-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
+    hub.style.display = 'none';
+    app.style.display = 'block';
+    // Força a navegação para o Dashboard de RH
     goPage('dashboard', nav.querySelector('.ni'));
   } 
   else if (mod === 'ops') {
-    // Menu específico para Operacional
     nav.innerHTML = `
-      <div class="sec-lbl">Controle Operacional</div>
-      <div class="ni active" onclick="goPage('operacional',this)">📋 Dashboard Ops</div>
-      <div class="ni" onclick="toast('Em breve: Configurar Checklists', true)">⚙️ Modelos</div>
-      <div class="ni" onclick="toast('Em breve: Relatórios Avançados', true)">📈 Analítico</div>
+      <div class="sec-lbl">Operação</div>
+      <div class="ni" onclick="goPage('operacional',this)">📊 Dashboard Ops</div>
+      <div class="sec-lbl">Checklists</div>
+      <div class="ni" onclick="toast('Em breve: Configurar novos Checklists', true)">⚙️ Modelos</div>
+      <div class="ni" onclick="toast('Em breve: Histórico de Fotos', true)">🖼️ Galeria</div>
     `;
-    document.getElementById('hub-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
+    hub.style.display = 'none';
+    app.style.display = 'block';
+    // Força a navegação para o Dashboard Operacional
     goPage('operacional', nav.querySelector('.ni'));
     loadOperacional();
   }
 }
+
 function entrarModulo(mod) {
   if (mod === 'rh') {
     document.getElementById('hub-screen').style.display = 'none';
