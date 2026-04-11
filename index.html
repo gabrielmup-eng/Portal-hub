@@ -258,8 +258,12 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 <div class="shell">
 
 <aside class="sb" id="sb">
-  <div class="sb-head"><div class="logo" style="cursor:pointer;" onclick="voltarHub()" title="Voltar ao Hub">Hub<span>On</span></div></div>
-<nav id="nav-menu" style="display: block !important; min-height: 10px;"></nav> 
+ function voltarHub() {
+  el('app').style.display = 'none';
+  el('hub-screen').style.display = 'block';
+}
+<nav id="nav-menu">
+  </nav> 
   <div class="sb-foot">
     <div class="av" id="ua">H</div>
     <div class="ui"><div class="un" id="un">—</div><div class="ur" id="ur">—</div></div>
@@ -1058,9 +1062,9 @@ async function onLogin(user) {
   await popularFiltroEmpresas();
   
   // NAVEGAÇÃO: Esconde login, mostra o HUB, esconde o APP (RH)
-  document.getElementById('login-screen').style.display = 'none';
-document.getElementById('hub-screen').style.display = 'block';
-document.getElementById('app').style.display = 'none';
+document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('hub-screen').style.display = 'block';
+  document.getElementById('app').style.display = 'none';
 }
 
 async function doLogin() {
@@ -1094,17 +1098,15 @@ el('li-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(
 el('li-email').addEventListener('keydown', e => { if (e.key === 'Enter') el('li-pass').focus(); });
 
 function entrarModulo(mod) {
-  const hub = el('hub-screen');
-  const app = el('app');
-  const nav = el('nav-menu');
+  const nav = document.getElementById('nav-menu');
+  const hub = document.getElementById('hub-screen');
+  const app = document.getElementById('app');
 
-  if (!hub || !app || !nav) return;
+  if (!nav || !hub || !app) return;
 
-  // Mostra o container do App e esconde o Hub
   hub.style.display = 'none';
   app.style.display = 'block';
 
-  // Reconstrói a Sidebar dinamicamente
   if (mod === 'rh') {
     nav.innerHTML = `
       <div class="sec-lbl">Visão Geral</div>
@@ -1121,6 +1123,7 @@ function entrarModulo(mod) {
       <div class="ni" onclick="goPage('empresas',this)">🏢 Empresas</div>
       <div class="ni" onclick="goPage('relatorios',this)">📊 Relatórios</div>
     `;
+    // Força a entrada no Dashboard e marca como ativo
     goPage('dashboard', nav.querySelector('.ni'));
   } 
   else if (mod === 'ops') {
@@ -1129,16 +1132,10 @@ function entrarModulo(mod) {
       <div class="ni" onclick="goPage('operacional',this)">📊 Dashboard Ops</div>
       <div class="sec-lbl">Checklists</div>
       <div class="ni" onclick="toast('Em breve: Configurar novos Checklists', true)">⚙️ Modelos</div>
-      <div class="ni" onclick="toast('Em breve: Histórico de Fotos', true)">🖼️ Galeria</div>
     `;
     goPage('operacional', nav.querySelector('.ni'));
     if (typeof loadOperacional === 'function') loadOperacional();
   }
-}
-
-function voltarHub() {
-  el('app').style.display = 'none';
-  el('hub-screen').style.display = 'block';
 }
 
 function entrarModulo(mod) {
