@@ -147,6 +147,14 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 #toast.ok{border-left:3px solid var(--gn);}
 #toast.er{border-left:3px solid var(--rd);}
 
+.btn-tab {
+  padding: 7px 16px; border-radius: 6px; cursor: pointer; font-size: 13px;
+  font-weight: 600; color: var(--tx2); background: none; border: none;
+  font-family: 'Outfit', sans-serif; transition: all .12s;
+}
+.btn-tab.active { background: var(--bg2); color: var(--tx); box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+.btn-tab:hover { color: var(--tx); }
+
 /* SPINNER */
 .spin{width:18px;height:18px;border:2px solid var(--bd2);border-top-color:var(--or);border-radius:50%;animation:sp .6s linear infinite;display:inline-block;vertical-align:middle;}
 @keyframes sp{to{transform:rotate(360deg);}}
@@ -308,12 +316,155 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 
 <!-- ENTREVISTAS -->
 <div id="page-entrevistas" class="pg">
-  <div class="tb"><div><div class="pt">Entrevistas</div></div>
-  <button class="btn btn-or" onclick="openMo('mo-ent')">＋ Avaliar</button></div>
-  <div class="tc"><table>
-    <thead><tr><th>Candidato</th><th>Vaga</th><th>Nota</th><th>Recomendação</th></tr></thead>
-    <tbody id="tb-ent"><tr class="erow"><td colspan="4"><span class="spin"></span></td></tr></tbody>
-  </table></div>
+  <div class="tb">
+    <div><div class="pt">Entrevistas</div><div class="ps">Triagem e seleção de candidatos</div></div>
+    <button class="btn btn-or" onclick="openMo('mo-ent')">＋ Nova Entrevista</button>
+  </div>
+
+  <!-- TABS -->
+  <div style="display:flex;gap:4px;background:var(--bg3);padding:4px;border-radius:8px;margin-bottom:20px;width:fit-content;">
+    <button class="btn-tab active" id="tab-triagem" onclick="showEntTab('triagem',this)">📋 Script de Triagem</button>
+    <button class="btn-tab" id="tab-candidatos" onclick="showEntTab('candidatos',this)">👥 Candidatos</button>
+    <button class="btn-tab" id="tab-vaga" onclick="showEntTab('vaga',this)">📌 Informações da Vaga</button>
+  </div>
+
+  <!-- TAB: SCRIPT DE TRIAGEM -->
+  <div id="ent-tab-triagem">
+
+    <!-- SELETOR CANDIDATO -->
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:16px;">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">👤 Candidato em Triagem</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+        <div class="fi" style="flex:1;min-width:200px;">
+          <label>Nome do Candidato</label>
+          <input id="triagem-nome" placeholder="Ex: João da Silva" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13.5px;outline:none;">
+        </div>
+        <div class="fi" style="flex:1;min-width:180px;">
+          <label>Vaga pretendida</label>
+          <select id="triagem-vaga" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13.5px;outline:none;">
+            <option value="Atendente">Atendente I</option>
+            <option value="Auxiliar de Cozinha">Auxiliar de Cozinha I</option>
+          </select>
+        </div>
+        <div class="fi" style="flex:1;min-width:180px;">
+          <label>Empresa</label>
+          <select id="triagem-empresa" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13.5px;outline:none;"></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENSAGEM 1: ABORDAGEM INICIAL -->
+    <div class="script-bloco" style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--or);">💬 MENSAGEM 1 — Abordagem Inicial</div>
+        <button class="btn btn-gh btn-sm" onclick="copiarScript('msg1')">📋 Copiar</button>
+      </div>
+      <div id="msg1" class="script-txt" style="background:var(--bg3);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;"></div>
+    </div>
+
+    <!-- MENSAGEM 2: PERGUNTAS -->
+    <div class="script-bloco" style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--or);">💬 MENSAGEM 2 — Perguntas de Triagem</div>
+        <button class="btn btn-gh btn-sm" onclick="copiarScript('msg2')">📋 Copiar</button>
+      </div>
+      <div id="msg2" class="script-txt" style="background:var(--bg3);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;"></div>
+    </div>
+
+    <!-- MENSAGEM 3: INFORMAÇÕES DA VAGA -->
+    <div class="script-bloco" style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--or);">💬 MENSAGEM 3 — Apresentação da Vaga</div>
+        <button class="btn btn-gh btn-sm" onclick="copiarScript('msg3')">📋 Copiar</button>
+      </div>
+      <div id="msg3" class="script-txt" style="background:var(--bg3);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;"></div>
+    </div>
+
+    <!-- MENSAGEM 4: ORIENTAÇÕES PARA O DIA -->
+    <div class="script-bloco" style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--or);">💬 MENSAGEM 4 — Orientações para o Dia de Teste</div>
+        <button class="btn btn-gh btn-sm" onclick="copiarScript('msg4')">📋 Copiar</button>
+      </div>
+      <div id="msg4" class="script-txt" style="background:var(--bg3);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;"></div>
+    </div>
+
+    <!-- CHECKLIST DE RESPOSTA -->
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:16px;">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;margin-bottom:14px;">✅ Checklist — Respostas Recebidas</div>
+      <div id="triagem-checklist" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-or" onclick="salvarTriagem()">💾 Salvar Triagem</button>
+        <button class="btn btn-gh" onclick="limparTriagem()">🔄 Nova Triagem</button>
+      </div>
+    </div>
+
+    <!-- RESPOSTAS DO CANDIDATO -->
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;margin-bottom:14px;">📝 Anotar Respostas do Candidato</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="campos-respostas"></div>
+    </div>
+  </div>
+
+  <!-- TAB: CANDIDATOS -->
+  <div id="ent-tab-candidatos" style="display:none;">
+    <div class="tc"><table>
+      <thead><tr><th>Candidato</th><th>Vaga</th><th>Empresa</th><th>Data</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody id="tb-ent"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
+    </table></div>
+  </div>
+
+  <!-- TAB: INFORMAÇÕES DA VAGA -->
+  <div id="ent-tab-vaga" style="display:none;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+      <!-- Card vaga -->
+      <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:16px;color:var(--or);margin-bottom:16px;">🍜 AUXILIAR DE COZINHA I & ATENDENTE I</div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--tx2);">
+          <div style="display:flex;gap:8px;"><span style="color:var(--or);font-weight:600;min-width:100px;">Horário</span><span>10h às 22h (podendo ir até 23h)</span></div>
+          <div style="display:flex;gap:8px;"><span style="color:var(--or);font-weight:600;min-width:100px;">Escala</span><span>12h × 36h (trabalha um dia, folga outro)</span></div>
+          <div style="display:flex;gap:8px;"><span style="color:var(--or);font-weight:600;min-width:100px;">Salário</span><span style="color:var(--gn);font-weight:600;">R$ 1.830,00</span></div>
+          <div style="border-top:1px solid var(--bd);padding-top:10px;margin-top:4px;">
+            <div style="font-weight:600;color:var(--tx);margin-bottom:6px;">Benefícios</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              ${['Assiduidade','Sacolão','Folga Aniversário','Auxílio Transporte','Refeição no Local'].map(b=>`<span style="padding:3px 10px;background:var(--gn-bg);color:var(--gn);border-radius:20px;font-size:11.5px;font-weight:600;">${b}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card empresa / produto -->
+      <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:16px;color:var(--or);margin-bottom:16px;">🥗 Sobre o Restaurante</div>
+        <div style="font-size:13px;color:var(--tx2);line-height:1.8;">
+          Nosso restaurante é especializado em <strong style="color:var(--tx)">Poke</strong> — como um sushi/temaki na tigela, ou uma salada montada com itens do sushi, onde cada cliente monta do seu jeito.<br><br>
+          A cozinha é de <strong style="color:var(--tx)">pratos frios</strong>. Uma pessoa cuida do arroz de sushi, salmão e itens delicados. Os demais auxiliares ficam com picar frutas/legumes, grelhar itens, preparar sucos e molhos.<br><br>
+          A tarefa mais importante é <strong style="color:var(--tx)">montar os Pokes</strong> no atendimento — exige atenção e delicadeza para evitar erros e garantir um prato bonito. Temos manuais que mostram como tudo deve ser feito.
+        </div>
+      </div>
+
+      <!-- Processo seletivo -->
+      <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;grid-column:1/-1;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:14px;color:var(--or);margin-bottom:14px;">📅 Processo Seletivo</div>
+        <div style="font-size:13px;color:var(--tx2);margin-bottom:14px;">
+          Contratação imediata. Inicialmente marcamos <strong style="color:var(--tx)">2 a 3 dias de teste/free das 10h às 22h</strong> para avaliar adaptação e desempenho.<br>
+          Pagamento: <strong style="color:var(--gn)">R$ 120,00/dia</strong>, pago no final do expediente. Após o free, iniciamos os trâmites de contratação.
+        </div>
+        <div style="font-weight:600;color:var(--tx);margin-bottom:10px;">Recomendações para o dia:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          ${[
+            '👕 Roupa preta ou escura',
+            '👖 Calça e camiseta (sem decote ou regata)',
+            '👟 Calçado fechado',
+            '💇 Cabelo preso',
+            '✨ Sem adereços chamativos (colar, brincos...)',
+            '💄 Sem maquiagem ou maquiagem leve'
+          ].map(r=>`<div style="display:flex;gap:8px;align-items:center;padding:8px 12px;background:var(--bg3);border-radius:8px;font-size:13px;color:var(--tx2);">${r}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- DOCUMENTOS -->
@@ -360,8 +511,10 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 
 <!-- USUÁRIOS -->
 <div id="page-usuarios" class="pg">
-  <div class="tb"><div><div class="pt">Usuários</div></div></div>
-  <div id="lista-usuarios"></div>
+  <div class="tb">
+    <div><div class="pt">Usuários</div><div class="ps">Controle de acesso e permissões</div></div>
+  </div>
+  <div id="lista-usuarios"><div style="text-align:center;padding:32px"><span class="spin"></span></div></div>
 </div>
 
 </main>
@@ -586,20 +739,53 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- ENTREVISTA -->
+<!-- ENTREVISTA / CANDIDATO -->
 <div class="mo" id="mo-ent">
-  <div class="md">
-    <div class="md-h"><h3>Avaliação de Candidato</h3><button class="xbtn" onclick="closeMo('mo-ent')">✕</button></div>
+  <div class="md" style="width:640px">
+    <div class="md-h"><h3>Registrar Candidato</h3><button class="xbtn" onclick="closeMo('mo-ent')">✕</button></div>
     <div class="md-b">
       <div class="fg2">
-        <div class="fi full"><label>Candidato *</label><input id="en-nome" placeholder="Nome completo"></div>
-        <div class="fi"><label>Vaga</label><input id="en-vaga" placeholder="Ex: Auxiliar de Cozinha"></div>
-        <div class="fi"><label>Nota</label><select id="en-nota"><option value="">—</option><option value="5">⭐⭐⭐⭐⭐ Excelente</option><option value="4">⭐⭐⭐⭐ Bom</option><option value="3">⭐⭐⭐ Regular</option><option value="2">⭐⭐ Fraco</option><option value="1">⭐ Não recomendado</option></select></div>
-        <div class="fi"><label>Recomendação</label><select id="en-rec"><option>✅ Contratar</option><option>⏳ 2ª etapa</option><option>🗂 Banco de talentos</option><option>❌ Não contratar</option></select></div>
-        <div class="fi full"><label>Observações</label><textarea id="en-obs"></textarea></div>
+        <div class="fi full"><label>Nome Completo *</label><input id="en-nome" placeholder="Nome completo do candidato"></div>
+        <div class="fi"><label>Vaga *</label>
+          <select id="en-vaga">
+            <option value="Atendente I">Atendente I</option>
+            <option value="Auxiliar de Cozinha I">Auxiliar de Cozinha I</option>
+          </select>
+        </div>
+        <div class="fi"><label>Empresa</label><select id="en-empresa" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13.5px;outline:none;"></select></div>
+        <div class="fi"><label>Idade</label><input id="en-idade" type="number" placeholder="Ex: 24"></div>
+        <div class="fi"><label>Cidade / Bairro</label><input id="en-local" placeholder="Ex: Santa Rosa / Centro"></div>
+        <div class="fi"><label>Transporte Público?</label><select id="en-transp"><option value="">—</option><option>Sim</option><option>Não</option></select></div>
+        <div class="fi"><label>Tem experiência na área?</label><select id="en-exp"><option value="">—</option><option>Sim</option><option>Não</option></select></div>
+        <div class="fi full"><label>Última Experiência / Tempo</label><input id="en-ult-exp" placeholder="Ex: Pizzaria 3 Irmãos — 8 meses"></div>
+        <div class="fi"><label>Disponível a partir de</label><input type="date" id="en-disponivel"></div>
+        <div class="fi"><label>Data do Teste Marcado</label><input type="date" id="en-teste"></div>
+        <div class="fi"><label>Status</label>
+          <select id="en-status">
+            <option>📞 Em triagem</option>
+            <option>📅 Teste agendado</option>
+            <option>✅ Aprovado</option>
+            <option>❌ Reprovado</option>
+            <option>🗂 Banco de talentos</option>
+          </select>
+        </div>
+        <div class="fi"><label>Avaliação</label>
+          <select id="en-nota">
+            <option value="">—</option>
+            <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+            <option value="4">⭐⭐⭐⭐ Bom</option>
+            <option value="3">⭐⭐⭐ Regular</option>
+            <option value="2">⭐⭐ Fraco</option>
+            <option value="1">⭐ Não recomendado</option>
+          </select>
+        </div>
+        <div class="fi full"><label>Observações</label><textarea id="en-obs" placeholder="Impressões, pontos fortes, comportamento..."></textarea></div>
       </div>
     </div>
-    <div class="md-f"><button class="btn btn-gh" onclick="closeMo('mo-ent')">Cancelar</button><button class="btn btn-or" onclick="saveReg('entrevista')">Salvar</button></div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-ent')">Cancelar</button>
+      <button class="btn btn-or" onclick="saveEntrevista()">Salvar Candidato</button>
+    </div>
   </div>
 </div>
 
@@ -698,7 +884,11 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
         <div class="fi"><label>Nome Fantasia</label><input id="emp-fantasia" placeholder="Ex: FNP Santa Rosa"></div>
         <div class="fi"><label>CNPJ *</label><input id="emp-cnpj" placeholder="00.000.000/0001-00"></div>
         <div class="fi"><label>Inscrição Estadual</label><input id="emp-ie" placeholder="Ex: 000.000.000"></div>
-        <div class="fi full"><label>Endereço Completo</label><input id="emp-end" placeholder="Rua, número, bairro, cidade, UF, CEP"></div>
+        <div class="fi full"><label>Logradouro (Rua/Av)</label><input id="emp-end" placeholder="Ex: Rua das Flores, 123"></div>
+        <div class="fi"><label>Bairro</label><input id="emp-bairro" placeholder="Ex: Centro"></div>
+        <div class="fi"><label>Cidade</label><input id="emp-cidade" placeholder="Ex: Santa Rosa"></div>
+        <div class="fi"><label>Estado (UF)</label><input id="emp-estado" placeholder="Ex: RS" maxlength="2" style="text-transform:uppercase"></div>
+        <div class="fi"><label>CEP</label><input id="emp-cep" placeholder="00000-000"></div>
         <div class="fi"><label>Telefone</label><input id="emp-tel" placeholder="(00) 00000-0000"></div>
         <div class="fi"><label>E-mail</label><input id="emp-email" placeholder="contato@empresa.com.br"></div>
         <div class="fi"><label>Responsável Legal</label><input id="emp-resp" placeholder="Nome do sócio/responsável"></div>
@@ -709,6 +899,36 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
     <div class="md-f">
       <button class="btn btn-gh" onclick="closeMo('mo-empresa');EMP_EDIT_ID=null;">Cancelar</button>
       <button class="btn btn-or" onclick="salvarEmpresa()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONVIDAR USUÁRIO -->
+<div class="mo" id="mo-invite">
+  <div class="md" style="width:480px">
+    <div class="md-h"><h3>✉️ Convidar Novo Usuário</h3><button class="xbtn" onclick="closeMo('mo-invite')">✕</button></div>
+    <div class="md-b">
+      <div style="background:var(--bl-bg);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:12px 14px;font-size:12.5px;color:var(--bl);margin-bottom:16px;">
+        💡 O usuário receberá um e-mail com link para criar a senha e acessar o sistema.
+      </div>
+      <div class="fg2">
+        <div class="fi full"><label>Nome *</label><input id="inv-nome" placeholder="Nome completo"></div>
+        <div class="fi full"><label>E-mail *</label><input id="inv-email" type="email" placeholder="email@exemplo.com"></div>
+        <div class="fi"><label>Papel</label>
+          <select id="inv-role">
+            <option value="gerente">👤 Gerente — Restrito à empresa</option>
+            <option value="socio">🤝 Sócio — Ver e criar</option>
+            <option value="admin">👑 Admin — Acesso total</option>
+          </select>
+        </div>
+        <div class="fi"><label>Empresa vinculada</label>
+          <input id="inv-empresa" placeholder="Obrigatório para gerentes">
+        </div>
+      </div>
+    </div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-invite')">Cancelar</button>
+      <button class="btn btn-or" id="inv-btn" onclick="convidarUsuario()">Enviar Convite</button>
     </div>
   </div>
 </div>
@@ -742,6 +962,10 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 //   cnpj TEXT,
 //   inscricao_estadual TEXT,
 //   endereco TEXT,
+//   bairro TEXT,
+//   cidade TEXT,
+//   estado TEXT,
+//   cep TEXT,
 //   telefone TEXT,
 //   email TEXT,
 //   responsavel TEXT,
@@ -749,6 +973,8 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 //   data_abertura DATE,
 //   created_at TIMESTAMPTZ DEFAULT NOW()
 // );
+// ALTER TABLE empresas ENABLE ROW LEVEL SECURITY;
+// CREATE POLICY "emp_all" ON empresas FOR ALL TO authenticated USING (true) WITH CHECK (true);
 // ALTER TABLE documentos ADD COLUMN IF NOT EXISTS colaborador_id UUID;
 // ALTER TABLE documentos ADD COLUMN IF NOT EXISTS demissao_id UUID;
 // ALTER TABLE advertencias ADD COLUMN IF NOT EXISTS cargo TEXT;
@@ -891,10 +1117,15 @@ function loadPage(id) {
     faltas:       () => loadTb('faltas','tb-faltas', rFaltas),
     demissoes:    () => loadTb('demissoes','tb-dem', rDem),
     contratos:    () => loadTb('contratos','tb-ct', rCt),
-    entrevistas:  () => loadTb('entrevistas','tb-ent', rEnt),
+    entrevistas:  () => {
+      buildChecklist();
+      popularTriagemEmpresas();
+      popularEntEmpresas();
+      // Não carregar candidatos até clicar na tab
+    },
     documentos:   () => loadTb('documentos','tb-docs', rDocs),
     empresas:     loadEmpresas,
-    relatorios:   () => { popularFiltroEmpresas(); el('rel-conteudo').innerHTML=''; },
+    relatorios:   () => { popularFiltroEmpresas(); if(el('rel-conteudo')) el('rel-conteudo').innerHTML=''; },
     usuarios:     loadUsuarios,
   };
   if (map[id]) map[id]();
@@ -952,7 +1183,8 @@ async function loadColab() {
           <td>${r.salario != null ? 'R$ ' + Number(r.salario).toLocaleString('pt-BR',{minimumFractionDigits:2}) : '—'}</td>
           <td><span class="bx ${r.status === 'Ativo' ? 'gn' : 'gr'}">${r.status || '—'}</span></td>
           <td style="display:flex;gap:6px;align-items:center;">
-            <button class="btn btn-gh btn-sm" onclick="abrirDocsColab('${r.id}','${esc(r.nome)}')">📁 Docs</button>
+            <button class="btn btn-gh btn-sm" onclick="abrirDocsColab('${r.id}','${esc(r.nome)}')">📁</button>
+            <button class="btn btn-gh btn-sm" onclick="verHistoricoColab('${esc(r.nome)}','${esc(r.empresa||'')}')">📊</button>
             ${isAdm ? `<button class="btn btn-rd btn-sm" onclick="pedirExclusao('${r.id}','${esc(r.nome)}')">🗑</button>` : ''}
           </td>
         </tr>`).join('')
@@ -1041,9 +1273,33 @@ function rCt(d) {
 }
 function rEnt(d) {
   return d.map(r => `<tr>
-    <td>${x(r.candidato)}</td><td>${x(r.vaga||'—')}</td>
-    <td>${'⭐'.repeat(parseInt(r.nota)||0)}</td><td>${x(r.recomendacao||'—')}</td>
+    <td>${x(r.candidato)}</td>
+    <td>${x(r.vaga||'—')}</td>
+    <td>${x(r.empresa||'—')}</td>
+    <td>${fd(r.data_teste||r.created_at)}</td>
+    <td><span class="bx ${statusEntCor(r.status)}">${x(r.status||'—')}</span></td>
+    <td style="display:flex;gap:5px">
+      <button class="btn btn-rd btn-sm" onclick="excluirCandidato('${r.id}',this)">🗑</button>
+    </td>
   </tr>`).join('');
+}
+
+function statusEntCor(s) {
+  if (!s) return 'gr';
+  if (s.includes('Aprovado')) return 'gn';
+  if (s.includes('Reprovado')) return 'rd';
+  if (s.includes('triagem')) return 'bl';
+  if (s.includes('agendado')) return 'or';
+  return 'gr';
+}
+
+async function excluirCandidato(id, btn) {
+  if (!confirm('Excluir este candidato?')) return;
+  btn.disabled = true;
+  const { error } = await db.from('entrevistas').delete().eq('id', id);
+  if (error) { toast('Erro: '+error.message, false); btn.disabled=false; return; }
+  toast('Candidato excluído.', true);
+  btn.closest('tr').remove();
 }
 function rDocs(d) {
   return d.map(r => `<tr data-s="${x(r.nome_arquivo+r.colaborador+r.empresa).toLowerCase()}">
@@ -1072,28 +1328,81 @@ async function loadUsuarios() {
     el('lista-usuarios').innerHTML = '<p style="color:var(--tx3);padding:20px">Acesso restrito a administradores.</p>';
     return;
   }
-  const { data } = await db.from('profiles').select('*').order('created_at');
-  if (!data?.length) { el('lista-usuarios').innerHTML = '<p style="color:var(--tx3);padding:20px">Nenhum usuário.</p>'; return; }
-  el('lista-usuarios').innerHTML = data.map(u => `
-    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:10px;">
-      <div class="av" style="background:${rColor(u.role)}">${(u.nome||'?')[0].toUpperCase()}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:600;font-size:13px">${x(u.nome||'—')}</div>
-        <div style="font-size:11.5px;color:var(--tx3)">${x(u.email||'—')} ${u.empresa?'· '+u.empresa:''}</div>
+
+  // Header com botão convidar
+  const header = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-family:'Outfit',sans-serif;font-size:13px;color:var(--tx2);">
+        Gerencie papéis e empresas. Para convidar novos usuários use o botão abaixo.
       </div>
-      ${ROLE==='admin'?`
-        <select onchange="updRole('${u.id}',this.value)" style="padding:5px 8px;background:var(--bg3);border:1px solid var(--bd);border-radius:6px;color:var(--tx);font-size:12px;outline:none;">
-          <option ${u.role==='admin'?'selected':''} value="admin">Admin</option>
-          <option ${u.role==='socio'?'selected':''} value="socio">Sócio</option>
-          <option ${u.role==='gerente'?'selected':''} value="gerente">Gerente</option>
-        </select>
-        <input value="${u.empresa||''}" placeholder="Empresa do gerente" onblur="updEmp('${u.id}',this.value)"
-          style="padding:5px 8px;background:var(--bg3);border:1px solid var(--bd);border-radius:6px;color:var(--tx);font-size:12px;outline:none;width:140px;">
-      `:''}
-    </div>`).join('');
+      <button class="btn btn-or btn-sm" onclick="openMo('mo-invite')">✉️ Convidar Usuário</button>
+    </div>`;
+
+  const { data } = await db.from('profiles').select('*').order('created_at');
+  if (!data?.length) { el('lista-usuarios').innerHTML = header + '<p style="color:var(--tx3);padding:20px">Nenhum usuário cadastrado.</p>'; return; }
+
+  const papeis = {
+    admin:   { label:'Admin',   desc:'Acesso total — ver, criar, editar e excluir tudo', cor:'#F97316' },
+    socio:   { label:'Sócio',   desc:'Ver tudo e criar registros — não exclui nem gerencia usuários', cor:'#8B5CF6' },
+    gerente: { label:'Gerente', desc:'Acesso restrito à empresa vinculada — advertências, faltas e entrevistas', cor:'#10B981' },
+  };
+
+  el('lista-usuarios').innerHTML = header + data.map(u => {
+    const papel = papeis[u.role] || papeis.gerente;
+    return `
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="av" style="background:${papel.cor}">${(u.nome||'?')[0].toUpperCase()}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;font-size:13.5px;">${x(u.nome||'Sem nome')}</div>
+          <div style="font-size:11.5px;color:var(--tx3);margin-top:2px;">${x(u.email||'—')}</div>
+        </div>
+        <span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${papel.cor}22;color:${papel.cor}">${papel.label}</span>
+      </div>
+
+      ${ROLE==='admin' ? `
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--bd);display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;">
+        <div class="fi">
+          <label>Papel / Permissão</label>
+          <select onchange="updRole('${u.id}',this.value)" style="padding:8px 10px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13px;outline:none;">
+            <option ${u.role==='admin'?'selected':''} value="admin">👑 Admin — Acesso total</option>
+            <option ${u.role==='socio'?'selected':''} value="socio">🤝 Sócio — Ver e criar</option>
+            <option ${u.role==='gerente'?'selected':''} value="gerente">👤 Gerente — Restrito à empresa</option>
+          </select>
+        </div>
+        <div class="fi">
+          <label>Empresa vinculada (gerentes)</label>
+          <input value="${u.empresa||''}" placeholder="Deixe vazio para todas"
+            onblur="updEmp('${u.id}',this.value)"
+            style="padding:8px 10px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13px;outline:none;">
+        </div>
+        <div class="fi">
+          <label>&nbsp;</label>
+          <button class="btn btn-rd btn-sm" onclick="desativarUsuario('${u.id}','${x(u.nome||u.email)}')">🗑 Remover</button>
+        </div>
+      </div>
+      <div style="margin-top:8px;font-size:11.5px;color:var(--tx3);">💡 ${papel.desc}</div>
+      ` : ''}
+    </div>`;
+  }).join('');
 }
-async function updRole(id, role) { await db.from('profiles').update({role}).eq('id',id); toast('Papel atualizado.',true); }
-async function updEmp(id, emp) { await db.from('profiles').update({empresa:emp||null}).eq('id',id); toast('Empresa atualizada.',true); }
+
+async function updRole(id, role) {
+  await db.from('profiles').update({role}).eq('id',id);
+  toast('Papel atualizado.', true);
+  loadUsuarios();
+}
+async function updEmp(id, emp) {
+  await db.from('profiles').update({empresa: emp||null}).eq('id',id);
+  toast('Empresa atualizada.', true);
+}
+async function desativarUsuario(id, nome) {
+  if (!confirm(`Remover acesso de ${nome}? O usuário não conseguirá mais entrar no sistema.`)) return;
+  // Não deleta — apenas remove o papel (vira gerente sem empresa = acesso vazio)
+  await db.from('profiles').update({ role:'gerente', empresa:null }).eq('id',id);
+  toast('Acesso removido.', true);
+  loadUsuarios();
+}
 
 // ─── SAVE COLABORADOR (separado, simples, sem validação complicada) ──
 async function saveColab() {
@@ -1223,6 +1532,12 @@ function docIcon(tipo) {
     'Atestado Médico':'🩺', 'Declaração':'📋',
   };
   return map[tipo] || '📎';
+}
+
+function verHistoricoColab(nome, empresa) {
+  // Navega para relatórios e gera relatório individual
+  goPage('relatorios', document.querySelector('.ni'));
+  setTimeout(() => relatorioIndividual(nome, empresa), 300);
 }
 
 // ─── EXCLUSÃO DE COLABORADOR ──────────────────────────
@@ -1620,6 +1935,7 @@ async function salvarLinhas(linhas, empresa) {
 function gerarPDF() {
   const colab  = v('a-colab');
   const emp    = v('a-emp');
+  const cnpj   = v('a-cnpj') || '';
   const tipo   = v('a-tipo');
   const data   = v('a-data');
   const motivo = v('a-motivo');
@@ -1632,7 +1948,7 @@ function gerarPDF() {
       <h2 style="text-align:center;font-size:18px;margin-bottom:4px;">TERMO DE ADVERTÊNCIA ${tipo.toUpperCase()}</h2>
       <hr style="margin:16px 0;">
       <table style="width:100%;margin-bottom:16px;"><tbody>
-        <tr><td style="width:160px;padding:5px 0"><strong>Empresa:</strong></td><td>${emp}</td></tr>
+        <tr><td style="width:160px;padding:5px 0"><strong>Empresa:</strong></td><td>${emp}${cnpj?' — CNPJ: '+cnpj:''}</td></tr>
         <tr><td style="padding:5px 0"><strong>Empregado(a):</strong></td><td>${colab}</td></tr>
         <tr><td style="padding:5px 0"><strong>Data da Ocorrência:</strong></td><td>${df}</td></tr>
       </tbody></table>
@@ -1723,15 +2039,210 @@ function toast(msg, ok) {
 }
 
 // ══════════════════════════════════════════════════════
+// ENTREVISTAS — Script de triagem e candidatos
+// ══════════════════════════════════════════════════════
+
+function showEntTab(tab, btn) {
+  ['triagem','candidatos','vaga'].forEach(t => {
+    const el_tab = document.getElementById('ent-tab-'+t);
+    if (el_tab) el_tab.style.display = t === tab ? '' : 'none';
+  });
+  document.querySelectorAll('.btn-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab === 'candidatos') loadTb('entrevistas','tb-ent', rEnt);
+}
+
+function gerarScripts() {
+  const nome   = el('triagem-nome')?.value?.trim() || 'candidato(a)';
+  const vaga   = el('triagem-vaga')?.value || 'Atendente';
+  const emp    = el('triagem-empresa')?.value || 'nossa empresa';
+
+  const msg1 = `Bom dia, tudo bem? 😊 Sou Gabriel da ${emp}!
+
+Recebi seu currículo para a vaga de ${vaga}, confirma?
+
+Podemos conversar mais sobre isso? Já te passo mais informações!`;
+
+  const msg2 = `Para agilizarmos a conversa e deixar registrado aqui no WhatsApp, consegue me responder umas perguntas rapidinho?
+
+📝 *Nome completo:*
+📅 *Idade:*
+📍 *Cidade e bairro:*
+🚌 *Utiliza transporte público?*
+👨‍🍳 *Tem experiência na área de restaurante?*
+💼 *Qual sua última experiência de trabalho e por quanto tempo?*
+📆 *Disponível para teste a partir de qual data?*`;
+
+  const msg3 = `Ótimo! Aqui vão as informações da vaga de *${vaga}*:
+
+⏰ *Horário:* das 10h às 22h (podendo ir até as 23h)
+📅 *Escala:* 12h por 36h — trabalha um dia e folga outro
+💰 *Salário:* R$ 1.830,00
+🎁 *Benefícios:* Assiduidade + Sacolão + Folga Aniversário + Auxílio Transporte + Refeição no Local
+
+Nosso restaurante é especializado em *Poke* 🥗 — é como um sushi/temaki na tigela, ou uma salada com vários itens do sushi, onde a pessoa monta como quiser.
+
+A cozinha é de pratos frios. Uma pessoa cuida do arroz de sushi, salmão e itens mais delicados. Os demais auxiliares ficam com a parte mais simples: picar frutas e legumes, grelhar alguns itens, preparar sucos e molhos.
+
+A tarefa mais importante é *montar os Pokes* junto ao atendimento — precisa de muita atenção e delicadeza para evitar erros e apresentar um prato bonito. Temos manuais que mostram como tudo deve ser feito! 📖`;
+
+  const msg4 = `Nossa vaga é para contratação imediata! Inicialmente marcamos *2 a 3 dias de teste/free* das 10h às 22h para avaliar a adaptação e o desempenho.
+
+💵 O pagamento é de *R$ 120,00 por dia*, pago no final do expediente. Após o free, iniciamos os trâmites de contratação.
+
+Para o dia do teste, as recomendações são:
+
+👕 Roupa preta ou escura
+👖 Calça e camiseta (sem decote ou regata)
+👟 Calçado fechado
+💇 Cabelo preso
+✨ Sem adereços chamativos (colar, brincos...)
+💄 Sem maquiagem ou maquiagem leve
+
+Ficou alguma dúvida? 😊`;
+
+  ['msg1','msg2','msg3','msg4'].forEach((id, i) => {
+    const el_msg = document.getElementById(id);
+    if (el_msg) el_msg.textContent = [msg1,msg2,msg3,msg4][i];
+  });
+}
+
+function copiarScript(id) {
+  const txt = document.getElementById(id)?.textContent || '';
+  navigator.clipboard.writeText(txt).then(() => toast('Mensagem copiada!', true));
+}
+
+function limparTriagem() {
+  ['triagem-nome','triagem-vaga'].forEach(id => { if(el(id)) el(id).value = ''; });
+  gerarScripts();
+  document.querySelectorAll('#triagem-checklist input[type=checkbox]').forEach(cb => { cb.checked = false; cb.closest('label')?.classList?.remove('done'); });
+  document.querySelectorAll('#campos-respostas input, #campos-respostas textarea').forEach(i => { i.value = ''; });
+}
+
+function buildChecklist() {
+  const items = [
+    'Nome completo recebido',
+    'Idade informada',
+    'Cidade e bairro informados',
+    'Transporte público respondido',
+    'Experiência na área confirmada',
+    'Última experiência informada',
+    'Data de disponibilidade confirmada',
+    'Vaga e horário explicados',
+    'Salário e benefícios passados',
+    'Informações da loja apresentadas',
+    'Processo de teste explicado',
+    'Data do teste marcada',
+  ];
+  const campos = [
+    {label:'Nome Completo', id:'resp-nome', type:'text'},
+    {label:'Idade', id:'resp-idade', type:'text'},
+    {label:'Cidade / Bairro', id:'resp-local', type:'text'},
+    {label:'Usa Transporte Público?', id:'resp-transp', type:'text'},
+    {label:'Experiência na área?', id:'resp-exp', type:'text'},
+    {label:'Última experiência / tempo', id:'resp-ult', type:'text'},
+    {label:'Disponível a partir de', id:'resp-data', type:'date'},
+    {label:'Data do Teste Marcado', id:'resp-teste', type:'date'},
+    {label:'Observações', id:'resp-obs', type:'textarea'},
+  ];
+
+  const cl = document.getElementById('triagem-checklist');
+  if (cl) cl.innerHTML = items.map((item, i) => `
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;cursor:pointer;" id="cl-${i}">
+      <input type="checkbox" style="accent-color:var(--or);width:16px;height:16px;" onchange="this.closest('label').style.opacity=this.checked?'.5':'1'">
+      <span style="font-size:13px;color:var(--tx2)">${item}</span>
+    </label>`).join('');
+
+  const cr = document.getElementById('campos-respostas');
+  if (cr) cr.innerHTML = campos.map(c => `
+    <div class="fi" style="${c.id==='resp-obs'?'grid-column:1/-1':''}">
+      <label>${c.label}</label>
+      ${c.type==='textarea'
+        ? `<textarea id="${c.id}" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13px;outline:none;min-height:60px;resize:vertical;"></textarea>`
+        : `<input type="${c.type}" id="${c.id}" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13px;outline:none;">`
+      }
+    </div>`).join('');
+}
+
+async function popularTriagemEmpresas() {
+  const sel = el('triagem-empresa');
+  if (!sel) return;
+  const { data } = await db.from('colaboradores').select('empresa').order('empresa');
+  const unicas = [...new Set((data||[]).map(r => r.empresa).filter(Boolean))].sort();
+  sel.innerHTML = unicas.map(e => `<option>${x(e)}</option>`).join('') || '<option>—</option>';
+  gerarScripts();
+}
+
+async function popularEntEmpresas() {
+  const sel = el('en-empresa');
+  if (!sel) return;
+  const { data } = await db.from('colaboradores').select('empresa').order('empresa');
+  const unicas = [...new Set((data||[]).map(r => r.empresa).filter(Boolean))].sort();
+  sel.innerHTML = unicas.map(e => `<option>${x(e)}</option>`).join('') || '<option>—</option>';
+}
+
+async function salvarTriagem() {
+  const nome = el('triagem-nome')?.value?.trim();
+  if (!nome) return toast('Informe o nome do candidato.', false);
+  const payload = {
+    candidato: nome,
+    vaga:      el('triagem-vaga')?.value,
+    empresa:   el('triagem-empresa')?.value,
+    idade:     el('resp-idade')?.value ? parseInt(el('resp-idade').value) : null,
+    local:     el('resp-local')?.value,
+    transporte:el('resp-transp')?.value,
+    experiencia: el('resp-exp')?.value,
+    ult_experiencia: el('resp-ult')?.value,
+    disponivel: el('resp-data')?.value || null,
+    data_teste: el('resp-teste')?.value || null,
+    obs:       el('resp-obs')?.value,
+    status:    '📞 Em triagem',
+    user_nome: el('un').textContent,
+  };
+  const { error } = await db.from('entrevistas').insert(payload);
+  if (error) return toast('Erro: ' + error.message, false);
+  toast('Triagem salva com sucesso!', true);
+  limparTriagem();
+}
+
+async function saveEntrevista() {
+  const nome = v('en-nome');
+  if (!nome) return toast('Informe o nome do candidato.', false);
+  const payload = {
+    candidato:   nome,
+    vaga:        v('en-vaga'),
+    empresa:     v('en-empresa') || null,
+    idade:       v('en-idade') ? parseInt(v('en-idade')) : null,
+    local:       v('en-local') || null,
+    transporte:  v('en-transp') || null,
+    experiencia: v('en-exp') || null,
+    ult_experiencia: v('en-ult-exp') || null,
+    disponivel:  v('en-disponivel') || null,
+    data_teste:  v('en-teste') || null,
+    status:      v('en-status'),
+    nota:        v('en-nota') ? parseInt(v('en-nota')) : null,
+    obs:         v('en-obs') || null,
+    user_nome:   el('un').textContent,
+  };
+  const { error } = await db.from('entrevistas').insert(payload);
+  if (error) return toast('Erro: ' + error.message, false);
+  toast('Candidato salvo!', true);
+  closeMo('mo-ent');
+  loadTb('entrevistas','tb-ent', rEnt);
+}
+
+// ══════════════════════════════════════════════════════
 // EMPRESAS
 // ══════════════════════════════════════════════════════
 let EMP_EDIT_ID = null;
 let EMPRESA_MAP = {}; // razaoSocial → { cnpj, ... }
 
 async function carregarEmpresasMap() {
-  const { data } = await db.from('empresas').select('razao_social, cnpj, nome_fantasia');
-  EMPRESA_MAP = {};
-  if (data) data.forEach(e => { EMPRESA_MAP[e.razao_social] = e; });
+  try {
+    const { data, error } = await db.from('empresas').select('razao_social, cnpj, nome_fantasia');
+    EMPRESA_MAP = {};
+    if (data && !error) data.forEach(e => { EMPRESA_MAP[e.razao_social] = e; });
+  } catch(e) { console.warn('Tabela empresas ainda não criada:', e.message); }
 }
 
 function preencherCNPJAdv() {
@@ -1742,7 +2253,8 @@ function preencherCNPJAdv() {
 
 async function loadEmpresas() {
   el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6"><span class="spin"></span></td></tr>';
-  const { data } = await db.from('empresas').select('*').order('razao_social');
+  const { data, error } = await db.from('empresas').select('*').order('razao_social');
+  if (error) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6" style="color:var(--rd)">Execute o SQL no Supabase para criar a tabela empresas.</td></tr>'; return; }
   if (!data?.length) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6">Nenhuma empresa cadastrada.</td></tr>'; return; }
   el('tb-empresas').innerHTML = data.map(e => `
     <tr>
@@ -1768,6 +2280,10 @@ async function salvarEmpresa() {
     cnpj:         v('emp-cnpj')||null,
     inscricao_estadual: v('emp-ie')||null,
     endereco:     v('emp-end')||null,
+    bairro:       v('emp-bairro')||null,
+    cidade:       v('emp-cidade')||null,
+    estado:       v('emp-estado')||null,
+    cep:          v('emp-cep')||null,
     telefone:     v('emp-tel')||null,
     email:        v('emp-email')||null,
     responsavel:  v('emp-resp')||null,
@@ -1784,7 +2300,7 @@ async function salvarEmpresa() {
   toast(EMP_EDIT_ID ? 'Empresa atualizada!' : 'Empresa cadastrada!', true);
   EMP_EDIT_ID = null;
   closeMo('mo-empresa');
-  ['emp-razao','emp-fantasia','emp-cnpj','emp-ie','emp-end','emp-tel','emp-email','emp-resp','emp-ramo','emp-abertura'].forEach(id => { if(el(id)) el(id).value=''; });
+  ['emp-razao','emp-fantasia','emp-cnpj','emp-ie','emp-end','emp-bairro','emp-cidade','emp-estado','emp-cep','emp-tel','emp-email','emp-resp','emp-ramo','emp-abertura'].forEach(id => { if(el(id)) el(id).value=''; });
   loadEmpresas();
   popularFiltroEmpresas();
 }
@@ -1799,6 +2315,10 @@ async function editarEmpresa(id) {
   el('emp-cnpj').value     = data.cnpj||'';
   el('emp-ie').value       = data.inscricao_estadual||'';
   el('emp-end').value      = data.endereco||'';
+  if(el('emp-bairro')) el('emp-bairro').value = data.bairro||'';
+  if(el('emp-cidade')) el('emp-cidade').value = data.cidade||'';
+  if(el('emp-estado')) el('emp-estado').value = data.estado||'';
+  if(el('emp-cep'))    el('emp-cep').value    = data.cep||'';
   el('emp-tel').value      = data.telefone||'';
   el('emp-email').value    = data.email||'';
   el('emp-resp').value     = data.responsavel||'';
@@ -1820,7 +2340,7 @@ async function excluirEmpresa(id, btn) {
 // FILTRO DE EMPRESA NA ABA COLABORADORES
 // ══════════════════════════════════════════════════════
 async function popularFiltroEmpresas() {
-  // Busca empresas distintas da tabela colaboradores
+  try {
   const { data } = await db.from('colaboradores').select('empresa').order('empresa');
   const filtro = el('filtro-empresa');
   if (!filtro || !data) return;
@@ -1830,6 +2350,7 @@ async function popularFiltroEmpresas() {
   const opts = '<option value="">Todas as empresas</option>' + unicas.map(e => `<option>${x(e)}</option>`).join('');
   filtro.innerHTML = opts;
   if (relEmp) relEmp.innerHTML = opts;
+  } catch(e) { console.warn('popularFiltroEmpresas:', e.message); }
 }
 
 function filtrarPorEmpresa() {
@@ -1990,6 +2511,7 @@ async function gerarRelatorio() {
             <th style="text-align:left;padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Cargo</th>
             <th style="text-align:left;padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Admissão</th>
             <th style="text-align:right;padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Salário</th>
+            <th style="padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)"></th>
           </tr></thead>
           <tbody>
             ${dados.colabs.map(c => `
@@ -1998,6 +2520,7 @@ async function gerarRelatorio() {
                 <td style="padding:10px 18px;font-size:13px;color:var(--tx2)">${x(c.cargo||'—')}</td>
                 <td style="padding:10px 18px;font-size:13px;color:var(--tx2)">${fd(c.data_admissao)}</td>
                 <td style="padding:10px 18px;font-size:13px;color:var(--tx2);text-align:right">${c.salario?fmt(c.salario):'—'}</td>
+                <td style="padding:10px 18px;text-align:right"><button class="btn btn-gh btn-sm" onclick="relatorioIndividual('${esc(c.nome)}','${esc(c.empresa||'')}')">📊 Histórico</button></td>
               </tr>`).join('')}
             <tr style="background:rgba(16,185,129,.05)">
               <td colspan="3" style="padding:10px 18px;font-size:13px;font-weight:600;color:var(--tx)">Total da Folha</td>
@@ -2067,7 +2590,97 @@ async function gerarRelatorio() {
       </div>`;
   }
 
-  cont.innerHTML = html_rel || '<div class="erow">Nenhum dado encontrado.</div>';
+  // Botão de impressão
+  const btnPrint = `<div style="text-align:right;margin-bottom:16px;">
+    <button class="btn btn-gh" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+  </div>`;
+  cont.innerHTML = btnPrint + (html_rel || '<div class="erow">Nenhum dado encontrado.</div>');
+}
+
+// ─── RELATÓRIO INDIVIDUAL POR COLABORADOR ─────────────
+async function relatorioIndividual(nome, empresa) {
+  const cont = el('rel-conteudo');
+  if (!cont) return;
+  cont.innerHTML = '<div style="text-align:center;padding:32px"><span class="spin"></span></div>';
+
+  const [
+    { data: adms },
+    { data: advs },
+    { data: flts },
+    { data: dems },
+    { data: exams },
+    { data: cts },
+  ] = await Promise.all([
+    db.from('colaboradores').select('*').eq('nome', nome).eq('empresa', empresa),
+    db.from('advertencias').select('*').eq('colaborador', nome).order('data'),
+    db.from('faltas').select('*').eq('colaborador', nome).order('data'),
+    db.from('demissoes').select('*').eq('colaborador', nome),
+    db.from('exames').select('*').eq('colaborador', nome).order('data_validade'),
+    db.from('contratos').select('*').eq('colaborador', nome).order('created_at'),
+  ]);
+
+  const colab = adms?.[0];
+  if (!colab) { cont.innerHTML = '<div class="erow">Colaborador não encontrado.</div>'; return; }
+
+  const fmt = n => n != null ? 'R$ ' + Number(n).toLocaleString('pt-BR',{minimumFractionDigits:2}) : '—';
+  const suspensoes = (advs||[]).filter(a => a.tipo === 'Suspensão').length;
+
+  let html_ind = `
+    <div style="text-align:right;margin-bottom:16px;">
+      <button class="btn btn-gh btn-sm" onclick="goPage('relatorios',document.querySelector('.ni.active'))">← Voltar</button>
+      <button class="btn btn-gh btn-sm" style="margin-left:8px" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+
+    <!-- Cabeçalho do colaborador -->
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--or),#c2410c);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:20px;color:#fff;flex-shrink:0;">${x(colab.nome[0])}</div>
+        <div>
+          <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:18px;">${x(colab.nome)}</div>
+          <div style="font-size:13px;color:var(--tx2);margin-top:3px;">${x(colab.cargo||'—')} · ${x(colab.empresa||'—')}</div>
+        </div>
+        <div style="margin-left:auto"><span class="bx ${colab.status==='Ativo'?'gn':'gr'}">${colab.status||'—'}</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;">
+        ${[
+          ['Código', colab.cpf||'—'],
+          ['Nascimento', fd(colab.data_nascimento)],
+          ['Admissão', fd(colab.data_admissao)],
+          ['Salário', fmt(colab.salario)],
+          ['Advertências', (advs||[]).length],
+          ['Suspensões', suspensoes],
+          ['Faltas', (flts||[]).length],
+          ['Faltas Injustificadas', (flts||[]).filter(f=>f.justificada==='Não').length],
+        ].map(([k,v2])=>`<div style="background:var(--bg3);padding:12px;border-radius:8px;"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:4px;">${k}</div><div style="font-size:15px;font-weight:600;color:var(--tx)">${v2}</div></div>`).join('')}
+      </div>
+    </div>`;
+
+  // Linha do tempo
+  const eventos = [];
+  if (colab.data_admissao) eventos.push({ data: colab.data_admissao, tipo: 'Admissão', desc: `Admitido como ${colab.cargo||'—'}`, cor: 'gn' });
+  (exams||[]).forEach(e => eventos.push({ data: e.data_validade, tipo: 'Exame', desc: `${e.tipo} — ${e.resultado||'—'}`, cor: 'bl' }));
+  (advs||[]).forEach(a => eventos.push({ data: a.data, tipo: a.tipo, desc: a.motivo||'—', cor: a.tipo==='Suspensão'?'rd':'or' }));
+  (flts||[]).forEach(f => eventos.push({ data: f.data, tipo: 'Falta', desc: `${f.justificada} — ${f.motivo||'—'}`, cor: f.justificada==='Sim'?'yl':'rd' }));
+  (dems||[]).forEach(d => eventos.push({ data: d.data, tipo: 'Demissão', desc: `${d.tipo} — ${d.motivo||'—'}`, cor: 'rd' }));
+  eventos.sort((a,b) => (a.data||'').localeCompare(b.data||''));
+
+  if (eventos.length) {
+    html_ind += `
+      <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;margin-bottom:16px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;margin-bottom:18px;">📅 Histórico Completo</div>
+        <div style="position:relative;padding-left:28px;">
+          <div style="position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:var(--bd);"></div>
+          ${eventos.map(e => `
+            <div style="position:relative;margin-bottom:18px;">
+              <div style="position:absolute;left:-24px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--${e.cor==='gn'?'gn':e.cor==='rd'?'rd':e.cor==='or'?'or':e.cor==='bl'?'bl':'yl'});border:2px solid var(--bg);"></div>
+              <div style="font-size:11px;color:var(--tx3);font-weight:600;letter-spacing:.04em;">${fd(e.data)}</div>
+              <div style="font-size:13px;margin-top:2px;"><span class="bx ${e.cor}" style="margin-right:6px;">${e.tipo}</span>${x(e.desc)}</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  cont.innerHTML = '<div style="text-align:right;margin-bottom:16px;"><button class="btn btn-gh btn-sm" onclick="window.print()">🖨️ Imprimir</button></div>' + html_ind;
 }
 
 // ══════════════════════════════════════════════════════
@@ -2081,6 +2694,51 @@ async function gerarRelatorio() {
 // ══════════════════════════════════════════════════════
 // RENDERER: documentos com botão excluir
 // ══════════════════════════════════════════════════════
+
+// ─── CONVIDAR USUÁRIO ─────────────────────────────────
+async function convidarUsuario() {
+  const nome    = v('inv-nome');
+  const email   = v('inv-email');
+  const role    = v('inv-role') || 'gerente';
+  const empresa = v('inv-empresa');
+  if (!nome || !email) return toast('Preencha nome e e-mail.', false);
+  const btn = el('inv-btn');
+  btn.disabled = true; btn.textContent = 'Enviando…';
+
+  // Supabase Admin API — requer service_role key (disponível apenas no backend)
+  // Como estamos no frontend, usamos a função de signUp com confirmação de e-mail
+  const { data, error } = await db.auth.admin?.inviteUserByEmail
+    ? await db.auth.admin.inviteUserByEmail(email, {
+        data: { nome, role, empresa: empresa || null }
+      })
+    : await db.auth.signUp({
+        email,
+        password: Math.random().toString(36).slice(-10) + 'Aa1!',
+        options: { data: { nome, role, empresa: empresa || null } }
+      });
+
+  btn.disabled = false; btn.textContent = 'Enviar Convite';
+
+  if (error) {
+    // Instrução alternativa para admin via Dashboard
+    toast('Use o Supabase Dashboard → Auth → Users → Invite user para convidar.', false);
+    // Mas salvamos o perfil para quando ele acessar
+    if (data?.user?.id) {
+      await db.from('profiles').upsert({ id: data.user.id, nome, email, role, empresa: empresa||null });
+    }
+    return;
+  }
+
+  // Salvar perfil com papel e empresa já definidos
+  if (data?.user?.id) {
+    await db.from('profiles').upsert({ id: data.user.id, nome, email, role, empresa: empresa||null });
+  }
+
+  toast('Convite enviado para ' + email, true);
+  closeMo('mo-invite');
+  ['inv-nome','inv-email','inv-empresa'].forEach(id => { if(el(id)) el(id).value=''; });
+  loadUsuarios();
+}
 
 // ─── START ────────────────────────────────────────────
 init();
