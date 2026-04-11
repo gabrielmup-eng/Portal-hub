@@ -287,6 +287,33 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 
 <main class="main">
 
+<div id="page-operacional" class="pg">
+  <div class="tb">
+    <div><div class="pt">Gestão Operacional</div><div class="ps">Auditoria de conformidade e tempo de execução</div></div>
+    <div class="row">
+        <button class="btn btn-gh" onclick="loadOperacional()">↻ Atualizar Dados</button>
+    </div>
+  </div>
+
+  <div class="sg">
+    <div class="sc bl"><div class="sv" id="op-tempo-medio">0 min</div><div class="sl">Tempo Médio Conclusão</div></div>
+    <div class="sc rd"><div class="sv" id="op-inconf">0</div><div class="sl">Inconformidades (Mês)</div></div>
+    <div class="sc gn"><div class="sv" id="op-taxa">0%</div><div class="sl">Taxa de Conformidade</div></div>
+    <div class="sc pu"><div class="sv" id="op-total">0</div><div class="sl">Checklists Realizados</div></div>
+  </div>
+
+  <div class="tc">
+    <div class="tc-h">Histórico de Auditorias (Via Bot WhatsApp)</div>
+    <table>
+      <thead>
+        <tr><th>Data/Hora</th><th>Loja</th><th>Checklist</th><th>Tempo</th><th>Status</th><th>Evidências</th><th>Ações</th></tr>
+      </thead>
+      <tbody id="tb-operacional">
+        <tr class="erow"><td colspan="7">Aguardando dados da operação...</td></tr>
+      </tbody>
+    </table></div>
+</div>
+
 <div id="page-dashboard" class="pg active">
   <div class="tb"><div><div class="pt">Dashboard</div><div class="ps" id="dash-date"></div></div>
   <button class="btn btn-gh btn-sm" onclick="loadDash()">↻ Atualizar</button></div>
@@ -1096,6 +1123,22 @@ function entrarModulo(mod) {
   } else {
     // Bloqueia módulos não desenvolvidos
     toast('Este módulo ainda está em desenvolvimento! 🚧', false);
+  }
+}
+
+function entrarModulo(mod) {
+  if (mod === 'rh') {
+    document.getElementById('hub-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    goPage('dashboard', document.querySelector('.ni'));
+  } else if (mod === 'ops') {
+    // NOVO: Entrar no Operacional
+    document.getElementById('hub-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    goPage('operacional', null); // Criaremos o link na sidebar se quiser, ou via Hub
+    loadOperacional();
+  } else {
+    toast('Módulo em desenvolvimento! 🚧', false);
   }
 }
 
@@ -2417,6 +2460,63 @@ async function loadEmpresas() {
       </td>
     </tr>`).join('');
   await carregarEmpresasMap();
+}
+
+async function loadOperacional() {
+  const tb = el('tb-operacional');
+  tb.innerHTML = '<tr class="erow"><td colspan="7"><span class="spin"></span></td></tr>';
+
+  // Buscar execuções de checklist
+  const { data, error } = await db.from('checklist_execucoes')
+    .select('*, checklist_modelos(nome)')
+    .order('created_at', { ascending: false });
+
+  if (error || !data || data.length === 0) {
+    tb.innerHTML = '<tr class="erow"><td colspan="7">Nenhum checklist registrado.</td></tr>';
+    return;
+  }
+
+  let totalMinutos = 0;
+  let inconformidades = 0;
+  let concluidos = 0;
+
+  tb.innerHTML = data.map(r => {
+    // Cálculo de tempo
+    let duracao = "—";
+    if (r.inicio_em && r.fim_em) {
+        const diff = (new Date(r.fim_em) - new Date(r.inicio_em)) / 60000;
+        duracao = Math.round(diff) + " min";
+        totalMinutos += diff;
+        concluidos++;
+    }
+    if (r.status === 'Inconformidade') inconformidades++;
+
+    return `<tr>
+      <td>${fd(r.created_at)} <small style="display:block;color:var(--tx3)">${new Date(r.created_at).toLocaleTimeString()}</small></td>
+      <td><strong>${x(r.loja)}</strong></td>
+      <td>${x(r.checklist_modelos?.nome || 'Geral')}</td>
+      <td>${duracao}</td>
+      <td><span class="bx ${r.status === 'Concluído' ? 'gn' : 'rd'}">${x(r.status)}</span></td>
+      <td>${r.fotos_url ? `<button class="btn btn-gh btn-sm" onclick="verEvidencias('${esc(JSON.stringify(r.fotos_url))}')">🖼️ Ver Fotos</button>` : '—'}</td>
+      <td><button class="btn btn-gh btn-sm" onclick="verDetalhesIA('${esc(r.inconformidades || 'Sem observações.')}')">📝 Feedback</button></td>
+    </tr>`;
+  }).join('');
+
+  // Atualizar Cards
+  el('op-total').textContent = data.length;
+  el('op-inconf').textContent = inconformidades;
+  el('op-tempo-medio').textContent = concluidos > 0 ? Math.round(totalMinutos / concluidos) + " min" : "0 min";
+  el('op-taxa').textContent = data.length > 0 ? Math.round(((data.length - inconformidades) / data.length) * 100) + "%" : "0%";
+}
+
+function verEvidencias(jsonFotos) {
+    const fotos = JSON.parse(jsonFotos);
+    // Aqui você pode abrir um modal com um carrossel de imagens
+    window.open(fotos[0], '_blank'); 
+}
+
+function verDetalhesIA(txt) {
+    alert("Feedback da Auditoria IA:\n\n" + txt);
 }
 
 async function salvarEmpresa() {
