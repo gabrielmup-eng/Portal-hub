@@ -258,7 +258,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 
 <div id="page-exames" class="pg">
   <div class="tb"><div><div class="pt">Exames Ocupacionais</div></div>
-  <button class="btn btn-or" onclick="openMo('mo-exame')">＋ Registrar</button></div>
+  <button class="btn btn-or" onclick="openMo('mo-exame')">＋ Registar</button></div>
   <div class="tc"><table>
     <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Validade</th><th>Status</th><th>Doc.</th></tr></thead>
     <tbody id="tb-exames"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
@@ -271,14 +271,14 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
     <button class="btn btn-or" onclick="abrirNovaAdv()">＋ Nova Advertência</button>
   </div>
   <div class="tc"><table>
-    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data</th><th>Motivo</th><th>Ações</th></tr></thead>
+    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data(s)</th><th>Motivo</th><th>Ações</th></tr></thead>
     <tbody id="tb-adv"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
   </table></div>
 </div>
 
 <div id="page-faltas" class="pg">
   <div class="tb"><div><div class="pt">Faltas</div></div>
-  <button class="btn btn-or" onclick="openMo('mo-falta')">＋ Registrar</button></div>
+  <button class="btn btn-or" onclick="openMo('mo-falta')">＋ Registar</button></div>
   <div class="tc"><table>
     <thead><tr><th>Colaborador</th><th>Empresa</th><th>Data</th><th>Justificada</th><th>Motivo</th><th>Ações</th></tr></thead>
     <tbody id="tb-faltas"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
@@ -287,10 +287,10 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 
 <div id="page-demissoes" class="pg">
   <div class="tb"><div><div class="pt">Demissões</div></div>
-  <button class="btn btn-or admin-only" onclick="openMo('mo-dem')">＋ Registrar</button></div>
+  <button class="btn btn-or admin-only" onclick="openMo('mo-dem')">＋ Iniciar Demissão</button></div>
   <div class="tc"><table>
-    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data</th><th>Docs</th></tr></thead>
-    <tbody id="tb-dem"><tr class="erow"><td colspan="5"><span class="spin"></span></td></tr></tbody>
+    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data</th><th>Status</th><th>Ações</th></tr></thead>
+    <tbody id="tb-dem"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
   </table></div>
 </div>
 
@@ -612,15 +612,21 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
           <option>Escrita (5ª)</option>
           <option>Suspensão</option>
         </select></div>
-        <div class="fi"><label>Data *</label><input type="date" id="a-data"></div>
-        <div class="fi full"><label>Motivo *</label><textarea id="a-motivo" placeholder="Descreva o motivo..."></textarea></div>
-        <div class="fi full"><label>Testemunhas</label><input id="a-test" placeholder="Nome e função das testemunhas"></div>
+        <div class="fi"><label>Data(s) da Ocorrência *</label><input type="text" id="a-data" placeholder="Ex: 10/04/2026 e 11/04/2026"></div>
+        <div class="fi full"><label>Motivo</label><textarea id="a-motivo" placeholder="Descreva o motivo da advertência..."></textarea></div>
+        <div class="fi full">
+          <label style="color:var(--bl)">Modelo do PDF</label>
+          <select id="a-modelo-pdf" style="border-color:var(--bl);">
+            <option value="padrao">📄 Padrão Geral</option>
+            <option value="falta">⚠️ Falta Não Justificada (Art. 482 alínea E)</option>
+          </select>
+        </div>
       </div>
     </div>
     <div class="md-f">
       <button class="btn btn-bl" onclick="gerarPDF()">🖨️ Gerar PDF</button>
       <button class="btn btn-gh" onclick="closeMo('mo-adv');ADV_EDIT_ID=null;">Cancelar</button>
-      <button class="btn btn-or" id="adv-save-btn" onclick="salvarAdvertencia()">Salvar</button>
+      <button class="btn btn-or" id="adv-save-btn" onclick="salvarAdvertencia()">Salvar no Sistema</button>
     </div>
   </div>
 </div>
@@ -646,7 +652,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
 
 <div class="mo" id="mo-dem">
   <div class="md" style="width:640px">
-    <div class="md-h"><h3>Registar Demissão</h3><button class="xbtn" onclick="closeMo('mo-dem')">✕</button></div>
+    <div class="md-h"><h3>Iniciar Processo de Demissão</h3><button class="xbtn" onclick="closeMo('mo-dem')">✕</button></div>
     <div class="md-b">
       <div class="fg2">
         <div class="fi full"><label>Colaborador *</label>
@@ -654,16 +660,30 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
         <div class="fi full"><label>Empresa</label><input id="d-emp" readonly></div>
         <div class="fi"><label>Cargo</label><input id="d-cargo" readonly></div>
         <div class="fi"><label>Salário</label><input id="d-sal" readonly></div>
-        <div class="fi"><label>Tipo *</label><select id="d-tipo"><option>Sem justa causa</option><option>Com justa causa</option><option>Pedido de demissão</option><option>Acordo mútuo (§6º)</option></select></div>
-        <div class="fi"><label>Data</label><input type="date" id="d-data"></div>
-        <div class="fi full"><label>Motivo</label><textarea id="d-motivo"></textarea></div>
+        <div class="fi"><label>Tipo de Rescisão *</label>
+          <select id="d-tipo">
+            <option>Sem justa causa</option>
+            <option>Com justa causa</option>
+            <option>Pedido de demissão</option>
+            <option>Acordo mútuo (§6º)</option>
+          </select>
+        </div>
+        <div class="fi"><label>Data de Início do Processo</label><input type="date" id="d-data"></div>
+        <div class="fi full">
+          <label style="color:var(--or)">Status do Processo *</label>
+          <select id="d-status" style="border-color:var(--or); font-weight:bold;">
+            <option value="Aviso Prévio">⏳ Em Aviso Prévio (Colaborador continua ativo)</option>
+            <option value="Concluída">✅ Concluída (Inativar colaborador agora)</option>
+          </select>
+        </div>
+        <div class="fi full"><label>Motivo / Observações</label><textarea id="d-motivo" placeholder="Descreva os detalhes da rescisão..."></textarea></div>
       </div>
       <hr style="border:none;border-top:1px solid var(--bd);margin:16px 0;">
       <div style="font-weight:600;font-size:13px;margin-bottom:12px;font-family:'Outfit',sans-serif;">📎 Documentos da Rescisão</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
         <div class="fi"><label>Tipo de Documento</label>
           <select id="dem-doc-tipo">
-            <option>Aviso Prévio</option>
+            <option>Aviso Prévio Assinado</option>
             <option>Termo de Quitação</option>
             <option>Espelho da Rescisão</option>
             <option>TRCT Assinado</option>
@@ -688,7 +708,7 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
     </div>
     <div class="md-f">
       <button class="btn btn-gh" onclick="closeMo('mo-dem')">Cancelar</button>
-      <button class="btn btn-or" onclick="saveReg('demissao')">Salvar Demissão</button>
+      <button class="btn btn-or" onclick="saveReg('demissao')">Salvar Processo</button>
     </div>
   </div>
 </div>
@@ -1004,8 +1024,8 @@ el('li-email').addEventListener('keydown', e => { if (e.key === 'Enter') el('li-
 // ─── COLAB MAP ────────────────────────────────────────
 async function reloadCMAP() {
   const { data } = await db.from('colaboradores')
-    .select('nome, empresa, cargo, salario')
-    .eq('status', 'Ativo')
+    .select('nome, empresa, cargo, salario, status')
+    .in('status', ['Ativo', 'Aviso Prévio'])
     .order('nome');
   CMAP = {};
   if (!data) return;
@@ -1013,6 +1033,7 @@ async function reloadCMAP() {
     CMAP[r.nome] = {
       empresa: r.empresa || '',
       cargo:   r.cargo   || '',
+      status:  r.status  || 'Ativo',
       salario: r.salario != null
         ? 'R$ ' + Number(r.salario).toLocaleString('pt-PT', { minimumFractionDigits: 2 })
         : '',
@@ -1078,7 +1099,7 @@ async function loadDash() {
     { count: at }, { count: ex }, { count: adv }, { count: fl }, { count: ct },
     { data: ativs }
   ] = await Promise.all([
-    db.from('colaboradores').select('*', { count:'exact', head:true }).eq('status','Ativo'),
+    db.from('colaboradores').select('*', { count:'exact', head:true }).in('status',['Ativo', 'Aviso Prévio']),
     db.from('exames').select('*', { count:'exact', head:true })
       .gte('data_validade', hoje.toISOString().slice(0,10))
       .lte('data_validade', em30.toISOString().slice(0,10)),
@@ -1109,7 +1130,9 @@ async function loadColab() {
   const { data } = await db.from('colaboradores').select('*').order('nome');
   const isAdm = ROLE === 'admin' || ROLE === 'socio';
   el('tb-colab').innerHTML = data?.length
-    ? data.map(r => `
+    ? data.map(r => {
+        let corStatus = r.status === 'Ativo' ? 'gn' : (r.status === 'Aviso Prévio' ? 'yl' : 'gr');
+        return `
         <tr data-s="${x(r.nome + r.empresa + r.cargo).toLowerCase()}">
           <td style="font-family:monospace;font-size:12px">${x(r.cpf || '—')}</td>
           <td>${x(r.nome)}</td>
@@ -1118,13 +1141,14 @@ async function loadColab() {
           <td>${r.data_nascimento ? fd(r.data_nascimento) : '—'}</td>
           <td>${r.data_admissao ? fd(r.data_admissao) : '—'}</td>
           <td>${r.salario != null ? 'R$ ' + Number(r.salario).toLocaleString('pt-PT',{minimumFractionDigits:2}) : '—'}</td>
-          <td><span class="bx ${r.status === 'Ativo' ? 'gn' : 'gr'}">${r.status || '—'}</span></td>
+          <td><span class="bx ${corStatus}">${r.status || '—'}</span></td>
           <td style="display:flex;gap:6px;align-items:center;">
             <button class="btn btn-gh btn-sm" onclick="abrirDocsColab('${r.id}','${esc(r.nome)}')">📁</button>
             <button class="btn btn-gh btn-sm" onclick="verHistoricoColab('${esc(r.nome)}','${esc(r.empresa||'')}')">📊</button>
             ${isAdm ? `<button class="btn btn-rd btn-sm" onclick="pedirExclusao('${r.id}','${esc(r.nome)}')">🗑</button>` : ''}
           </td>
-        </tr>`).join('')
+        </tr>`
+      }).join('')
     : '<tr class="erow"><td colspan="8">Nenhum colaborador registado.</td></tr>';
 }
 
@@ -1144,12 +1168,11 @@ function rExames(d) {
   </tr>`).join('');
 }
 
-// Limpa o dashboard quando a advertência é excluída
 function rAdv(d) {
   return d.map(r => `<tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
     <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
     <td><span class="bx or">${x(r.tipo)}</span></td>
-    <td>${fd(r.data)}</td><td>${x(r.motivo||'—')}</td>
+    <td>${x(r.data||'—')}</td><td>${x(r.motivo||'—')}</td>
     <td style="display:flex;gap:5px;align-items:center;">
       <button class="btn btn-gh btn-sm" onclick="abrirEditarAdv('${r.id}')">✏️</button>
       <button class="btn btn-rd btn-sm" onclick="excluirAdv('${r.id}', '${esc(r.colaborador)}', this)">🗑</button>
@@ -1160,14 +1183,9 @@ function rAdv(d) {
 async function excluirAdv(id, nomeColab, btn) {
   if (!confirm('Excluir esta advertência?')) return;
   btn.disabled = true;
-  
-  // Apaga a advertência
   const { error } = await db.from('advertencias').delete().eq('id', id);
   if (error) { toast('Erro: '+error.message, false); btn.disabled=false; return; }
-  
-  // Apaga a marcação do Dashboard (tabela atividades)
   await db.from('atividades').delete().eq('tipo', 'Advertência').eq('colaborador', nomeColab);
-  
   toast('Advertência excluída.', true);
   loadTb('advertencias','tb-adv', rAdv);
   loadDash();
@@ -1184,12 +1202,37 @@ function rFaltas(d) {
     </td>
   </tr>`).join('');
 }
+
+async function excluirFalta(id, nomeColab, btn) {
+  if (!confirm('Excluir esta falta?')) return;
+  btn.disabled = true;
+  const { error } = await db.from('faltas').delete().eq('id', id);
+  if (error) { toast('Erro: '+error.message, false); btn.disabled=false; return; }
+  await db.from('atividades').delete().eq('tipo', 'Falta').eq('colaborador', nomeColab);
+  toast('Falta excluída com sucesso.', true);
+  loadTb('faltas','tb-faltas', rFaltas);
+  loadDash();
+}
+
 function rDem(d) {
   return d.map(r => `<tr>
     <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
     <td><span class="bx rd">${x(r.tipo)}</span></td><td>${fd(r.data)}</td>
-    <td><button class="btn btn-gh btn-sm" onclick="abrirDocsDem('${r.id}','${esc(r.colaborador)}')">📁 Docs</button></td>
+    <td><span class="bx ${r.status === 'Aviso Prévio' ? 'yl' : 'rd'}">${x(r.status || 'Concluída')}</span></td>
+    <td style="display:flex;gap:5px;">
+      <button class="btn btn-gh btn-sm" onclick="abrirDocsDem('${r.id}','${esc(r.colaborador)}')">📁 Docs</button>
+      ${r.status === 'Aviso Prévio' ? `<button class="btn btn-gn btn-sm" onclick="concluirDemissao('${r.id}', '${esc(r.colaborador)}')">✔️ Concluir</button>` : ''}
+    </td>
   </tr>`).join('');
+}
+
+async function concluirDemissao(id, colab) {
+  if(!confirm(`Deseja concluir a demissão e inativar definitivamente o colaborador(a) ${colab}?`)) return;
+  await db.from('demissoes').update({status: 'Concluída'}).eq('id', id);
+  await db.from('colaboradores').update({status: 'Inativo'}).eq('nome', colab);
+  toast('Demissão concluída e colaborador inativado!', true);
+  loadTb('demissoes','tb-dem', rDem);
+  await reloadCMAP();
 }
 
 let DEM_ID_ATUAL = null;
@@ -1214,12 +1257,14 @@ async function carregarDocsDem(demId) {
       <button class="btn btn-rd btn-sm" onclick="excluirDocColab('${d.id}',this)">🗑</button>
     </div>`).join('');
 }
+
 function rCt(d) {
   return d.map(r => `<tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
     <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td><td>${x(r.tipo)}</td>
     <td>${fd(r.data_termino)}</td><td>${sCt(r.data_termino)}</td>
   </tr>`).join('');
 }
+
 function rEnt(d) {
   return d.map(r => `<tr>
     <td>${x(r.candidato)}</td>
@@ -1250,6 +1295,7 @@ async function excluirCandidato(id, btn) {
   toast('Candidato excluído.', true);
   btn.closest('tr').remove();
 }
+
 function rDocs(d) {
   return d.map(r => `<tr data-s="${x(r.nome_arquivo+r.colaborador+r.empresa).toLowerCase()}">
     <td>${x(r.nome_arquivo)}</td>
@@ -1520,17 +1566,6 @@ async function saveReg(tipo) {
     if (file) { const u = await uploadFile(file); if (u) payload.doc_url = u; }
     ativ = { tipo:'Exame', colaborador:colab, empresa:v('e-emp'), user_nome:userName };
   }
-  else if (tipo === 'advertencia') {
-    const colab = v('a-colab');
-    if (!colab) return toast('Selecione o colaborador.', false);
-    if (!v('a-motivo')) return toast('Informe o motivo.', false);
-    table = 'advertencias'; modal = 'mo-adv';
-    payload = { colaborador:colab, empresa:v('a-emp'), tipo:v('a-tipo'),
-                data:v('a-data')||null, motivo:v('a-motivo'), testemunhas:v('a-test'), user_nome:userName };
-    const file = el('a-file').files[0] || el('a-cam').files[0];
-    if (file) { const u = await uploadFile(file); if (u) payload.doc_url = u; }
-    ativ = { tipo:'Advertência', colaborador:colab, empresa:v('a-emp'), user_nome:userName };
-  }
   else if (tipo === 'falta') {
     const colab = v('f-colab');
     if (!colab) return toast('Selecione o colaborador.', false);
@@ -1544,21 +1579,49 @@ async function saveReg(tipo) {
     const colab = v('d-colab');
     if (!colab) return toast('Selecione o colaborador.', false);
     table = 'demissoes'; modal = 'mo-dem';
-    payload = { colaborador:colab, empresa:v('d-emp'), tipo:v('d-tipo'),
-                data:v('d-data')||null, motivo:v('d-motivo')||null };
+    
+    const statusDem = v('d-status');
+    payload = { 
+      colaborador:colab, empresa:v('d-emp'), tipo:v('d-tipo'),
+      data:v('d-data')||null, motivo:v('d-motivo')||null,
+      status: statusDem
+    };
     ativ = { tipo:'Demissão', colaborador:colab, empresa:v('d-emp'), user_nome:userName };
-    await db.from('colaboradores').update({ status:'Inativo' }).eq('nome', colab);
-    if (DEM_DOCS_PENDENTES.length > 0) {
-      const { data: demCriada } = await db.from('demissoes').select('id').eq('colaborador', colab).order('created_at', {ascending:false}).limit(1).single();
-      if (demCriada) {
-        for (const doc of DEM_DOCS_PENDENTES) {
-          const url = await uploadFile(doc.file);
-          if (url) await db.from('documentos').insert([{ nome_arquivo: doc.file.name||'doc.pdf', tipo: doc.tipo, colaborador: colab, empresa: v('d-emp'), demissao_id: demCriada.id, url, user_nome: userName }]);
+    
+    // Atualiza status do colaborador dependendo do andamento
+    const novoStatusColab = statusDem === 'Aviso Prévio' ? 'Aviso Prévio' : 'Inativo';
+    await db.from('colaboradores').update({ status: novoStatusColab }).eq('nome', colab);
+    
+    // Inserimos a demissão com .select() para garantir que temos o ID logo para salvar os documentos
+    const { data: demCriada, error } = await db.from('demissoes').insert([payload]).select();
+    if (error) return toast('Erro: ' + error.message, false);
+    
+    if (DEM_DOCS_PENDENTES.length > 0 && demCriada && demCriada[0]) {
+      const demId = demCriada[0].id;
+      for (const doc of DEM_DOCS_PENDENTES) {
+        const url = await uploadFile(doc.file);
+        if (url) {
+          await db.from('documentos').insert([{ 
+            nome_arquivo: doc.file.name||'doc.pdf', 
+            tipo: doc.tipo, 
+            colaborador: colab, 
+            empresa: v('d-emp'), 
+            demissao_id: demId, 
+            url, 
+            user_nome: userName 
+          }]);
         }
       }
-      DEM_DOCS_PENDENTES = [];
-      el('dem-docs-preview').innerHTML = '';
     }
+    DEM_DOCS_PENDENTES = [];
+    el('dem-docs-preview').innerHTML = '';
+    
+    if (ativ) await db.from('atividades').insert([ativ]);
+    toast('Processo de demissão salvo!', true);
+    closeMo(modal);
+    await reloadCMAP();
+    loadPage('demissoes');
+    return; // Paramos aqui porque o INSERT já foi feito manualmente com .select()
   }
   else if (tipo === 'contrato') {
     const colab = v('ct-colab');
@@ -1583,7 +1646,6 @@ async function saveReg(tipo) {
 
   toast('Salvo com sucesso!', true);
   closeMo(modal);
-  if (tipo === 'demissao') { await reloadCMAP(); }
   loadPage(table === 'demissoes' ? 'demissoes' :
            table === 'contratos' ? 'contratos' : table);
 }
@@ -1845,39 +1907,74 @@ function gerarPDF() {
   const emp    = v('a-emp');
   const cnpj   = v('a-cnpj') || '';
   const tipo   = v('a-tipo');
-  const data   = v('a-data');
+  const data   = v('a-data'); // Agora permite múltiplas datas em formato texto
   const motivo = v('a-motivo');
-  const test   = v('a-test');
-  if (!colab || !motivo) return toast('Preencha colaborador e motivo.', false);
-  const df = data ? data.split('-').reverse().join('/') : '___/___/______';
+  const modelo = v('a-modelo-pdf');
+  
+  if (!colab) return toast('Preencha o colaborador.', false);
+
+  const empData = EMPRESA_MAP[emp] || {};
+  const cidade = empData.cidade || 'Local';
+  const dataAtual = new Date().toLocaleDateString('pt-PT');
+
+  let conteudoHTML = '';
+
+  if (modelo === 'falta') {
+    // MODELO ESPECÍFICO PARA FALTA NÃO JUSTIFICADA
+    if (!data) return toast('Preencha as datas da ocorrência.', false);
+    conteudoHTML = `
+      <p style="font-size:15px;line-height:1.6;text-align:justify;text-indent:40px;">
+        Vimos, pelo presente, aplicar-lhe <strong>advertência disciplinar</strong>, e já advertido verbalmente anteriormente pelo mesmo motivo, pelo fato de FALTA NÃO JUSTIFICADA NO DIA ${data}, agindo assim com ato de Desídia, na forma do art. 482 alínea e, da Consolidação das Leis do Trabalho (CLT).
+      </p>
+      <p style="font-size:15px;line-height:1.6;text-align:justify;text-indent:40px;">
+        Solicitamos adequar seu comportamento às normas e costumes desta empresa e manter a disciplina necessária para o bom desempenho de suas atividades no trabalho.
+      </p>
+      <p style="font-size:15px;line-height:1.6;text-align:justify;text-indent:40px;">
+        Esclarecemos que a reincidência em tal atitude poderá ensejar uma suspensão disciplinar ou até mesmo a extinção do contrato de trabalho por justa causa. Assim, evite a reincidência da prática de seu ato, o que, se ocorrer, nos obrigará a tomar outras medidas cabíveis de acordo a legislação em vigor.
+      </p>`;
+  } else {
+    // MODELO PADRÃO
+    if (!motivo) return toast('Preencha o motivo.', false);
+    conteudoHTML = `
+      <table style="width:100%;margin-bottom:16px;"><tbody>
+        <tr><td style="width:160px;padding:5px 0"><strong>Empresa:</strong></td><td>${emp}${cnpj?' — CNPJ: '+cnpj:''}</td></tr>
+        <tr><td style="padding:5px 0"><strong>Empregado(a):</strong></td><td>${colab}</td></tr>
+        <tr><td style="padding:5px 0"><strong>Data da Ocorrência:</strong></td><td>${data||'—'}</td></tr>
+      </tbody></table>
+      <p>Pelo presente instrumento, aplicamos a V. Sa. a presente advertência pelo seguinte motivo:</p>
+      <div style="padding:16px;border:1px solid #000;min-height:80px;margin:12px 0;font-size:14px;">${motivo}</div>
+      <p style="font-size:14px;text-align:justify;">Solicitamos que observe as normas internas, evitando reincidências que poderão acarretar medidas disciplinares mais severas, conforme a legislação vigente.</p>`;
+  }
+
   const div = document.createElement('div');
   div.innerHTML = `
     <div style="padding:40px;font-family:Arial,sans-serif;color:#000;max-width:700px;margin:auto;">
       <h2 style="text-align:center;font-size:18px;margin-bottom:4px;">TERMO DE ADVERTÊNCIA ${tipo.toUpperCase()}</h2>
-      <hr style="margin:16px 0;">
-      <table style="width:100%;margin-bottom:16px;"><tbody>
-        <tr><td style="width:160px;padding:5px 0"><strong>Empresa:</strong></td><td>${emp}${cnpj?' — CNPJ: '+cnpj:''}</td></tr>
-        <tr><td style="padding:5px 0"><strong>Empregado(a):</strong></td><td>${colab}</td></tr>
-        <tr><td style="padding:5px 0"><strong>Data da Ocorrência:</strong></td><td>${df}</td></tr>
-      </tbody></table>
-      <p>Pelo presente instrumento, aplicamos a V. Sa. a presente advertência pelo seguinte motivo:</p>
-      <div style="padding:16px;border:1px solid #000;min-height:80px;margin:12px 0;">${motivo}</div>
-      <p style="font-size:13px;">Solicitamos que observe as normas internas, evitando reincidências que poderão acarretar medidas disciplinares mais severas, conforme a CLT.</p>
-      <p style="margin-top:10px;font-size:12px;"><strong>Testemunhas:</strong> ${test||'_______________________  /  _______________________'}</p>
-      <p style="text-align:right;font-size:12px;margin-top:8px;">Emitido em: ${new Date().toLocaleDateString('pt-PT')}</p>
-      <div style="display:flex;justify-content:space-between;margin-top:70px;gap:20px;">
-        <div style="width:45%;text-align:center;border-top:1px solid #000;padding-top:6px;">Empregador<br><small>${emp}</small></div>
-        <div style="width:45%;text-align:center;border-top:1px solid #000;padding-top:6px;">Empregado(a)<br><small>${colab}</small></div>
+      <hr style="margin:16px 0 30px 0;">
+      
+      ${conteudoHTML}
+
+      <p style="text-align:right;font-size:14px;margin-top:40px;">${cidade}, ${dataAtual}</p>
+      
+      <div style="margin-top:60px;text-align:center;border-top:1px solid #000;padding-top:6px;width:70%;margin-left:auto;margin-right:auto;">
+        <strong>${emp}</strong><br><small>CNPJ: ${cnpj}</small><br><small>Empregador</small>
       </div>
-      <div style="width:45%;margin:50px auto 0;text-align:center;border-top:1px solid #000;padding-top:6px;">Testemunha</div>
+
+      <div style="margin-top:60px;border:1px solid #000;padding:20px;border-radius:4px;">
+        <p style="margin-bottom:60px;font-size:14px;">Ciente do funcionário em: ___/___/______</p>
+        <div style="border-top:1px solid #000;width:80%;margin:0 auto;text-align:center;padding-top:6px;">
+          ${colab}
+        </div>
+      </div>
     </div>`;
+  
   html2pdf().set({
     margin:10,
     filename:`Advertencia_${colab.replace(/\s/g,'_')}.pdf`,
     html2canvas:{ scale:2 },
     jsPDF:{ unit:'mm', format:'a4' }
   }).from(div).save();
-  toast('PDF gerado!', true);
+  toast('PDF gerado com sucesso!', true);
 }
 
 // ─── UTILITÁRIOS ──────────────────────────────────────
@@ -2146,7 +2243,7 @@ let EMPRESA_MAP = {}; // razaoSocial → { cnpj, ... }
 
 async function carregarEmpresasMap() {
   try {
-    const { data, error } = await db.from('empresas').select('razao_social, cnpj, nome_fantasia');
+    const { data, error } = await db.from('empresas').select('razao_social, cnpj, nome_fantasia, cidade');
     EMPRESA_MAP = {};
     if (data && !error) data.forEach(e => { EMPRESA_MAP[e.razao_social] = e; });
   } catch(e) { console.warn('Tabela empresas não encontrada:', e.message); }
@@ -2160,21 +2257,9 @@ function preencherCNPJAdv() {
 
 async function loadEmpresas() {
   el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6"><span class="spin"></span></td></tr>';
-  
   const { data, error } = await db.from('empresas').select('*').order('razao_social');
-  
-  // AQUI ESTÁ A MUDANÇA: Vamos mostrar o erro real!
-  if (error) { 
-    console.error("ERRO SUPABASE:", error);
-    el('tb-empresas').innerHTML = `<tr class="erow"><td colspan="6" style="color:var(--rd); font-weight:bold;">ERRO REAL: ${error.message}</td></tr>`; 
-    return; 
-  }
-  
-  if (!data?.length) { 
-    el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6">Nenhuma empresa registada.</td></tr>'; 
-    return; 
-  }
-  
+  if (error) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6" style="color:var(--rd)">Aguardando tabela empresas no Supabase.</td></tr>'; return; }
+  if (!data?.length) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6">Nenhuma empresa registada.</td></tr>'; return; }
   el('tb-empresas').innerHTML = data.map(e => `
     <tr>
       <td>${x(e.razao_social)}</td>
@@ -2187,9 +2272,9 @@ async function loadEmpresas() {
         <button class="btn btn-rd btn-sm" onclick="excluirEmpresa('${e.id}',this)">🗑</button>
       </td>
     </tr>`).join('');
-    
   await carregarEmpresasMap();
 }
+
 async function salvarEmpresa() {
   const razao = v('emp-razao');
   if (!razao) return toast('Razão Social é obrigatória.', false);
@@ -2217,11 +2302,9 @@ async function salvarEmpresa() {
       // Editar
       res = await db.from('empresas').update(payload).eq('id', EMP_EDIT_ID);
     } else {
-      // Novo - O uso de [payload] resolve problemas com o RLS em várias versões do supabase-js
       res = await db.from('empresas').insert([payload]);
     }
     
-    // Se o Supabase deitar um erro, vai exibi-lo!
     if (res.error) {
       console.error("Erro Supabase:", res.error);
       return toast('Erro da Base de Dados: ' + res.error.message, false);
@@ -2308,9 +2391,9 @@ let ADV_EDIT_ID = null;
 function abrirNovaAdv() {
   ADV_EDIT_ID = null;
   el('adv-modal-titulo').textContent = 'Nova Advertência';
-  el('adv-save-btn').textContent = 'Gerar e Salvar';
+  el('adv-save-btn').textContent = 'Salvar no Sistema';
   el('adv-edit-id').value = '';
-  ['a-motivo','a-test'].forEach(id => { if(el(id)) el(id).value=''; });
+  ['a-motivo'].forEach(id => { if(el(id)) el(id).value=''; });
   if(el('a-colab')) el('a-colab').value='';
   if(el('a-emp'))   el('a-emp').value='';
   if(el('a-cnpj'))  el('a-cnpj').value='';
@@ -2332,7 +2415,6 @@ async function abrirEditarAdv(id) {
   if(el('a-tipo'))  el('a-tipo').value  = data.tipo||'';
   if(el('a-data'))  el('a-data').value  = data.data||'';
   if(el('a-motivo'))el('a-motivo').value= data.motivo||'';
-  if(el('a-test'))  el('a-test').value  = data.testemunhas||'';
   preencherCNPJAdv();
   openMo('mo-adv');
 }
@@ -2340,7 +2422,6 @@ async function abrirEditarAdv(id) {
 async function salvarAdvertencia() {
   const colab = v('a-colab');
   if (!colab) return toast('Selecione o colaborador.', false);
-  if (!v('a-motivo')) return toast('Informe o motivo.', false);
   const userName = el('un').textContent;
   const payload = {
     colaborador: colab,
@@ -2349,7 +2430,6 @@ async function salvarAdvertencia() {
     tipo:        v('a-tipo'),
     data:        v('a-data')||null,
     motivo:      v('a-motivo'),
-    testemunhas: v('a-test'),
     user_nome:   userName,
   };
   let error;
@@ -2484,7 +2564,7 @@ async function gerarRelatorio() {
               <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
                 <td style="padding:8px 18px;font-size:13px;color:var(--tx)">${x(a.colaborador)}</td>
                 <td style="padding:8px 18px;font-size:12px"><span style="padding:2px 8px;border-radius:20px;background:var(--or-bg);color:var(--or);font-weight:600">${x(a.tipo)}</span></td>
-                <td style="padding:8px 18px;font-size:13px;color:var(--tx2)">${fd(a.data)}</td>
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx2)">${x(a.data||'—')}</td>
                 <td style="padding:8px 18px;font-size:13px;color:var(--tx2)">${x(a.motivo||'—')}</td>
               </tr>`).join('')}
           </tbody>
@@ -2572,7 +2652,7 @@ async function relatorioIndividual(nome, empresa) {
           <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:18px;">${x(colab.nome)}</div>
           <div style="font-size:13px;color:var(--tx2);margin-top:3px;">${x(colab.cargo||'—')} · ${x(colab.empresa||'—')}</div>
         </div>
-        <div style="margin-left:auto"><span class="bx ${colab.status==='Ativo'?'gn':'gr'}">${colab.status||'—'}</span></div>
+        <div style="margin-left:auto"><span class="bx ${colab.status==='Ativo'?'gn':(colab.status==='Aviso Prévio'?'yl':'gr')}">${colab.status||'—'}</span></div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;">
         ${[
@@ -2594,7 +2674,7 @@ async function relatorioIndividual(nome, empresa) {
   (exams||[]).forEach(e => eventos.push({ data: e.data_validade, tipo: 'Exame', desc: `${e.tipo} — ${e.resultado||'—'}`, cor: 'bl' }));
   (advs||[]).forEach(a => eventos.push({ data: a.data, tipo: a.tipo, desc: a.motivo||'—', cor: a.tipo==='Suspensão'?'rd':'or' }));
   (flts||[]).forEach(f => eventos.push({ data: f.data, tipo: 'Falta', desc: `${f.justificada} — ${f.motivo||'—'}`, cor: f.justificada==='Sim'?'yl':'rd' }));
-  (dems||[]).forEach(d => eventos.push({ data: d.data, tipo: 'Demissão', desc: `${d.tipo} — ${d.motivo||'—'}`, cor: 'rd' }));
+  (dems||[]).forEach(d => eventos.push({ data: d.data, tipo: 'Demissão', desc: `${d.tipo} — ${d.status||'Concluída'}`, cor: 'rd' }));
   eventos.sort((a,b) => (a.data||'').localeCompare(b.data||''));
 
   if (eventos.length) {
