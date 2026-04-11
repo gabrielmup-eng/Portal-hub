@@ -263,7 +263,10 @@ tbody tr:hover td{background:rgba(255,255,255,.02);}
   
   <div class="sb-foot">
     <div class="av" id="ua">G</div>
-    <div class="ui"><div class="un" id="un">gabrielmup</div><div class="ur" id="ur">ADMIN</div></div>
+    <div class="ui">
+      <div class="un" id="un">gabrielmup</div>
+      <div class="ur" id="ur">ADMIN</div>
+    </div>
     <button class="lout" onclick="doLogout()" title="Sair">⏻</button>
   </div>
 </aside>
@@ -1104,10 +1107,10 @@ function entrarModulo(mod) {
   hub.style.display = 'none';
   app.style.display = 'block';
 
-  // Criamos o cabeçalho com o logo que volta para o HUB
+  // Definimos o cabeçalho que contém o Logótipo e a lógica de voltar
   const header = `
     <div class="sb-head">
-      <div class="logo" style="cursor:pointer" onclick="voltarHub()">
+      <div class="logo" style="cursor:pointer" onclick="voltarHub()" title="Voltar ao Hub">
         Hub<span>On</span>
       </div>
     </div>
