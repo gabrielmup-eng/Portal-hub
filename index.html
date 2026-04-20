@@ -1029,6 +1029,30 @@ let DEL_ID  = null;
 
 // ─── AUTH ────────────────────────────────────────────
 async function init() {
+  // Detecta token de reset de senha na URL
+  const hash = window.location.hash;
+  if (hash && hash.includes('access_token') && hash.includes('type=recovery')) {
+    const params = new URLSearchParams(hash.substring(1));
+    const accessToken = params.get('access_token');
+    if (accessToken) {
+      const novaSenha = prompt('Digite sua nova senha (mínimo 6 caracteres):');
+      if (novaSenha && novaSenha.length >= 6) {
+        await db.auth.setSession({ access_token: accessToken, refresh_token: params.get('refresh_token') });
+        const { error } = await db.auth.updateUser({ password: novaSenha });
+        if (error) {
+          alert('Erro ao trocar senha: ' + error.message);
+        } else {
+          alert('✅ Senha alterada! Faça login com a nova senha.');
+          window.location.href = window.location.origin;
+        }
+      } else {
+        alert('Senha inválida. Tente novamente.');
+        window.location.href = window.location.origin;
+      }
+      return;
+    }
+  }
+
   const { data:{ session } } = await db.auth.getSession();
   if (session) { SESSION = session; await onLogin(session.user); }
   else showLogin();
