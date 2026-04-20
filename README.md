@@ -1,0 +1,3187 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HubOn</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C0F14;--bg2:#131720;--bg3:#1A1F2E;
+  --bd:rgba(255,255,255,0.06);--bd2:rgba(255,255,255,0.11);
+  --tx:#F0F2F7;--tx2:#8B93A8;--tx3:#4E566A;
+  --or:#F97316;--or2:#FB923C;--or-bg:rgba(249,115,22,0.10);--or-glow:rgba(249,115,22,0.20);
+  --gn:#10B981;--gn-bg:rgba(16,185,129,0.10);
+  --rd:#EF4444;--rd-bg:rgba(239,68,68,0.10);
+  --yl:#F59E0B;--yl-bg:rgba(245,158,11,0.10);
+  --bl:#3B82F6;--bl-bg:rgba(59,130,246,0.10);
+  --pu:#8B5CF6;--pu-bg:rgba(139,92,246,0.10);
+  --r:10px;--rl:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;-webkit-font-smoothing:antialiased;}
+.hidden{display:none!important;}
+
+/* LOGIN */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 60% 60% at 30% 30%,rgba(249,115,22,0.06),transparent),var(--bg);}
+.lbox{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);padding:44px 40px;width:400px;max-width:95vw;box-shadow:0 32px 64px rgba(0,0,0,0.6);}
+.lbox h1{font-family:'Outfit',sans-serif;font-weight:800;font-size:28px;text-align:center;letter-spacing:-0.03em;}
+.lbox h1 span{color:var(--or);}
+.lbox p{font-size:11px;color:var(--tx3);text-align:center;letter-spacing:0.1em;text-transform:uppercase;margin:8px 0 28px;}
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:11px;font-weight:600;color:var(--tx3);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:6px;}
+.fg input{width:100%;padding:11px 13px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:var(--r);color:var(--tx);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;}
+.fg input:focus{border-color:var(--or);box-shadow:0 0 0 3px var(--or-glow);}
+#lerr{background:var(--rd-bg);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:10px 13px;font-size:12.5px;color:var(--rd);margin-bottom:14px;display:none;}
+.lbtn{width:100%;padding:12px;background:var(--or);border:none;border-radius:var(--r);color:#fff;font-size:14px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:4px;}
+.lbtn:hover{background:var(--or2);}
+.lbtn:disabled{opacity:.6;cursor:not-allowed;}
+
+/* LAYOUT */
+#app{display:none;min-height:100vh;}
+.shell{display:flex;min-height:100vh;}
+.sb{width:224px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:50;overflow-y:auto;}
+.sb-head{padding:20px 18px 16px;border-bottom:1px solid var(--bd);}
+.sb-head .logo{font-family:'Outfit',sans-serif;font-weight:800;font-size:20px;letter-spacing:-0.03em;}
+.sb-head .logo span{color:var(--or);}
+.sec-lbl{padding:16px 18px 4px;font-size:9.5px;font-weight:600;letter-spacing:0.13em;text-transform:uppercase;color:var(--tx3);font-family:'Outfit',sans-serif;}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;font-size:13px;font-weight:500;color:var(--tx2);border-left:2px solid transparent;transition:all .12s;}
+.ni:hover{color:var(--tx);background:rgba(255,255,255,.03);}
+.ni.active{color:var(--or);border-left-color:var(--or);background:var(--or-bg);font-weight:600;}
+.sb-foot{margin-top:auto;padding:14px 16px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;}
+.av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--or),#c2410c);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;}
+.ui{flex:1;min-width:0;}
+.ui .un{font-size:12.5px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ui .ur{font-size:10px;color:var(--tx3);}
+.lout{background:none;border:none;cursor:pointer;color:var(--tx3);font-size:17px;padding:4px;border-radius:6px;}
+.lout:hover{color:var(--rd);background:var(--rd-bg);}
+.main{flex:1;margin-left:224px;padding:28px;}
+.pg{display:none;} .pg.active{display:block;}
+.tb{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.pt{font-family:'Outfit',sans-serif;font-size:22px;font-weight:700;letter-spacing:-0.02em;}
+.ps{font-size:12.5px;color:var(--tx2);margin-top:2px;}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-bottom:24px;}
+.sc{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;position:relative;overflow:hidden;}
+.sc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
+.sc.gn::after{background:var(--gn);}.sc.yl::after{background:var(--yl);}.sc.or::after{background:var(--or);}.sc.rd::after{background:var(--rd);}.sc.pu::after{background:var(--pu);}
+.sv{font-family:'Outfit',sans-serif;font-size:30px;font-weight:700;line-height:1;}
+.sl{font-size:11px;color:var(--tx3);font-weight:600;text-transform:uppercase;margin-top:6px;letter-spacing:0.04em;}
+
+/* TABLE CARD */
+.tc{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;}
+.tc-h{padding:14px 18px;border-bottom:1px solid var(--bd);font-family:'Outfit',sans-serif;font-weight:600;font-size:14px;}
+table{width:100%;border-collapse:collapse;}
+thead th{text-align:left;padding:9px 15px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);background:rgba(255,255,255,.015);border-bottom:1px solid var(--bd);letter-spacing:.06em;}
+tbody td{padding:12px 15px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--tx2);vertical-align:middle;}
+tbody td:first-child{color:var(--tx);font-weight:500;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(255,255,255,.02);}
+.erow td{text-align:center;padding:36px;color:var(--tx3);font-size:13px;}
+
+/* BADGE */
+.bx{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;font-family:'Outfit',sans-serif;display:inline-block;}
+.bx.gn{background:var(--gn-bg);color:var(--gn);}
+.bx.rd{background:var(--rd-bg);color:var(--rd);}
+.bx.or{background:var(--or-bg);color:var(--or);}
+.bx.yl{background:var(--yl-bg);color:var(--yl);}
+.bx.bl{background:var(--bl-bg);color:var(--bl);}
+.bx.gr{background:rgba(255,255,255,.06);color:var(--tx3);}
+
+/* BUTTONS */
+.btn{padding:8px 15px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:'Outfit',sans-serif;display:inline-flex;align-items:center;gap:5px;transition:all .12s;white-space:nowrap;}
+.btn-or{background:var(--or);color:#fff;}.btn-or:hover{background:var(--or2);}
+.btn-bl{background:var(--bl-bg);color:var(--bl);border:1px solid rgba(59,130,246,.2);}.btn-bl:hover{background:rgba(59,130,246,.2);}
+.btn-gh{background:rgba(255,255,255,.05);color:var(--tx);border:1px solid var(--bd);}.btn-gh:hover{background:rgba(255,255,255,.09);}
+.btn-rd{background:var(--rd-bg);color:var(--rd);border:1px solid rgba(239,68,68,.15);}.btn-rd:hover{background:rgba(239,68,68,.2);}
+.btn-sm{padding:5px 10px;font-size:12px;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+
+/* SEARCH */
+.si{padding:8px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:200px;}
+.si:focus{border-color:var(--or);}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
+.mo.open{display:flex;}
+.md{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rl);width:580px;max-width:96vw;max-height:92vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.7);}
+.md-h{padding:20px 22px 16px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1;}
+.md-h h3{font-family:'Outfit',sans-serif;font-size:17px;font-weight:700;}
+.xbtn{background:none;border:none;cursor:pointer;color:var(--tx3);font-size:20px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;}
+.xbtn:hover{background:var(--rd-bg);color:var(--rd);}
+.md-b{padding:20px 22px;}
+.md-f{padding:14px 22px;border-top:1px solid var(--bd);display:flex;gap:8px;justify-content:flex-end;position:sticky;bottom:0;background:var(--bg2);}
+
+/* FORM */
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fi{display:flex;flex-direction:column;gap:5px;}
+.fi.full{grid-column:1/-1;}
+.fi label{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;font-family:'Outfit',sans-serif;}
+.fi input,.fi select,.fi textarea{padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13.5px;outline:none;transition:border-color .12s;}
+.fi input:focus,.fi select:focus,.fi textarea:focus{border-color:var(--or);box-shadow:0 0 0 2px var(--or-glow);}
+.fi textarea{min-height:72px;resize:vertical;}
+.fi select option{background:var(--bg2);}
+.fi input[readonly]{opacity:.55;cursor:not-allowed;}
+.hint{font-size:11px;color:var(--tx3);margin-top:3px;}
+
+/* UPLOAD ZONE */
+.uz{border:2px dashed var(--bd2);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:all .15s;}
+.uz:hover,.uz.over{border-color:var(--or);background:var(--or-bg);}
+.uz-ic{font-size:24px;display:block;margin-bottom:6px;}
+.uz-tx{font-size:13px;color:var(--tx2);}
+.fok{margin-top:8px;color:var(--gn);font-size:12.5px;font-weight:500;}
+
+/* IMPORT LOG */
+.ilog{background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:12px;margin-top:12px;font-size:12px;max-height:150px;overflow-y:auto;display:none;font-family:monospace;}
+.ilog .ok{color:var(--gn);}.ilog .sk{color:var(--tx3);}.ilog .er{color:var(--rd);}
+.isumm{margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);font-weight:600;font-family:'DM Sans',sans-serif;}
+
+/* TOAST */
+#toast{position:fixed;bottom:22px;right:22px;z-index:999;background:var(--bg3);border:1px solid var(--bd2);border-radius:var(--r);padding:12px 17px;font-weight:500;transform:translateY(12px);opacity:0;transition:all .22s;max-width:300px;pointer-events:none;}
+#toast.show{transform:translateY(0);opacity:1;}
+#toast.ok{border-left:3px solid var(--gn);}
+#toast.er{border-left:3px solid var(--rd);}
+
+.btn-tab {
+  padding: 7px 16px; border-radius: 6px; cursor: pointer; font-size: 13px;
+  font-weight: 600; color: var(--tx2); background: none; border: none;
+  font-family: 'Outfit', sans-serif; transition: all .12s;
+}
+.btn-tab.active { background: var(--bg2); color: var(--tx); box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+.btn-tab:hover { color: var(--tx); }
+
+/* SPINNER */
+.spin{width:18px;height:18px;border:2px solid var(--bd2);border-top-color:var(--or);border-radius:50%;animation:sp .6s linear infinite;display:inline-block;vertical-align:middle;}
+@keyframes sp{to{transform:rotate(360deg);}}
+
+/* HUB SCREEN */
+#hub-screen { display:none; min-height:100vh; padding:40px 20px; background:var(--bg); }
+.hub-top { max-width:1100px; margin:0 auto 40px; display:flex; justify-content:space-between; align-items:center; }
+.hub-user { display:flex; align-items:center; gap:12px; }
+.hub-head { text-align:center; margin-bottom:50px; }
+.hub-head h1 { font-family:'Outfit',sans-serif; font-weight:800; font-size:42px; letter-spacing:-0.03em; }
+.hub-head h1 span { color:var(--or); }
+.hub-head p { color:var(--tx2); margin-top:8px; font-size:15px; }
+.hub-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:24px; max-width:1100px; margin:0 auto; }
+.hub-card { background:var(--bg2); border:1px solid var(--bd); border-radius:var(--rl); padding:36px 24px; text-align:center; cursor:pointer; transition:all 0.25s; position:relative; overflow:hidden; }
+.hub-card:hover { border-color:var(--or); transform:translateY(-6px); box-shadow:0 20px 40px rgba(0,0,0,0.4); background:var(--bg3); }
+.hub-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--bd); transition:all 0.3s; }
+.hub-card:hover::before { background:var(--or); }
+.hub-ic { font-size:48px; margin-bottom:20px; display:inline-block; transition:transform 0.3s; }
+.hub-card:hover .hub-ic { transform:scale(1.1); }
+.hub-title { font-family:'Outfit',sans-serif; font-size:22px; font-weight:700; color:var(--tx); margin-bottom:10px; }
+.hub-desc { font-size:13.5px; color:var(--tx2); line-height:1.6; }
+
+/* MOBILE */
+.mob-btn{display:none;position:fixed;top:13px;left:13px;z-index:60;background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:17px;color:var(--tx);}
+@media(max-width:800px){
+  .mob-btn{display:flex;}
+  .sb{transform:translateX(-100%);transition:transform .22s;}
+  .sb.open{transform:translateX(0);box-shadow:20px 0 60px rgba(0,0,0,.5);}
+  .main{margin-left:0;padding:62px 14px 20px;}
+  .fg2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="lbox">
+    <h1>Hub<span>On</span></h1>
+    <p>Gestão de Redes · Food</p>
+    <div id="lerr"></div>
+    <div class="fg"><label>E-mail</label><input type="email" id="li-email" placeholder="seu@email.com" autocomplete="email"></div>
+    <div class="fg"><label>Senha</label><input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <input type="checkbox" id="li-lembrar" checked style="accent-color:var(--or);width:15px;height:15px;cursor:pointer;">
+      <label for="li-lembrar" style="font-size:12.5px;color:var(--tx2);cursor:pointer;text-transform:none;letter-spacing:0;">Manter conectado neste dispositivo</label>
+    </div>
+    <button class="lbtn" id="lbtn" onclick="doLogin()">Entrar</button>
+  </div>
+</div>
+
+<div id="hub-screen">
+  <div class="hub-top">
+    <div class="hub-user">
+      <div class="av" id="hub-av">H</div>
+      <div>
+        <div style="font-weight:600;font-size:14px;color:var(--tx)" id="hub-un">Usuário</div>
+        <div style="font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:0.05em" id="hub-ur">Role</div>
+      </div>
+    </div>
+    <button class="btn btn-gh" onclick="doLogout()">Sair</button>
+  </div>
+
+  <div class="hub-head">
+    <h1>Hub<span>On</span></h1>
+    <p>Selecione o módulo que deseja aceder</p>
+  </div>
+
+  <div class="hub-grid">
+    <div class="hub-card" onclick="entrarModulo('rh')">
+      <div class="hub-ic">👥</div>
+      <div class="hub-title">Departamento Pessoal</div>
+      <div class="hub-desc">Gestão de colaboradores, faltas, advertências, demissões, relatórios e admissões.</div>
+    </div>
+    <div class="hub-card" onclick="entrarModulo('fin')">
+      <div class="hub-ic">💰</div>
+      <div class="hub-title">Financeiro</div>
+      <div class="hub-desc">Faturamento, fluxo de caixa, contas a pagar, DRE e conciliação bancária.</div>
+    </div>
+    <div class="hub-card" onclick="entrarModulo('ops')">
+      <div class="hub-ic">📋</div>
+      <div class="hub-title">Operacional</div>
+      <div class="hub-desc">Checklists de loja, auditorias de qualidade, manutenção e processos diários.</div>
+    </div>
+    <div class="hub-card" onclick="entrarModulo('mkt')">
+      <div class="hub-ic">🚀</div>
+      <div class="hub-title">Marketing</div>
+      <div class="hub-desc">Campanhas, gestão de redes sociais, materiais gráficos e promoções.</div>
+    </div>
+    <div class="hub-card" onclick="entrarModulo('trein')">
+      <div class="hub-ic">🎓</div>
+      <div class="hub-title">Treinamentos</div>
+      <div class="hub-desc">Integração de novos colaboradores, manuais de operação e cursos em vídeo.</div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<button class="mob-btn" onclick="document.getElementById('sb').classList.toggle('open')">☰</button>
+
+<div id="app" style="display:none">
+<div class="shell">
+
+<aside class="sb" id="sb">
+  <div class="sb-head">
+    <div class="logo" style="cursor:pointer" onclick="voltarHub()" title="Voltar ao Hub">
+      Hub<span>On</span>
+    </div>
+  </div>
+
+  <nav id="nav-menu">
+    </nav>
+  
+  <div class="sb-foot">
+    <div class="av" id="ua">G</div>
+    <div class="ui">
+      <div class="un" id="un">gabrielmup</div>
+      <div class="ur" id="ur">ADMIN</div>
+    </div>
+    <button class="lout" onclick="doLogout()" title="Sair">⏻</button>
+  </div>
+</aside>
+
+<main class="main">
+
+<div id="page-operacional" class="pg">
+  <div class="tb">
+    <div><div class="pt">Gestão Operacional</div><div class="ps">Auditoria de conformidade e tempo de execução</div></div>
+    <div class="row">
+        <button class="btn btn-gh" onclick="loadOperacional()">↻ Atualizar Dados</button>
+    </div>
+  </div>
+
+  <div class="sg">
+    <div class="sc bl"><div class="sv" id="op-tempo-medio">0 min</div><div class="sl">Tempo Médio Conclusão</div></div>
+    <div class="sc rd"><div class="sv" id="op-inconf">0</div><div class="sl">Inconformidades (Mês)</div></div>
+    <div class="sc gn"><div class="sv" id="op-taxa">0%</div><div class="sl">Taxa de Conformidade</div></div>
+    <div class="sc pu"><div class="sv" id="op-total">0</div><div class="sl">Checklists Realizados</div></div>
+  </div>
+
+  <div class="tc">
+    <div class="tc-h">Histórico de Auditorias (Via Bot WhatsApp)</div>
+    <table>
+      <thead>
+        <tr><th>Data/Hora</th><th>Loja</th><th>Checklist</th><th>Tempo</th><th>Status</th><th>Evidências</th><th>Ações</th></tr>
+      </thead>
+      <tbody id="tb-operacional">
+        <tr class="erow"><td colspan="7">Aguardando dados da operação...</td></tr>
+      </tbody>
+    </table></div>
+</div>
+
+<div id="page-dashboard" class="pg active">
+  <div class="tb"><div><div class="pt">Dashboard</div><div class="ps" id="dash-date"></div></div>
+  <button class="btn btn-gh btn-sm" onclick="loadDash()">↻ Atualizar</button></div>
+  <div class="sg">
+    <div class="sc gn"><div class="sv" id="d-at">—</div><div class="sl">Ativos</div></div>
+    <div class="sc yl"><div class="sv" id="d-ex">—</div><div class="sl">Exames (30d)</div></div>
+    <div class="sc or"><div class="sv" id="d-adv">—</div><div class="sl">Advertências (Mês)</div></div>
+    <div class="sc rd"><div class="sv" id="d-fl">—</div><div class="sl">Faltas (Mês)</div></div>
+    <div class="sc pu"><div class="sv" id="d-ct">—</div><div class="sl">Contratos (15d)</div></div>
+  </div>
+  <div class="tc"><div class="tc-h">Últimas Ações</div>
+  <table><thead><tr><th>Tipo</th><th>Colaborador</th><th>Empresa</th><th>Data</th></tr></thead>
+  <tbody id="tb-ativ"><tr class="erow"><td colspan="4"><span class="spin"></span></td></tr></tbody></table></div>
+</div>
+
+<div id="page-colaboradores" class="pg">
+  <div class="tb">
+    <div><div class="pt">Colaboradores</div><div class="ps">Cadastro geral da rede</div></div>
+    <div class="row">
+      <input class="si" type="text" placeholder="Buscar..." oninput="filterTb('tb-colab',this.value)">
+      <select id="filtro-empresa" onchange="filtrarPorEmpresa()" style="padding:8px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13px;outline:none;min-width:180px;">
+        <option value="">Todas as empresas</option>
+      </select>
+      <button class="btn btn-bl admin-only" onclick="openMo('mo-import')">📥 Importar PDF</button>
+      <button class="btn btn-or admin-only" onclick="openMo('mo-colab')">＋ Novo</button>
+    </div>
+  </div>
+  <div class="tc"><table>
+    <thead><tr><th>Cód.</th><th>Nome</th><th>Cargo</th><th>Empresa</th><th>Nascimento</th><th>Admissão</th><th>Salário</th><th>Status</th><th></th></tr></thead>
+    <tbody id="tb-colab"><tr class="erow"><td colspan="8"><span class="spin"></span></td></tr></tbody>
+  </table></div>
+</div>
+
+<div id="page-exames" class="pg">
+  <div class="tb"><div><div class="pt">Exames Ocupacionais</div></div>
+  <button class="btn btn-or" onclick="openMo('mo-exame')">＋ Registar</button></div>
+  <div class="tc"><table>
+    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Validade</th><th>Status</th><th>Doc.</th></tr></thead>
+    <tbody id="tb-exames"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
+  </table></div>
+</div>
+
+<div id="page-advertencias" class="pg">
+  <div class="tb">
+    <div><div class="pt">Advertências</div><div class="ps">Geração e controle de advertências</div></div>
+    <button class="btn btn-or" onclick="abrirNovaAdv()">＋ Nova Advertência</button>
+  </div>
+  <div class="tc"><table>
+    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data(s)</th><th>Motivo</th><th>Ações</th></tr></thead>
+    <tbody id="tb-adv"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
+  </table></div>
+</div>
+
+<div id="page-faltas" class="pg">
+  <div class="tb"><div><div class="pt">Faltas</div></div>
+  <button class="btn btn-or" onclick="openMo('mo-falta')">＋ Registar</button></div>
+  <div class="tc"><table>
+    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Data</th><th>Justificada</th><th>Motivo</th><th>Ações</th></tr></thead>
+    <tbody id="tb-faltas"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
+  </table></div>
+</div>
+
+<div id="page-demissoes" class="pg">
+  <div class="tb"><div><div class="pt">Demissões</div></div>
+  <button class="btn btn-or admin-only" onclick="openMo('mo-dem')">＋ Iniciar Demissão</button></div>
+  <div class="tc"><table>
+    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Data</th><th>Status</th><th>Ações</th></tr></thead>
+    <tbody id="tb-dem"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
+  </table></div>
+</div>
+
+<div id="page-contratos" class="pg">
+  <div class="tb"><div><div class="pt">Contratos</div></div>
+  <button class="btn btn-or admin-only" onclick="openMo('mo-ct')">＋ Novo</button></div>
+  <div class="tc"><table>
+    <thead><tr><th>Colaborador</th><th>Empresa</th><th>Tipo</th><th>Término</th><th>Status</th></tr></thead>
+    <tbody id="tb-ct"><tr class="erow"><td colspan="5"><span class="spin"></span></td></tr></tbody>
+  </table></div>
+</div>
+
+<div id="page-entrevistas" class="pg">
+  <div class="tb">
+    <div><div class="pt">Entrevistas</div><div class="ps">Triagem e seleção de candidatos</div></div>
+    <button class="btn btn-or" onclick="openMo('mo-ent')">＋ Nova Entrevista</button>
+  </div>
+
+  <div style="display:flex;gap:4px;background:var(--bg3);padding:4px;border-radius:8px;margin-bottom:20px;width:fit-content;">
+    <button class="btn-tab active" id="tab-triagem" onclick="showEntTab('triagem',this)">📋 Script de Triagem</button>
+    <button class="btn-tab" id="tab-candidatos" onclick="showEntTab('candidatos',this)">👥 Candidatos</button>
+    <button class="btn-tab" id="tab-vaga" onclick="showEntTab('vaga',this)">📌 Informações da Vaga</button>
+  </div>
+
+  <div id="ent-tab-triagem">
+
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:16px;">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;margin-bottom:14px;">👤 Candidato em Triagem</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+        <div class="fi" style="flex:1;min-width:200px;">
+          <label>Nome do Candidato</label>
+          <input id="triagem-nome" placeholder="Ex: João da Silva" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13.5px;outline:none;">
+        </div>
+        <div class="fi" style="flex:1;min-width:180px;">
+          <label>Vaga pretendida</label>
+          <select id="triagem-vaga" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13.5px;outline:none;">
+            <option value="Atendente">Atendente I</option>
+            <option value="Auxiliar de Cozinha">Auxiliar de Cozinha I</option>
+          </select>
+        </div>
+        <div class="fi" style="flex:1;min-width:180px;">
+          <label>Empresa</label>
+          <select id="triagem-empresa" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13.5px;outline:none;"></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="script-bloco" style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--or);">💬 MENSAGEM 1 — Abordagem Inicial</div>
+        <button class="btn btn-gh btn-sm" onclick="copiarScript('msg1')">📋 Copiar</button>
+      </div>
+      <div id="msg1" class="script-txt" style="background:var(--bg3);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;"></div>
+    </div>
+
+    <div class="script-bloco" style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--or);">💬 MENSAGEM 2 — Perguntas de Triagem</div>
+        <button class="btn btn-gh btn-sm" onclick="copiarScript('msg2')">📋 Copiar</button>
+      </div>
+      <div id="msg2" class="script-txt" style="background:var(--bg3);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;"></div>
+    </div>
+
+    <div class="script-bloco" style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--or);">💬 MENSAGEM 3 — Apresentação da Vaga</div>
+        <button class="btn btn-gh btn-sm" onclick="copiarScript('msg3')">📋 Copiar</button>
+      </div>
+      <div id="msg3" class="script-txt" style="background:var(--bg3);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;"></div>
+    </div>
+
+    <div class="script-bloco" style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;color:var(--or);">💬 MENSAGEM 4 — Orientações para o Dia de Teste</div>
+        <button class="btn btn-gh btn-sm" onclick="copiarScript('msg4')">📋 Copiar</button>
+      </div>
+      <div id="msg4" class="script-txt" style="background:var(--bg3);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--tx2);white-space:pre-wrap;"></div>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:16px;">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;margin-bottom:14px;">✅ Checklist — Respostas Recebidas</div>
+      <div id="triagem-checklist" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-or" onclick="salvarTriagem()">💾 Salvar Triagem</button>
+        <button class="btn btn-gh" onclick="limparTriagem()">🔄 Nova Triagem</button>
+      </div>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;margin-bottom:14px;">📝 Anotar Respostas do Candidato</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="campos-respostas"></div>
+    </div>
+  </div>
+
+  <div id="ent-tab-candidatos" style="display:none;">
+    <div class="tc"><table>
+      <thead><tr><th>Candidato</th><th>Vaga</th><th>Empresa</th><th>Data</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody id="tb-ent"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
+    </table></div>
+  </div>
+
+  <div id="ent-tab-vaga" style="display:none;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+      <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:16px;color:var(--or);margin-bottom:16px;">🍜 AUXILIAR DE COZINHA I & ATENDENTE I</div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--tx2);">
+          <div style="display:flex;gap:8px;"><span style="color:var(--or);font-weight:600;min-width:100px;">Horário</span><span>10h às 22h (podendo ir até 23h)</span></div>
+          <div style="display:flex;gap:8px;"><span style="color:var(--or);font-weight:600;min-width:100px;">Escala</span><span>12h × 36h (trabalha um dia, folga outro)</span></div>
+          <div style="display:flex;gap:8px;"><span style="color:var(--or);font-weight:600;min-width:100px;">Salário</span><span style="color:var(--gn);font-weight:600;">R$ 1.830,00</span></div>
+          <div style="border-top:1px solid var(--bd);padding-top:10px;margin-top:4px;">
+            <div style="font-weight:600;color:var(--tx);margin-bottom:6px;">Benefícios</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              ${['Assiduidade','Sacolão','Folga Aniversário','Auxílio Transporte','Refeição no Local'].map(b=>`<span style="padding:3px 10px;background:var(--gn-bg);color:var(--gn);border-radius:20px;font-size:11.5px;font-weight:600;">${b}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:16px;color:var(--or);margin-bottom:16px;">🥗 Sobre o Restaurante</div>
+        <div style="font-size:13px;color:var(--tx2);line-height:1.8;">
+          O nosso restaurante é especializado em <strong style="color:var(--tx)">Poke</strong> — como um sushi/temaki na tigela, ou uma salada montada com itens do sushi, onde cada cliente monta do seu jeito.<br><br>
+          A cozinha é de <strong style="color:var(--tx)">pratos frios</strong>. Uma pessoa cuida do arroz de sushi, salmão e itens delicados. Os demais auxiliares ficam com picar frutas/legumes, grelhar itens, preparar sucos e molhos.<br><br>
+          A tarefa mais importante é <strong style="color:var(--tx)">montar os Pokes</strong> no atendimento — exige atenção e delicadeza para evitar erros e garantir um prato bonito. Temos manuais que mostram como tudo deve ser feito.
+        </div>
+      </div>
+
+      <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;grid-column:1/-1;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:14px;color:var(--or);margin-bottom:14px;">📅 Processo Seletivo</div>
+        <div style="font-size:13px;color:var(--tx2);margin-bottom:14px;">
+          Contratação imediata. Inicialmente marcamos <strong style="color:var(--tx)">2 a 3 dias de teste/free das 10h às 22h</strong> para avaliar adaptação e desempenho.<br>
+          Pagamento: <strong style="color:var(--gn)">R$ 120,00/dia</strong>, pago no final do expediente. Após o free, iniciamos os trâmites de contratação.
+        </div>
+        <div style="font-weight:600;color:var(--tx);margin-bottom:10px;">Recomendações para o dia:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          ${[
+            '👕 Roupa preta ou escura',
+            '👖 Calça e t-shirt (sem decote ou alças)',
+            '👟 Calçado fechado',
+            '💇 Cabelo apanhado',
+            '✨ Sem adereços chamativos (colares, brincos...)',
+            '💄 Sem maquilhagem ou maquilhagem leve'
+          ].map(r=>`<div style="display:flex;gap:8px;align-items:center;padding:8px 12px;background:var(--bg3);border-radius:8px;font-size:13px;color:var(--tx2);">${r}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-documentos" class="pg">
+  <div class="tb"><div><div class="pt">Documentos</div></div>
+  <button class="btn btn-or" onclick="openMo('mo-up')">📎 Enviar</button></div>
+  <div class="tc"><table>
+    <thead><tr><th>Arquivo</th><th>Tipo</th><th>Colaborador</th><th>Empresa</th><th>Data</th><th>Ações</th></tr></thead>
+    <tbody id="tb-docs"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
+  </table></div>
+</div>
+
+<div id="page-empresas" class="pg">
+  <div class="tb">
+    <div><div class="pt">Empresas</div><div class="ps">Dados cadastrais de cada unidade</div></div>
+    <button class="btn btn-or" onclick="openMo('mo-empresa')">＋ Nova Empresa</button>
+  </div>
+  <div class="tc"><table>
+    <thead><tr><th>Razão Social</th><th>CNPJ</th><th>Endereço</th><th>Telefone</th><th>E-mail</th><th></th></tr></thead>
+    <tbody id="tb-empresas"><tr class="erow"><td colspan="6"><span class="spin"></span></td></tr></tbody>
+  </table></div>
+</div>
+
+<div id="page-relatorios" class="pg">
+  <div class="tb"><div><div class="pt">Relatórios</div><div class="ps">Salários, advertências, faltas e histórico</div></div></div>
+
+  <div class="fg2" style="margin-bottom:20px;">
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--or);">🏢 Relatório Geral (Empresa)</div>
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+        <div class="fi" style="flex:1;">
+          <label>Selecione a Empresa</label>
+          <select id="rel-empresa" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13.5px;outline:none;">
+            <option value="">Todas as empresas</option>
+          </select>
+        </div>
+        <button class="btn btn-or" onclick="gerarRelatorio()">📊 Gerar Relatório</button>
+      </div>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;">
+      <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;color:var(--bl);">👤 Relatório Individual</div>
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+        <div class="fi" style="flex:1;">
+          <label>Selecione o Colaborador</label>
+          <select id="rel-colab" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13.5px;outline:none;">
+            <option value="">Selecione...</option>
+          </select>
+        </div>
+        <button class="btn btn-bl" onclick="gerarRelatorioIndDireto()">📄 Ver Histórico</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="rel-conteudo"></div>
+</div>
+
+<div id="page-usuarios" class="pg">
+  <div class="tb">
+    <div><div class="pt">Utilizadores</div><div class="ps">Controlo de acesso e permissões</div></div>
+  </div>
+  <div id="lista-usuarios"><div style="text-align:center;padding:32px"><span class="spin"></span></div></div>
+</div>
+
+</main>
+</div></div><div class="mo" id="mo-import">
+  <div class="md">
+    <div class="md-h"><h3>📥 Importar Relação de Empregados (JB Contábil)</h3><button class="xbtn" onclick="closeMo('mo-import')">✕</button></div>
+    <div class="md-b">
+      <div class="fi full" style="margin-bottom:14px;">
+        <label>Nome da Empresa no Sistema *</label>
+        <input id="imp-emp" placeholder="Ex: FNP SANTA ROSA">
+        <div class="hint">Será salvo como "empresa" de todos os colaboradores importados.</div>
+      </div>
+
+      <div class="fi full" style="margin-bottom:6px;">
+        <label>Opção 1 — Anexar PDF diretamente</label>
+        <div class="uz" id="imp-uz" onclick="document.getElementById('imp-pdf').click()">
+          <span class="uz-ic">📄</span>
+          <div class="uz-tx">Clique para selecionar o PDF da contabilidade</div>
+          <div class="hint" style="margin-top:4px;">O sistema lê e extrai os dados automaticamente</div>
+        </div>
+        <input type="file" id="imp-pdf" accept=".pdf,application/pdf" style="display:none" onchange="onImpPdf(this)">
+        <div class="fok" id="imp-pdf-ok"></div>
+      </div>
+
+      <div style="text-align:center;color:var(--tx3);font-size:12px;margin:10px 0;">— ou —</div>
+
+      <div class="fi full">
+        <label>Opção 2 — Colar texto (Ctrl+A no PDF → Ctrl+C → Ctrl+V aqui)</label>
+        <textarea id="imp-txt" style="height:100px;font-family:monospace;font-size:11.5px;" placeholder="Cole o texto aqui..."></textarea>
+      </div>
+
+      <div id="imp-log" class="ilog"></div>
+    </div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-import')">Cancelar</button>
+      <button class="btn btn-or" id="imp-btn" onclick="importar()">▶ Importar</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo-colab">
+  <div class="md">
+    <div class="md-h"><h3>Novo Colaborador</h3><button class="xbtn" onclick="closeMo('mo-colab')">✕</button></div>
+    <div class="md-b">
+      <div class="fg2">
+        <div class="fi full"><label>Nome Completo *</label><input id="c-nome" placeholder="Nome completo"></div>
+        <div class="fi"><label>Cargo / Função</label><input id="c-cargo" placeholder="Ex: Operador de Caixa"></div>
+        <div class="fi"><label>Empresa *</label><input id="c-empresa" placeholder="Ex: FNP SANTA ROSA"></div>
+        <div class="fi"><label>Data de Nascimento</label><input type="date" id="c-nasc"></div>
+        <div class="fi"><label>Data de Admissão</label><input type="date" id="c-adm"></div>
+        <div class="fi"><label>Salário (R$)</label><input type="number" id="c-sal" step="0.01" placeholder="0,00"></div>
+      </div>
+      <div class="hint" style="margin-top:10px;">💡 O código do colaborador é gerado automaticamente (sequencial, sem repetição).</div>
+    </div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-colab')">Cancelar</button>
+      <button class="btn btn-or" onclick="saveColab()">Salvar Colaborador</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo-exame">
+  <div class="md">
+    <div class="md-h"><h3>Registar Exame</h3><button class="xbtn" onclick="closeMo('mo-exame')">✕</button></div>
+    <div class="md-b">
+      <div class="fg2">
+        <div class="fi full"><label>Colaborador *</label>
+          <select id="e-colab" onchange="autoFill('e-colab','e-emp','e-cargo','e-sal')"><option value="">Selecione...</option></select></div>
+        <div class="fi full"><label>Empresa</label><input id="e-emp" readonly></div>
+        <div class="fi"><label>Cargo</label><input id="e-cargo" readonly></div>
+        <div class="fi"><label>Salário</label><input id="e-sal" readonly></div>
+        <div class="fi"><label>Tipo *</label><select id="e-tipo"><option>Admissional</option><option>Periódico</option><option>Demissional</option><option>Retorno ao Trabalho</option><option>Mudança de Função</option></select></div>
+        <div class="fi"><label>Validade *</label><input type="date" id="e-val"></div>
+        <div class="fi full">
+          <label>Anexar Documento</label>
+          <div class="uz" onclick="document.getElementById('e-file').click()">
+            <span class="uz-ic">📎</span><div class="uz-tx">Selecionar ou tirar foto</div>
+            <button type="button" class="btn btn-gh btn-sm" style="margin-top:8px" onclick="event.stopPropagation();document.getElementById('e-cam').click()">📸 Câmera</button>
+          </div>
+          <input type="file" id="e-file" accept="image/*,.pdf" style="display:none" onchange="fileOk(this,'e-ok')">
+          <input type="file" id="e-cam" accept="image/*" capture="environment" style="display:none" onchange="fileOk(this,'e-ok')">
+          <div class="fok" id="e-ok"></div>
+        </div>
+      </div>
+    </div>
+    <div class="md-f"><button class="btn btn-gh" onclick="closeMo('mo-exame')">Cancelar</button><button class="btn btn-or" onclick="saveReg('exame')">Salvar</button></div>
+  </div>
+</div>
+
+<div class="mo" id="mo-adv">
+  <div class="md">
+    <div class="md-h">
+      <h3 id="adv-modal-titulo">Nova Advertência</h3>
+      <button class="xbtn" onclick="closeMo('mo-adv');ADV_EDIT_ID=null;">✕</button>
+    </div>
+    <div class="md-b">
+      <input type="hidden" id="adv-edit-id">
+      <div class="fg2">
+        <div class="fi full"><label>Colaborador *</label>
+          <select id="a-colab" onchange="autoFill('a-colab','a-emp','a-cargo','a-sal');preencherCNPJAdv()"><option value="">Selecione...</option></select></div>
+        <div class="fi full"><label>Empresa</label><input id="a-emp" readonly></div>
+        <div class="fi"><label>CNPJ da Empresa</label><input id="a-cnpj" readonly placeholder="Cadastre a empresa primeiro"></div>
+        <div class="fi"><label>Cargo</label><input id="a-cargo" readonly></div>
+        <div class="fi"><label>Tipo *</label><select id="a-tipo">
+          <option>Verbal</option>
+          <option>Escrita (1ª)</option>
+          <option>Escrita (2ª)</option>
+          <option>Escrita (3ª)</option>
+          <option>Escrita (4ª)</option>
+          <option>Escrita (5ª)</option>
+          <option>Suspensão</option>
+        </select></div>
+        <div class="fi"><label>Data(s) da Ocorrência *</label><input type="text" id="a-data" placeholder="Ex: 10/04/2026 e 11/04/2026"></div>
+        <div class="fi full"><label>Motivo</label><textarea id="a-motivo" placeholder="Descreva o motivo da advertência..."></textarea></div>
+        <div class="fi full">
+          <label style="color:var(--bl)">Modelo do PDF</label>
+          <select id="a-modelo-pdf" style="border-color:var(--bl);">
+            <option value="padrao">📄 Padrão Geral</option>
+            <option value="falta">⚠️ Falta Não Justificada (Art. 482 alínea E)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="md-f">
+      <button class="btn btn-bl" onclick="gerarPDF()">🖨️ Gerar PDF</button>
+      <button class="btn btn-gh" onclick="closeMo('mo-adv');ADV_EDIT_ID=null;">Cancelar</button>
+      <button class="btn btn-or" id="adv-save-btn" onclick="salvarAdvertencia()">Salvar no Sistema</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo-falta">
+  <div class="md">
+    <div class="md-h"><h3>Registar Falta</h3><button class="xbtn" onclick="closeMo('mo-falta')">✕</button></div>
+    <div class="md-b">
+      <div class="fg2">
+        <div class="fi full"><label>Colaborador *</label>
+          <select id="f-colab" onchange="autoFill('f-colab','f-emp','f-cargo','f-sal')"><option value="">Selecione...</option></select></div>
+        <div class="fi full"><label>Empresa</label><input id="f-emp" readonly></div>
+        <div class="fi"><label>Cargo</label><input id="f-cargo" readonly></div>
+        <div class="fi"><label>Salário</label><input id="f-sal" readonly></div>
+        <div class="fi"><label>Data *</label><input type="date" id="f-data"></div>
+        <div class="fi"><label>Justificada?</label><select id="f-just"><option>Não</option><option>Sim</option></select></div>
+        <div class="fi full"><label>Motivo / Atestado</label><textarea id="f-motivo"></textarea></div>
+      </div>
+    </div>
+    <div class="md-f"><button class="btn btn-gh" onclick="closeMo('mo-falta')">Cancelar</button><button class="btn btn-or" onclick="saveReg('falta')">Salvar</button></div>
+  </div>
+</div>
+
+<div class="mo" id="mo-dem">
+  <div class="md" style="width:640px">
+    <div class="md-h"><h3>Iniciar Processo de Demissão</h3><button class="xbtn" onclick="closeMo('mo-dem')">✕</button></div>
+    <div class="md-b">
+      <div class="fg2">
+        <div class="fi full"><label>Colaborador *</label>
+          <select id="d-colab" onchange="autoFill('d-colab','d-emp','d-cargo','d-sal')"><option value="">Selecione...</option></select></div>
+        <div class="fi full"><label>Empresa</label><input id="d-emp" readonly></div>
+        <div class="fi"><label>Cargo</label><input id="d-cargo" readonly></div>
+        <div class="fi"><label>Salário</label><input id="d-sal" readonly></div>
+        <div class="fi"><label>Tipo de Rescisão *</label>
+          <select id="d-tipo">
+            <option>Sem justa causa</option>
+            <option>Com justa causa</option>
+            <option>Pedido de demissão</option>
+            <option>Acordo mútuo (§6º)</option>
+          </select>
+        </div>
+        <div class="fi"><label>Data de Início do Processo</label><input type="date" id="d-data"></div>
+        <div class="fi full">
+          <label style="color:var(--or)">Status do Processo *</label>
+          <select id="d-status" style="border-color:var(--or); font-weight:bold;">
+            <option value="Aviso Prévio">⏳ Em Aviso Prévio (Colaborador continua ativo)</option>
+            <option value="Concluída">✅ Concluída (Inativar colaborador agora)</option>
+          </select>
+        </div>
+        <div class="fi full"><label>Motivo / Observações</label><textarea id="d-motivo" placeholder="Descreva os detalhes da rescisão..."></textarea></div>
+      </div>
+      <hr style="border:none;border-top:1px solid var(--bd);margin:16px 0;">
+      <div style="font-weight:600;font-size:13px;margin-bottom:12px;font-family:'Outfit',sans-serif;">📎 Documentos da Rescisão</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div class="fi"><label>Tipo de Documento</label>
+          <select id="dem-doc-tipo">
+            <option>Aviso Prévio Assinado</option>
+            <option>Termo de Quitação</option>
+            <option>Espelho da Rescisão</option>
+            <option>TRCT Assinado</option>
+            <option>Comprovante FGTS</option>
+            <option>Chave FGTS</option>
+            <option>Guia Seguro-Desemprego</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="fi"><label>Arquivo</label>
+          <div style="display:flex;gap:6px">
+            <button type="button" class="btn btn-gh btn-sm" style="flex:1" onclick="document.getElementById('dem-file').click()">📎 Selecionar</button>
+            <button type="button" class="btn btn-gh btn-sm" onclick="document.getElementById('dem-cam').click()">📸</button>
+          </div>
+          <input type="file" id="dem-file" accept="image/*,.pdf" style="display:none" onchange="fileOk(this,'dem-ok')">
+          <input type="file" id="dem-cam" accept="image/*" capture="environment" style="display:none" onchange="fileOk(this,'dem-ok')">
+          <div class="fok" id="dem-ok"></div>
+        </div>
+      </div>
+      <div id="dem-docs-preview" style="display:flex;flex-direction:column;gap:6px;"></div>
+      <button type="button" class="btn btn-gh btn-sm" style="margin-top:6px" onclick="adicionarDocDemissao()">＋ Adicionar documento</button>
+    </div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-dem')">Cancelar</button>
+      <button class="btn btn-or" onclick="saveReg('demissao')">Salvar Processo</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo-ct">
+  <div class="md">
+    <div class="md-h"><h3>Contrato</h3><button class="xbtn" onclick="closeMo('mo-ct')">✕</button></div>
+    <div class="md-b">
+      <div class="fg2">
+        <div class="fi full"><label>Colaborador *</label>
+          <select id="ct-colab" onchange="autoFill('ct-colab','ct-emp','ct-cargo','ct-sal')"><option value="">Selecione...</option></select></div>
+        <div class="fi full"><label>Empresa</label><input id="ct-emp" readonly></div>
+        <div class="fi"><label>Cargo</label><input id="ct-cargo" readonly></div>
+        <div class="fi"><label>Salário</label><input id="ct-sal" readonly></div>
+        <div class="fi"><label>Tipo *</label><select id="ct-tipo"><option>CLT — Indeterminado</option><option>Experiência 45 dias</option><option>Experiência 90 dias</option><option>Temporário</option><option>Estágio</option></select></div>
+        <div class="fi"><label>Data de Término</label><input type="date" id="ct-fim"></div>
+      </div>
+    </div>
+    <div class="md-f"><button class="btn btn-gh" onclick="closeMo('mo-ct')">Cancelar</button><button class="btn btn-or" onclick="saveReg('contrato')">Salvar</button></div>
+  </div>
+</div>
+
+<div class="mo" id="mo-ent">
+  <div class="md" style="width:640px">
+    <div class="md-h"><h3>Registar Candidato</h3><button class="xbtn" onclick="closeMo('mo-ent')">✕</button></div>
+    <div class="md-b">
+      <div class="fg2">
+        <div class="fi full"><label>Nome Completo *</label><input id="en-nome" placeholder="Nome completo do candidato"></div>
+        <div class="fi"><label>Vaga *</label>
+          <select id="en-vaga">
+            <option value="Atendente I">Atendente I</option>
+            <option value="Auxiliar de Cozinha I">Auxiliar de Cozinha I</option>
+          </select>
+        </div>
+        <div class="fi"><label>Empresa</label><select id="en-empresa" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13.5px;outline:none;"></select></div>
+        <div class="fi"><label>Idade</label><input id="en-idade" type="number" placeholder="Ex: 24"></div>
+        <div class="fi"><label>Localidade / Bairro</label><input id="en-local" placeholder="Ex: Santa Rosa / Centro"></div>
+        <div class="fi"><label>Transportes Públicos?</label><select id="en-transp"><option value="">—</option><option>Sim</option><option>Não</option></select></div>
+        <div class="fi"><label>Tem experiência na área?</label><select id="en-exp"><option value="">—</option><option>Sim</option><option>Não</option></select></div>
+        <div class="fi full"><label>Última Experiência / Tempo</label><input id="en-ult-exp" placeholder="Ex: Pizzaria 3 Irmãos — 8 meses"></div>
+        <div class="fi"><label>Disponível a partir de</label><input type="date" id="en-disponivel"></div>
+        <div class="fi"><label>Data do Teste Marcado</label><input type="date" id="en-teste"></div>
+        <div class="fi"><label>Status</label>
+          <select id="en-status">
+            <option>📞 Em triagem</option>
+            <option>📅 Teste agendado</option>
+            <option>✅ Aprovado</option>
+            <option>❌ Reprovado</option>
+            <option>🗂 Banco de talentos</option>
+          </select>
+        </div>
+        <div class="fi"><label>Avaliação</label>
+          <select id="en-nota">
+            <option value="">—</option>
+            <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+            <option value="4">⭐⭐⭐⭐ Bom</option>
+            <option value="3">⭐⭐⭐ Regular</option>
+            <option value="2">⭐⭐ Fraco</option>
+            <option value="1">⭐ Não recomendado</option>
+          </select>
+        </div>
+        <div class="fi full"><label>Observações</label><textarea id="en-obs" placeholder="Impressões, pontos fortes, comportamento..."></textarea></div>
+      </div>
+    </div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-ent')">Cancelar</button>
+      <button class="btn btn-or" onclick="saveEntrevista()">Salvar Candidato</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo-up">
+  <div class="md">
+    <div class="md-h"><h3>Enviar Documento</h3><button class="xbtn" onclick="closeMo('mo-up')">✕</button></div>
+    <div class="md-b">
+      <div class="fg2">
+        <div class="fi full"><label>Colaborador *</label>
+          <select id="up-colab" onchange="autoFill('up-colab','up-emp','up-cargo','up-sal')"><option value="">Selecione...</option></select></div>
+        <div class="fi full"><label>Empresa</label><input id="up-emp" readonly></div>
+        <div class="fi"><label>Cargo</label><input id="up-cargo" readonly></div>
+        <div class="fi"><label>Salário</label><input id="up-sal" readonly></div>
+        <div class="fi full"><label>Tipo</label><select id="up-tipo"><option>Advertência Assinada</option><option>Contrato Assinado</option><option>Atestado Médico</option><option>Exame Ocupacional</option><option>Documento Admissional</option><option>Outro</option></select></div>
+        <div class="fi full">
+          <label>Arquivo *</label>
+          <div class="uz" onclick="document.getElementById('up-file').click()">
+            <span class="uz-ic">📤</span><div class="uz-tx">Selecionar ficheiro</div>
+            <button type="button" class="btn btn-gh btn-sm" style="margin-top:8px" onclick="event.stopPropagation();document.getElementById('up-cam').click()">📸 Câmera</button>
+          </div>
+          <input type="file" id="up-file" accept="image/*,.pdf" style="display:none" onchange="fileOk(this,'up-ok')">
+          <input type="file" id="up-cam" accept="image/*" capture="environment" style="display:none" onchange="fileOk(this,'up-ok')">
+          <div class="fok" id="up-ok"></div>
+        </div>
+      </div>
+    </div>
+    <div class="md-f"><button class="btn btn-gh" onclick="closeMo('mo-up')">Cancelar</button><button class="btn btn-or" onclick="saveUpload()">Salvar</button></div>
+  </div>
+</div>
+
+
+<div class="mo" id="mo-docs-colab">
+  <div class="md" style="width:680px">
+    <div class="md-h">
+      <h3>📁 Documentos de <span id="docs-colab-nome" style="color:var(--or)"></span></h3>
+      <button class="xbtn" onclick="closeMo('mo-docs-colab')">✕</button>
+    </div>
+    <div class="md-b">
+      <div style="background:var(--bg3);border:1px solid var(--bd);border-radius:var(--r);padding:16px;margin-bottom:18px;">
+        <div style="font-weight:600;font-size:13px;margin-bottom:12px;font-family:'Outfit',sans-serif;">➕ Adicionar Documento</div>
+        <div class="fg2">
+          <div class="fi">
+            <label>Tipo de Documento</label>
+            <select id="dc-tipo"></select>
+          </div>
+          <div class="fi">
+            <label>Arquivo (foto ou PDF)</label>
+            <div style="display:flex;gap:8px;">
+              <button type="button" class="btn btn-gh btn-sm" style="flex:1" onclick="document.getElementById('dc-file').click()">📎 Selecionar</button>
+              <button type="button" class="btn btn-gh btn-sm" onclick="document.getElementById('dc-cam').click()">📸</button>
+            </div>
+            <input type="file" id="dc-file" accept="image/*,.pdf" style="display:none" onchange="fileOk(this,'dc-ok')">
+            <input type="file" id="dc-cam" accept="image/*" capture="environment" style="display:none" onchange="fileOk(this,'dc-ok')">
+            <div class="fok" id="dc-ok"></div>
+          </div>
+        </div>
+        <div style="margin-top:12px;text-align:right;">
+          <button class="btn btn-or btn-sm" onclick="salvarDocColab()">Salvar Documento</button>
+        </div>
+      </div>
+
+      <div style="font-weight:600;font-size:13px;margin-bottom:10px;font-family:'Outfit',sans-serif;">Documentos registados</div>
+      <div id="docs-colab-lista">
+        <div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px;"><span class="spin"></span></div>
+      </div>
+    </div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-docs-colab')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo-empresa">
+  <div class="md">
+    <div class="md-h"><h3 id="emp-modal-titulo">Nova Empresa</h3><button class="xbtn" onclick="closeMo('mo-empresa');EMP_EDIT_ID=null;">✕</button></div>
+    <div class="md-b">
+      <input type="hidden" id="emp-edit-id">
+      <div class="fg2">
+        <div class="fi full"><label>Razão Social *</label><input id="emp-razao" placeholder="Ex: WILLIAN CORREA FRANCO MORAES LTDA"></div>
+        <div class="fi"><label>Nome Fantasia</label><input id="emp-fantasia" placeholder="Ex: FNP Santa Rosa"></div>
+        <div class="fi"><label>CNPJ *</label><input id="emp-cnpj" placeholder="00.000.000/0001-00"></div>
+        <div class="fi"><label>Inscrição Estadual</label><input id="emp-ie" placeholder="Ex: 000.000.000"></div>
+        <div class="fi full"><label>Logradouro (Rua/Av)</label><input id="emp-end" placeholder="Ex: Rua das Flores, 123"></div>
+        <div class="fi"><label>Localidade</label><input id="emp-bairro" placeholder="Ex: Centro"></div>
+        <div class="fi"><label>Cidade</label><input id="emp-cidade" placeholder="Ex: Santa Rosa"></div>
+        <div class="fi"><label>Distrito/Estado</label><input id="emp-estado" placeholder="Ex: RS" maxlength="2" style="text-transform:uppercase"></div>
+        <div class="fi"><label>Código Postal</label><input id="emp-cep" placeholder="0000-000"></div>
+        <div class="fi"><label>Telefone</label><input id="emp-tel" placeholder="(00) 00000-0000"></div>
+        <div class="fi"><label>E-mail</label><input id="emp-email" placeholder="contato@empresa.com.br"></div>
+        <div class="fi"><label>Responsável Legal</label><input id="emp-resp" placeholder="Nome do sócio/responsável"></div>
+        <div class="fi"><label>Ramo de Atividade</label><input id="emp-ramo" placeholder="Ex: Restauração"></div>
+        <div class="fi"><label>Data de Abertura</label><input type="date" id="emp-abertura"></div>
+      </div>
+    </div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-empresa');EMP_EDIT_ID=null;">Cancelar</button>
+      <button class="btn btn-or" onclick="salvarEmpresa()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo-invite">
+  <div class="md" style="width:480px">
+    <div class="md-h"><h3>✉️ Convidar Novo Utilizador</h3><button class="xbtn" onclick="closeMo('mo-invite')">✕</button></div>
+    <div class="md-b">
+      <div style="background:var(--bl-bg);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:12px 14px;font-size:12.5px;color:var(--bl);margin-bottom:16px;">
+        💡 O utilizador receberá um e-mail com link para criar a senha e aceder ao sistema.
+      </div>
+      <div class="fg2">
+        <div class="fi full"><label>Nome *</label><input id="inv-nome" placeholder="Nome completo"></div>
+        <div class="fi full"><label>E-mail *</label><input id="inv-email" type="email" placeholder="email@exemplo.com"></div>
+        <div class="fi"><label>Papel</label>
+          <select id="inv-role">
+            <option value="gerente">👤 Gerente — Restrito à empresa</option>
+            <option value="socio">🤝 Sócio — Ver e criar</option>
+            <option value="admin">👑 Admin — Acesso total</option>
+          </select>
+        </div>
+        <div class="fi"><label>Empresa vinculada</label>
+          <input id="inv-empresa" placeholder="Obrigatório para gerentes">
+        </div>
+      </div>
+    </div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-invite')">Cancelar</button>
+      <button class="btn btn-or" id="inv-btn" onclick="convidarUsuario()">Enviar Convite</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="mo-del">
+  <div class="md" style="width:420px">
+    <div class="md-h"><h3>Confirmar Exclusão</h3><button class="xbtn" onclick="closeMo('mo-del')">✕</button></div>
+    <div class="md-b">
+      <p style="color:var(--tx2);line-height:1.6;">Tem a certeza que deseja excluir o colaborador <strong id="del-nome" style="color:var(--tx)"></strong>?</p>
+      <p style="color:var(--rd);font-size:12.5px;margin-top:10px;">⚠️ Esta ação não pode ser desfeita.</p>
+    </div>
+    <div class="md-f">
+      <button class="btn btn-gh" onclick="closeMo('mo-del')">Cancelar</button>
+      <button class="btn btn-rd" id="del-btn" onclick="confirmarExclusao()">Excluir</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ╔══════════════════════════════════════╗
+//   CONFIGURAÇÃO — preencha antes de publicar
+// ╚══════════════════════════════════════╝
+const SUPABASE_URL     = 'https://djopojjzuvfdukgglinj.supabase.co';       // https://xxxxx.supabase.co
+const SUPABASE_ANON    = 'sb_publishable_ypgq1IS7TqilRgwg5Gbgwg_xmZxC9ES';  // eyJhbGci...
+// ═══════════════════════════════════════
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    storageKey: 'hubon-session',
+  }
+});
+
+let SESSION = null;
+let ROLE    = 'gerente';
+let CMAP    = {}; 
+let DEL_ID  = null; 
+
+// ─── AUTH ────────────────────────────────────────────
+async function init() {
+  // Detecta token de reset de senha na URL
+  const hash = window.location.hash;
+  if (hash && hash.includes('access_token') && hash.includes('type=recovery')) {
+    const params = new URLSearchParams(hash.substring(1));
+    const accessToken = params.get('access_token');
+    
+    if (accessToken) {
+      const novaSenha = prompt('Digite sua nova senha (mínimo 6 caracteres):');
+      if (novaSenha && novaSenha.length >= 6) {
+        await db.auth.setSession({ access_token: accessToken, refresh_token: params.get('refresh_token') });
+        const { error } = await db.auth.updateUser({ password: novaSenha });
+        if (error) {
+          alert('Erro ao trocar senha: ' + error.message);
+        } else {
+          alert('✅ Senha alterada com sucesso! Faça login com a nova senha.');
+          window.location.href = window.location.origin;
+        }
+      } else {
+        alert('Senha inválida. Tente novamente.');
+        window.location.href = window.location.origin;
+      }
+      return;
+    }
+  }
+
+  const { data:{ session } } = await db.auth.getSession();
+  if (session) { SESSION = session; await onLogin(session.user); }
+  else showLogin();
+
+  db.auth.onAuthStateChange(async (_e, s) => {
+    if (s && !SESSION) { SESSION = s; await onLogin(s.user); }
+    else if (!s) { SESSION = null; showLogin(); }
+  });
+}
+
+function showLogin() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+async function onLogin(user) {
+  const { data: p } = await db.from('profiles').select('*').eq('id', user.id).single();
+  ROLE = p?.role || 'gerente';
+  const nome = p?.nome || user.email.split('@')[0];
+  
+  // Atualiza avatar no Sidebar e no Hub
+  const inits = nome[0].toUpperCase();
+  el('ua').textContent = inits;
+  el('hub-av').textContent = inits;
+  
+  el('un').textContent = nome;
+  el('hub-un').textContent = nome;
+  
+  el('ur').textContent = ROLE.toUpperCase();
+  el('hub-ur').textContent = ROLE.toUpperCase();
+
+  if (ROLE === 'admin' || ROLE === 'socio') {
+    document.querySelectorAll('.admin-only').forEach(e => e.style.display = '');
+  }
+  await reloadCMAP();
+  await carregarEmpresasMap();
+  await popularFiltroEmpresas();
+  
+  // NAVEGAÇÃO: Esconde login, mostra o HUB, esconde o APP (RH)
+document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('hub-screen').style.display = 'block';
+  document.getElementById('app').style.display = 'none';
+}
+
+async function doLogin() {
+  const btn = el('lbtn');
+  btn.disabled = true; btn.textContent = 'A entrar…';
+  const lembrar = el('li-lembrar')?.checked !== false;
+  
+  if (!lembrar) {
+    await db.auth.signOut();
+  }
+
+  const { error } = await db.auth.signInWithPassword({
+    email: v('li-email'), password: v('li-pass')
+  });
+  btn.disabled = false; btn.textContent = 'Entrar';
+  if (error) {
+    const e = el('lerr');
+    e.textContent = 'E-mail ou palavra-passe incorretos.';
+    e.style.display = 'block';
+    return;
+  }
+  if (!lembrar) {
+    window.addEventListener('beforeunload', async () => {
+      await db.auth.signOut();
+    });
+  }
+}
+async function doLogout() { await db.auth.signOut(); }
+
+el('li-pass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+el('li-email').addEventListener('keydown', e => { if (e.key === 'Enter') el('li-pass').focus(); });
+
+function entrarModulo(mod) {
+  const nav = el('nav-menu');
+  const hub = el('hub-screen');
+  const app = el('app');
+
+  if (!nav || !hub || !app) return;
+
+  hub.style.display = 'none';
+  app.style.display = 'block';
+
+  if (mod === 'rh') {
+    nav.innerHTML = `
+      <div class="sec-lbl">Visão Geral</div>
+      <div class="ni" onclick="goPage('dashboard',this)">📊 Dashboard</div>
+      <div class="sec-lbl">Pessoas</div>
+      <div class="ni" onclick="goPage('colaboradores',this)">👥 Colaboradores</div>
+      <div class="ni" onclick="goPage('exames',this)">🏥 Exames</div>
+      <div class="ni" onclick="goPage('advertencias',this)">⚠️ Advertências</div>
+      <div class="ni" onclick="goPage('faltas',this)">📅 Faltas</div>
+      <div class="ni" onclick="goPage('demissoes',this)">🚪 Demissões</div>
+      <div class="sec-lbl">Arquivos</div>
+      <div class="ni" onclick="goPage('documentos',this)">📁 Documentos</div>
+      <div class="sec-lbl">Gestão</div>
+      <div class="ni" onclick="goPage('empresas',this)">🏢 Empresas</div>
+      <div class="ni" onclick="goPage('relatorios',this)">📊 Relatórios</div>
+    `;
+    goPage('dashboard', nav.querySelector('.ni'));
+  } 
+  else if (mod === 'ops') {
+    nav.innerHTML = `
+      <div class="sec-lbl">Operação</div>
+      <div class="ni" onclick="goPage('operacional',this)">📊 Dashboard Ops</div>
+      <div class="sec-lbl">Checklists</div>
+      <div class="ni" onclick="toast('Módulo em desenvolvimento', true)">⚙️ Modelos</div>
+    `;
+    goPage('operacional', nav.querySelector('.ni'));
+    if (typeof loadOperacional === 'function') loadOperacional();
+  }
+}
+
+function entrarModulo(mod) {
+  if (mod === 'rh') {
+    document.getElementById('hub-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    goPage('dashboard', document.querySelector('.ni'));
+  } else if (mod === 'ops') {
+    // NOVO: Entrar no Operacional
+    document.getElementById('hub-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    goPage('operacional', null); // Criaremos o link na sidebar se quiser, ou via Hub
+    loadOperacional();
+  } else {
+    toast('Módulo em desenvolvimento! 🚧', false);
+  }
+}
+
+function voltarHub() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('hub-screen').style.display = 'block';
+}
+
+// ─── COLAB MAP ────────────────────────────────────────
+async function reloadCMAP() {
+  const { data } = await db.from('colaboradores')
+    .select('nome, empresa, cargo, salario, status')
+    .in('status', ['Ativo', 'Aviso Prévio'])
+    .order('nome');
+  CMAP = {};
+  if (!data) return;
+  data.forEach(r => {
+    CMAP[r.nome] = {
+      empresa: r.empresa || '',
+      cargo:   r.cargo   || '',
+      status:  r.status  || 'Ativo',
+      salario: r.salario != null
+        ? 'R$ ' + Number(r.salario).toLocaleString('pt-PT', { minimumFractionDigits: 2 })
+        : '',
+    };
+  });
+  const opts = '<option value="">Selecione...</option>' +
+    data.map(r => `<option>${esc(r.nome)}</option>`).join('');
+  
+  // Inclui o rel-colab na atualização das listas
+  ['e-colab','a-colab','f-colab','d-colab','ct-colab','up-colab','rel-colab'].forEach(id => {
+    const s = el(id); if (s) s.innerHTML = opts;
+  });
+}
+
+function autoFill(selId, empId, cargoId, salId) {
+  const nome = el(selId)?.value || '';
+  const info = CMAP[nome] || { empresa:'', cargo:'', salario:'' };
+  if (el(empId))   el(empId).value   = info.empresa;
+  if (el(cargoId)) el(cargoId).value = info.cargo;
+  if (el(salId))   el(salId).value   = info.salario;
+}
+
+// ─── NAVEGAÇÃO ────────────────────────────────────────
+function goPage(id, elem) {
+  // Esconde todas as páginas e remove classes active
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
+  
+  // Mostra a página alvo
+  const targetPage = el('page-' + id);
+  if (targetPage) targetPage.classList.add('active');
+  
+  // Marca o item do menu como ativo
+  if (elem) {
+    elem.classList.add('active');
+  } else {
+    // Tenta encontrar o link no menu dinâmico se elem não for passado
+    document.querySelectorAll('.ni').forEach(link => {
+      if (link.getAttribute('onclick')?.includes(`'${id}'`)) {
+        link.classList.add('active');
+      }
+    });
+  }
+  
+  loadPage(id);
+  if (el('sb')) el('sb').classList.remove('open');
+}
+
+// ─── LOADERS ──────────────────────────────────────────
+function loadPage(id) {
+  const map = {
+    dashboard:    loadDash,
+    colaboradores:loadColab,
+    exames:       () => loadTb('exames','tb-exames', rExames),
+    advertencias: () => loadTb('advertencias','tb-adv', rAdv),
+    faltas:       () => loadTb('faltas','tb-faltas', rFaltas),
+    demissoes:    () => loadTb('demissoes','tb-dem', rDem),
+    contratos:    () => loadTb('contratos','tb-ct', rCt),
+    entrevistas:  () => {
+      buildChecklist();
+      popularTriagemEmpresas();
+      popularEntEmpresas();
+    },
+    documentos:   () => loadTb('documentos','tb-docs', rDocs),
+    operacional:  loadOperacional,	
+    empresas:     loadEmpresas,
+    relatorios:   () => { popularFiltroEmpresas(); if(el('rel-conteudo')) el('rel-conteudo').innerHTML=''; },
+    usuarios:     loadUsuarios,
+  };
+  if (map[id]) map[id]();
+}
+
+async function loadDash() {
+  const hoje = new Date();
+  const em30 = new Date(hoje); em30.setDate(hoje.getDate() + 30);
+  const em15 = new Date(hoje); em15.setDate(hoje.getDate() + 15);
+  const mesIni = new Date(hoje.getFullYear(), hoje.getMonth(), 1).toISOString();
+
+  const [
+    { count: at }, { count: ex }, { count: adv }, { count: fl }, { count: ct },
+    { data: ativs }
+  ] = await Promise.all([
+    db.from('colaboradores').select('*', { count:'exact', head:true }).in('status',['Ativo', 'Aviso Prévio']),
+    db.from('exames').select('*', { count:'exact', head:true })
+      .gte('data_validade', hoje.toISOString().slice(0,10))
+      .lte('data_validade', em30.toISOString().slice(0,10)),
+    db.from('advertencias').select('*', { count:'exact', head:true }).gte('created_at', mesIni),
+    db.from('faltas').select('*', { count:'exact', head:true }).gte('created_at', mesIni),
+    db.from('contratos').select('*', { count:'exact', head:true })
+      .gte('data_termino', hoje.toISOString().slice(0,10))
+      .lte('data_termino', em15.toISOString().slice(0,10)),
+    db.from('atividades').select('*').order('created_at', { ascending:false }).limit(10),
+  ]);
+
+  el('d-at').textContent  = at  ?? '—';
+  el('d-ex').textContent  = ex  ?? '—';
+  el('d-adv').textContent = adv ?? '—';
+  el('d-fl').textContent  = fl  ?? '—';
+  el('d-ct').textContent  = ct  ?? '—';
+
+  el('tb-ativ').innerHTML = ativs?.length
+    ? ativs.map(a => `<tr>
+        <td><span class="bx ${tipoCor(a.tipo)}">${x(a.tipo)}</span></td>
+        <td>${x(a.colaborador)}</td><td>${x(a.empresa)}</td><td>${fd(a.created_at)}</td>
+      </tr>`).join('')
+    : '<tr class="erow"><td colspan="4">Nenhuma ação registada.</td></tr>';
+}
+
+async function loadColab() {
+  el('tb-colab').innerHTML = '<tr class="erow"><td colspan="8"><span class="spin"></span></td></tr>';
+  const { data } = await db.from('colaboradores').select('*').order('nome');
+  const isAdm = ROLE === 'admin' || ROLE === 'socio';
+  el('tb-colab').innerHTML = data?.length
+    ? data.map(r => {
+        let corStatus = r.status === 'Ativo' ? 'gn' : (r.status === 'Aviso Prévio' ? 'yl' : 'gr');
+        return `
+        <tr data-s="${x(r.nome + r.empresa + r.cargo).toLowerCase()}">
+          <td style="font-family:monospace;font-size:12px">${x(r.cpf || '—')}</td>
+          <td>${x(r.nome)}</td>
+          <td>${x(r.cargo || '—')}</td>
+          <td>${x(r.empresa || '—')}</td>
+          <td>${r.data_nascimento ? fd(r.data_nascimento) : '—'}</td>
+          <td>${r.data_admissao ? fd(r.data_admissao) : '—'}</td>
+          <td>${r.salario != null ? 'R$ ' + Number(r.salario).toLocaleString('pt-PT',{minimumFractionDigits:2}) : '—'}</td>
+          <td><span class="bx ${corStatus}">${r.status || '—'}</span></td>
+          <td style="display:flex;gap:6px;align-items:center;">
+            <button class="btn btn-gh btn-sm" onclick="abrirDocsColab('${r.id}','${esc(r.nome)}')">📁</button>
+            <button class="btn btn-gh btn-sm" onclick="verHistoricoColab('${esc(r.nome)}','${esc(r.empresa||'')}')">📊</button>
+            ${isAdm ? `<button class="btn btn-rd btn-sm" onclick="pedirExclusao('${r.id}','${esc(r.nome)}')">🗑</button>` : ''}
+          </td>
+        </tr>`
+      }).join('')
+    : '<tr class="erow"><td colspan="8">Nenhum colaborador registado.</td></tr>';
+}
+
+async function loadTb(table, tbId, renderer) {
+  el(tbId).innerHTML = '<tr class="erow"><td colspan="9"><span class="spin"></span></td></tr>';
+  const { data, error } = await db.from(table).select('*').order('created_at', { ascending:false }).limit(300);
+  if (error) { el(tbId).innerHTML = `<tr class="erow"><td colspan="9" style="color:var(--rd)">Erro: ${error.message}</td></tr>`; return; }
+  el(tbId).innerHTML = data?.length ? renderer(data) : '<tr class="erow"><td colspan="9">Nenhum registo.</td></tr>';
+}
+
+// ─── RENDERERS ────────────────────────────────────────
+function rExames(d) {
+  return d.map(r => `<tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
+    <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td><td>${x(r.tipo)}</td>
+    <td>${fd(r.data_validade)}</td><td>${sVal(r.data_validade)}</td>
+    <td>${r.doc_url ? `<a href="${r.doc_url}" target="_blank" class="btn btn-gh btn-sm">Ver</a>` : '—'}</td>
+  </tr>`).join('');
+}
+
+function rAdv(d) {
+  return d.map(r => `<tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
+    <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
+    <td><span class="bx or">${x(r.tipo)}</span></td>
+    <td>${x(r.data||'—')}</td><td>${x(r.motivo||'—')}</td>
+    <td style="display:flex;gap:5px;align-items:center;">
+      <button class="btn btn-gh btn-sm" onclick="abrirEditarAdv('${r.id}')">✏️</button>
+      <button class="btn btn-rd btn-sm" onclick="excluirAdv('${r.id}', '${esc(r.colaborador)}', this)">🗑</button>
+    </td>
+  </tr>`).join('');
+}
+
+async function excluirAdv(id, nomeColab, btn) {
+  if (!confirm('Excluir esta advertência?')) return;
+  btn.disabled = true;
+  const { error } = await db.from('advertencias').delete().eq('id', id);
+  if (error) { toast('Erro: '+error.message, false); btn.disabled=false; return; }
+  await db.from('atividades').delete().eq('tipo', 'Advertência').eq('colaborador', nomeColab);
+  toast('Advertência excluída.', true);
+  loadTb('advertencias','tb-adv', rAdv);
+  loadDash();
+}
+
+function rFaltas(d) {
+  return d.map(r => `<tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
+    <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
+    <td>${fd(r.data)}</td>
+    <td><span class="bx ${r.justificada==='Sim'?'gn':'rd'}">${r.justificada||'—'}</span></td>
+    <td>${x(r.motivo||'—')}</td>
+    <td>
+      <button class="btn btn-rd btn-sm" onclick="excluirFalta('${r.id}', '${esc(r.colaborador)}', this)">🗑</button>
+    </td>
+  </tr>`).join('');
+}
+
+async function excluirFalta(id, nomeColab, btn) {
+  if (!confirm('Excluir esta falta?')) return;
+  btn.disabled = true;
+  const { error } = await db.from('faltas').delete().eq('id', id);
+  if (error) { toast('Erro: '+error.message, false); btn.disabled=false; return; }
+  await db.from('atividades').delete().eq('tipo', 'Falta').eq('colaborador', nomeColab);
+  toast('Falta excluída com sucesso.', true);
+  loadTb('faltas','tb-faltas', rFaltas);
+  loadDash();
+}
+
+function rDem(d) {
+  return d.map(r => `<tr>
+    <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td>
+    <td><span class="bx rd">${x(r.tipo)}</span></td><td>${fd(r.data)}</td>
+    <td><span class="bx ${r.status === 'Aviso Prévio' ? 'yl' : (r.status === 'Cancelada' ? 'gr' : 'rd')}">${x(r.status || 'Concluída')}</span></td>
+    <td style="display:flex;gap:5px;">
+      <button class="btn btn-gh btn-sm" onclick="abrirDocsDem('${r.id}','${esc(r.colaborador)}')">📁 Docs</button>
+      ${r.status === 'Aviso Prévio' ? `<button class="btn btn-gn btn-sm" onclick="concluirDemissao('${r.id}', '${esc(r.colaborador)}')">✔️ Concluir</button>` : ''}
+      ${r.status !== 'Cancelada' ? `<button class="btn btn-bl btn-sm" onclick="reativarColaborador('${r.id}', '${esc(r.colaborador)}')">🔄 Reativar</button>` : ''}
+    </td>
+  </tr>`).join('');
+}
+
+async function reativarColaborador(idDemissao, colab) {
+  if(!confirm(`Deseja CANCELAR a rescisão e reativar o colaborador(a) ${colab}?`)) return;
+  
+  const btn = event.currentTarget;
+  btn.disabled = true;
+  btn.textContent = '⏳...';
+
+  // Altera o status da demissão para "Cancelada"
+  await db.from('demissoes').update({status: 'Cancelada'}).eq('id', idDemissao);
+  
+  // Retorna o status do colaborador de volta para Ativo
+  await db.from('colaboradores').update({status: 'Ativo'}).eq('nome', colab);
+  
+  toast('Rescisão cancelada e colaborador reativado!', true);
+  loadTb('demissoes','tb-dem', rDem);
+  await reloadCMAP(); // Garante que ele volta a aparecer nas listas do sistema
+}
+
+async function concluirDemissao(id, colab) {
+  if(!confirm(`Deseja concluir a demissão e inativar definitivamente o colaborador(a) ${colab}?`)) return;
+  await db.from('demissoes').update({status: 'Concluída'}).eq('id', id);
+  await db.from('colaboradores').update({status: 'Inativo'}).eq('nome', colab);
+  toast('Demissão concluída e colaborador inativado!', true);
+  loadTb('demissoes','tb-dem', rDem);
+  await reloadCMAP();
+}
+
+function rCt(d) {
+  return d.map(r => `<tr data-s="${x(r.colaborador+r.empresa).toLowerCase()}">
+    <td>${x(r.colaborador)}</td><td>${x(r.empresa||'—')}</td><td>${x(r.tipo)}</td>
+    <td>${fd(r.data_termino)}</td><td>${sCt(r.data_termino)}</td>
+  </tr>`).join('');
+}
+
+function rEnt(d) {
+  return d.map(r => `<tr>
+    <td>${x(r.candidato)}</td>
+    <td>${x(r.vaga||'—')}</td>
+    <td>${x(r.empresa||'—')}</td>
+    <td>${fd(r.data_teste||r.created_at)}</td>
+    <td><span class="bx ${statusEntCor(r.status)}">${x(r.status||'—')}</span></td>
+    <td style="display:flex;gap:5px">
+      <button class="btn btn-rd btn-sm" onclick="excluirCandidato('${r.id}',this)">🗑</button>
+    </td>
+  </tr>`).join('');
+}
+
+function statusEntCor(s) {
+  if (!s) return 'gr';
+  if (s.includes('Aprovado')) return 'gn';
+  if (s.includes('Reprovado')) return 'rd';
+  if (s.includes('triagem')) return 'bl';
+  if (s.includes('agendado')) return 'or';
+  return 'gr';
+}
+
+async function excluirCandidato(id, btn) {
+  if (!confirm('Excluir este candidato?')) return;
+  btn.disabled = true;
+  const { error } = await db.from('entrevistas').delete().eq('id', id);
+  if (error) { toast('Erro: '+error.message, false); btn.disabled=false; return; }
+  toast('Candidato excluído.', true);
+  btn.closest('tr').remove();
+}
+
+function rDocs(d) {
+  return d.map(r => `<tr data-s="${x(r.nome_arquivo+r.colaborador+r.empresa).toLowerCase()}">
+    <td>${x(r.nome_arquivo)}</td>
+    <td><span class="bx bl">${x(r.tipo||'—')}</span></td>
+    <td>${x(r.colaborador||'—')}</td><td>${x(r.empresa||'—')}</td>
+    <td>${fd(r.created_at)}</td>
+    <td style="display:flex;gap:5px">
+      <a href="${r.url}" target="_blank" class="btn btn-gh btn-sm">Ver</a>
+      <button class="btn btn-rd btn-sm" onclick="excluirDoc('${r.id}',this)">🗑</button>
+    </td>
+  </tr>`).join('');
+}
+
+async function excluirDoc(id, btn) {
+  if (!confirm('Excluir este documento?')) return;
+  btn.disabled = true;
+  const { error } = await db.from('documentos').delete().eq('id', id);
+  if (error) { toast('Erro: '+error.message, false); btn.disabled=false; return; }
+  toast('Documento excluído.', true);
+  btn.closest('tr').remove();
+}
+
+async function loadUsuarios() {
+  if (ROLE !== 'admin' && ROLE !== 'socio') {
+    el('lista-usuarios').innerHTML = '<p style="color:var(--tx3);padding:20px">Acesso restrito a administradores.</p>';
+    return;
+  }
+
+  const header = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-family:'Outfit',sans-serif;font-size:13px;color:var(--tx2);">
+        Gerir papéis e empresas. Para convidar novos utilizadores use o botão abaixo.
+      </div>
+      <button class="btn btn-or btn-sm" onclick="openMo('mo-invite')">✉️ Convidar Utilizador</button>
+    </div>`;
+
+  const { data } = await db.from('profiles').select('*').order('created_at');
+  if (!data?.length) { el('lista-usuarios').innerHTML = header + '<p style="color:var(--tx3);padding:20px">Nenhum utilizador registado.</p>'; return; }
+
+  const papeis = {
+    admin:   { label:'Admin',   desc:'Acesso total — ver, criar, editar e excluir tudo', cor:'#F97316' },
+    socio:   { label:'Sócio',   desc:'Ver tudo e criar registos — não exclui nem gere utilizadores', cor:'#8B5CF6' },
+    gerente: { label:'Gerente', desc:'Acesso restrito à empresa vinculada — advertências, faltas e entrevistas', cor:'#10B981' },
+  };
+
+  el('lista-usuarios').innerHTML = header + data.map(u => {
+    const papel = papeis[u.role] || papeis.gerente;
+    return `
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:16px 18px;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="av" style="background:${papel.cor}">${(u.nome||'?')[0].toUpperCase()}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;font-size:13.5px;">${x(u.nome||'Sem nome')}</div>
+          <div style="font-size:11.5px;color:var(--tx3);margin-top:2px;">${x(u.email||'—')}</div>
+        </div>
+        <span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${papel.cor}22;color:${papel.cor}">${papel.label}</span>
+      </div>
+
+      ${ROLE==='admin' ? `
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--bd);display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;">
+        <div class="fi">
+          <label>Papel / Permissão</label>
+          <select onchange="updRole('${u.id}',this.value)" style="padding:8px 10px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13px;outline:none;">
+            <option ${u.role==='admin'?'selected':''} value="admin">👑 Admin — Acesso total</option>
+            <option ${u.role==='socio'?'selected':''} value="socio">🤝 Sócio — Ver e criar</option>
+            <option ${u.role==='gerente'?'selected':''} value="gerente">👤 Gerente — Restrito à empresa</option>
+          </select>
+        </div>
+        <div class="fi">
+          <label>Empresa vinculada (gerentes)</label>
+          <input value="${u.empresa||''}" placeholder="Deixe vazio para todas"
+            onblur="updEmp('${u.id}',this.value)"
+            style="padding:8px 10px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13px;outline:none;">
+        </div>
+        <div class="fi">
+          <label>&nbsp;</label>
+          <button class="btn btn-rd btn-sm" onclick="desativarUsuario('${u.id}','${x(u.nome||u.email)}')">🗑 Remover</button>
+        </div>
+      </div>
+      <div style="margin-top:8px;font-size:11.5px;color:var(--tx3);">💡 ${papel.desc}</div>
+      ` : ''}
+    </div>`;
+  }).join('');
+}
+
+async function updRole(id, role) {
+  await db.from('profiles').update({role}).eq('id',id);
+  toast('Papel atualizado.', true);
+  loadUsuarios();
+}
+async function updEmp(id, emp) {
+  await db.from('profiles').update({empresa: emp||null}).eq('id',id);
+  toast('Empresa atualizada.', true);
+}
+async function desativarUsuario(id, nome) {
+  if (!confirm(`Remover acesso de ${nome}? O utilizador não conseguirá mais entrar no sistema.`)) return;
+  await db.from('profiles').update({ role:'gerente', empresa:null }).eq('id',id);
+  toast('Acesso removido.', true);
+  loadUsuarios();
+}
+
+// ─── SAVE COLABORADOR ──
+async function saveColab() {
+  const nome = v('c-nome');
+  const empresa = v('c-empresa');
+  if (!nome)    return toast('Nome é obrigatório.', false);
+  if (!empresa) return toast('Empresa é obrigatória.', false);
+
+  const cod = await proximoCod();
+  const payload = {
+    cpf:            cod,
+    nome:           nome,
+    cargo:          v('c-cargo') || null,
+    empresa:        empresa,
+    data_nascimento:v('c-nasc') || null,
+    data_admissao:  v('c-adm') || null,
+    salario:        v('c-sal') ? parseFloat(v('c-sal')) : null,
+    status:         'Ativo',
+  };
+
+  const { error } = await db.from('colaboradores').insert([payload]);
+  if (error) return toast('Erro ao salvar: ' + error.message, false);
+
+  await db.from('atividades').insert([{
+    tipo:'Admissão', colaborador:nome, empresa:empresa,
+    user_nome: el('un').textContent
+  }]);
+
+  toast('Colaborador salvo!', true);
+  closeMo('mo-colab');
+  ['c-nome','c-cargo','c-empresa','c-nasc','c-adm','c-sal'].forEach(id => { if(el(id)) el(id).value = ''; });
+  await reloadCMAP();
+  loadColab();
+}
+
+async function proximoCod() {
+  const { data } = await db.from('colaboradores').select('cpf');
+  let max = 0;
+  (data || []).forEach(r => {
+    const n = parseInt((r.cpf || '').replace(/\D/g, ''));
+    if (!isNaN(n) && n > max) max = n;
+  });
+  return String(max + 1).padStart(4, '0');
+}
+
+
+// ─── GESTÃO DE DOCUMENTOS (COLABORADOR E DEMISSÃO) ───────────────
+let DOCS_CONTEXT    = 'colaborador'; // 'colaborador' ou 'demissao'
+let DOCS_COLAB_ID   = null;
+let CURRENT_DEM_ID  = null;
+let DOCS_COLAB_NOME = null;
+
+function abrirDocsColab(id, nome) {
+  DOCS_CONTEXT = 'colaborador';
+  DOCS_COLAB_ID = id;
+  DOCS_COLAB_NOME = nome;
+  el('docs-colab-nome').textContent = nome;
+  
+  el('dc-tipo').innerHTML = `
+    <option>RG</option>
+    <option>CPF</option>
+    <option>Comprovante de Residência</option>
+    <option>Carteira de Trabalho (CTPS)</option>
+    <option>ASO — Exame Admissional</option>
+    <option>Contrato Assinado</option>
+    <option>Advertência Assinada</option>
+    <option>Atestado Médico</option>
+    <option>Declaração</option>
+    <option>Outro</option>
+  `;
+
+  el('dc-ok').textContent = '';
+  el('dc-file').value = '';
+  openMo('mo-docs-colab');
+  carregarDocsColab();
+}
+
+function abrirDocsDem(id, nome) {
+  DOCS_CONTEXT = 'demissao';
+  CURRENT_DEM_ID = id;
+  DOCS_COLAB_NOME = nome;
+  el('docs-colab-nome').textContent = nome + ' (Rescisão)';
+  
+  el('dc-tipo').innerHTML = `
+    <option>Aviso Prévio Assinado</option>
+    <option>Termo de Quitação</option>
+    <option>Espelho da Rescisão</option>
+    <option>TRCT Assinado</option>
+    <option>Comprovante FGTS</option>
+    <option>Chave FGTS</option>
+    <option>Guia Seguro-Desemprego</option>
+    <option>Outro</option>
+  `;
+
+  el('dc-ok').textContent = '';
+  el('dc-file').value = '';
+  openMo('mo-docs-colab');
+  carregarDocsDem(id);
+}
+
+async function carregarDocsColab() {
+  const lista = el('docs-colab-lista');
+  lista.innerHTML = '<div style="text-align:center;padding:20px;color:var(--tx3)"><span class="spin"></span></div>';
+
+  const { data, error } = await db.from('documentos')
+    .select('*')
+    .eq('colaborador_id', DOCS_COLAB_ID)
+    .order('created_at', { ascending: false });
+
+  if (error || !data?.length) {
+    lista.innerHTML = '<div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px;">Nenhum documento registado ainda.</div>';
+    return;
+  }
+
+  lista.innerHTML = data.map(d => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;">
+      <span style="font-size:22px">${docIcon(d.tipo)}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:13px">${x(d.tipo)}</div>
+        <div style="font-size:11.5px;color:var(--tx3)">${x(d.nome_arquivo)} · ${fd(d.created_at)}</div>
+      </div>
+      <a href="${d.url}" target="_blank" class="btn btn-gh btn-sm">Ver 📄</a>
+      <button class="btn btn-rd btn-sm" onclick="excluirDocColab('${d.id}', this)">🗑</button>
+    </div>`).join('');
+}
+
+async function carregarDocsDem(demId) {
+  const lista = el('docs-colab-lista');
+  lista.innerHTML = '<div style="text-align:center;padding:20px"><span class="spin"></span></div>';
+  const { data } = await db.from('documentos').select('*').eq('demissao_id', demId).order('created_at', {ascending:false});
+  if (!data?.length) { lista.innerHTML = '<div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px;">Nenhum documento da rescisão anexado.</div>'; return; }
+  lista.innerHTML = data.map(d => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;margin-bottom:8px;">
+      <span style="font-size:20px">📄</span>
+      <div style="flex:1"><div style="font-weight:600;font-size:13px">${x(d.tipo)}</div><div style="font-size:11.5px;color:var(--tx3)">${x(d.nome_arquivo)} · ${fd(d.created_at)}</div></div>
+      <a href="${d.url}" target="_blank" class="btn btn-gh btn-sm">Ver 📄</a>
+      <button class="btn btn-rd btn-sm" onclick="excluirDocColab('${d.id}',this)">🗑</button>
+    </div>`).join('');
+}
+
+async function salvarDocColab() {
+  const file = el('dc-file').files[0] || el('dc-cam').files[0];
+  if (!file) return toast('Selecione um ficheiro.', false);
+
+  const url = await uploadFile(file);
+  if (!url) return;
+
+  let payload = {
+    nome_arquivo:   file.name || 'foto.jpg',
+    tipo:           v('dc-tipo'),
+    colaborador:    DOCS_COLAB_NOME,
+    empresa:        CMAP[DOCS_COLAB_NOME]?.empresa || '',
+    url,
+    user_nome:      el('un').textContent,
+  };
+
+  // Aqui está o truque: Guardar o ID certo dependendo de onde o modal abriu
+  if (DOCS_CONTEXT === 'demissao') {
+    payload.demissao_id = CURRENT_DEM_ID;
+  } else {
+    payload.colaborador_id = DOCS_COLAB_ID;
+  }
+
+  const { error } = await db.from('documentos').insert([payload]);
+
+  if (error) return toast('Erro: ' + error.message, false);
+  toast('Documento salvo!', true);
+  el('dc-ok').textContent = '';
+  el('dc-file').value = '';
+  
+  if (DOCS_CONTEXT === 'demissao') carregarDocsDem(CURRENT_DEM_ID);
+  else carregarDocsColab();
+}
+
+async function excluirDocColab(id, btn) {
+  if (!confirm('Excluir este documento?')) return;
+  btn.disabled = true;
+  const { error } = await db.from('documentos').delete().eq('id', id);
+  if (error) { toast('Erro: ' + error.message, false); btn.disabled = false; return; }
+  toast('Documento removido.', true);
+  
+  if (DOCS_CONTEXT === 'demissao') carregarDocsDem(CURRENT_DEM_ID);
+  else carregarDocsColab();
+}
+
+function docIcon(tipo) {
+  const map = {
+    'RG':'🪪', 'CPF':'🪪', 'Comprovante de Residência':'🏠',
+    'Carteira de Trabalho (CTPS)':'📒', 'ASO — Exame Admissional':'🏥',
+    'Contrato Assinado':'📄', 'Advertência Assinada':'⚠️',
+    'Atestado Médico':'🩺', 'Declaração':'📋',
+  };
+  return map[tipo] || '📎';
+}
+
+function verHistoricoColab(nome, empresa) {
+  goPage('relatorios', document.querySelector('.ni'));
+  setTimeout(() => relatorioIndividual(nome, empresa), 300);
+}
+
+// ─── EXCLUSÃO DE COLABORADOR ──────────────────────────
+function pedirExclusao(id, nome) {
+  DEL_ID = id;
+  el('del-nome').textContent = nome;
+  openMo('mo-del');
+}
+
+async function confirmarExclusao() {
+  if (!DEL_ID) return;
+  el('del-btn').disabled = true;
+  const { error } = await db.from('colaboradores').delete().eq('id', DEL_ID);
+  el('del-btn').disabled = false;
+  if (error) return toast('Erro: ' + error.message, false);
+  toast('Colaborador excluído.', true);
+  closeMo('mo-del');
+  DEL_ID = null;
+  await reloadCMAP();
+  loadColab();
+}
+
+// ─── SAVE REGISTROS GERAIS ────────────────────────────
+async function saveReg(tipo) {
+  const userName = el('un').textContent;
+  let table, modal, payload, ativ;
+
+  if (tipo === 'exame') {
+    const colab = v('e-colab');
+    if (!colab) return toast('Selecione o colaborador.', false);
+    if (!v('e-val')) return toast('Informe a data de validade.', false);
+    table = 'exames'; modal = 'mo-exame';
+    payload = { colaborador:colab, empresa:v('e-emp'), tipo:v('e-tipo'), data_validade:v('e-val') };
+    const file = el('e-file').files[0] || el('e-cam').files[0];
+    if (file) { const u = await uploadFile(file); if (u) payload.doc_url = u; }
+    ativ = { tipo:'Exame', colaborador:colab, empresa:v('e-emp'), user_nome:userName };
+  }
+  else if (tipo === 'falta') {
+    const colab = v('f-colab');
+    if (!colab) return toast('Selecione o colaborador.', false);
+    if (!v('f-data')) return toast('Informe a data.', false);
+    table = 'faltas'; modal = 'mo-falta';
+    payload = { colaborador:colab, empresa:v('f-emp'), data:v('f-data'),
+                justificada:v('f-just'), motivo:v('f-motivo')||null, user_nome:userName };
+    ativ = { tipo:'Falta', colaborador:colab, empresa:v('f-emp'), user_nome:userName };
+  }
+  else if (tipo === 'demissao') {
+    const colab = v('d-colab');
+    if (!colab) return toast('Selecione o colaborador.', false);
+    table = 'demissoes'; modal = 'mo-dem';
+    
+    const statusDem = v('d-status');
+    payload = { 
+      colaborador:colab, empresa:v('d-emp'), tipo:v('d-tipo'),
+      data:v('d-data')||null, motivo:v('d-motivo')||null,
+      status: statusDem
+    };
+    ativ = { tipo:'Demissão', colaborador:colab, empresa:v('d-emp'), user_nome:userName };
+    
+    const novoStatusColab = statusDem === 'Aviso Prévio' ? 'Aviso Prévio' : 'Inativo';
+    await db.from('colaboradores').update({ status: novoStatusColab }).eq('nome', colab);
+    
+    // ATENÇÃO: Salvando com .select() para obter o ID da demissão gerado e associar aos documentos!
+    const { data: demCriada, error } = await db.from('demissoes').insert([payload]).select();
+    if (error) return toast('Erro ao criar demissão: ' + error.message, false);
+    
+    if (DEM_DOCS_PENDENTES.length > 0 && demCriada && demCriada[0]) {
+      const demId = demCriada[0].id;
+      for (const doc of DEM_DOCS_PENDENTES) {
+        const url = await uploadFile(doc.file);
+        if (url) {
+          const resDoc = await db.from('documentos').insert([{ 
+            nome_arquivo: doc.file.name||'doc.pdf', 
+            tipo: doc.tipo, 
+            colaborador: colab, 
+            empresa: v('d-emp'), 
+            demissao_id: demId, 
+            url, 
+            user_nome: userName 
+          }]);
+          if(resDoc.error) console.error("Erro no doc da rescisão:", resDoc.error);
+        }
+      }
+    }
+    DEM_DOCS_PENDENTES = [];
+    el('dem-docs-preview').innerHTML = '';
+    
+    if (ativ) await db.from('atividades').insert([ativ]);
+    toast('Processo de demissão salvo!', true);
+    closeMo(modal);
+    await reloadCMAP();
+    loadPage('demissoes');
+    return; // Para não duplicar o insert
+  }
+  else if (tipo === 'contrato') {
+    const colab = v('ct-colab');
+    if (!colab) return toast('Selecione o colaborador.', false);
+    table = 'contratos'; modal = 'mo-ct';
+    payload = { colaborador:colab, empresa:v('ct-emp'), tipo:v('ct-tipo'), data_termino:v('ct-fim')||null };
+    ativ = { tipo:'Contrato', colaborador:colab, empresa:v('ct-emp'), user_nome:userName };
+  }
+  else if (tipo === 'entrevista') {
+    if (!v('en-nome')) return toast('Informe o nome do candidato.', false);
+    table = 'entrevistas'; modal = 'mo-ent';
+    payload = { candidato:v('en-nome'), vaga:v('en-vaga')||null,
+                nota:v('en-nota')?parseInt(v('en-nota')):null,
+                recomendacao:v('en-rec'), obs:v('en-obs')||null, user_nome:userName };
+    ativ = { tipo:'Entrevista', colaborador:v('en-nome'), empresa:'—', user_nome:userName };
+  }
+  else return;
+
+  const { error } = await db.from(table).insert([payload]);
+  if (error) return toast('Erro: ' + error.message, false);
+  if (ativ) await db.from('atividades').insert([ativ]);
+
+  toast('Salvo com sucesso!', true);
+  closeMo(modal);
+  loadPage(table === 'demissoes' ? 'demissoes' :
+           table === 'contratos' ? 'contratos' : table);
+}
+
+// ─── UPLOAD DOCUMENTO ─────────────────────────────────
+async function saveUpload() {
+  const colab = v('up-colab');
+  if (!colab) return toast('Selecione o colaborador.', false);
+  const file = el('up-file').files[0] || el('up-cam').files[0];
+  if (!file) return toast('Selecione um ficheiro.', false);
+
+  const url = await uploadFile(file);
+  if (!url) return;
+
+  const { error } = await db.from('documentos').insert([{
+    nome_arquivo: file.name || 'foto.jpg',
+    tipo: v('up-tipo'),
+    colaborador: colab,
+    empresa: v('up-emp'),
+    url,
+    user_nome: el('un').textContent,
+  }]);
+  if (error) return toast('Erro: ' + error.message, false);
+
+  toast('Documento enviado!', true);
+  closeMo('mo-up');
+  loadPage('documentos');
+}
+
+async function uploadFile(file) {
+  const path = 'docs/' + Date.now() + '_' + (file.name || 'file');
+  const { data, error } = await db.storage.from('rh-documentos').upload(path, file, { upsert:true });
+  if (error) { toast('Erro no upload: ' + error.message, false); return null; }
+  return db.storage.from('rh-documentos').getPublicUrl(data.path).data.publicUrl;
+}
+
+// ─── IMPORTADOR JB CONTÁBIL ───────────────────────────
+let IMP_PDF_B64 = null;
+
+function onImpPdf(input) {
+  const file = input.files[0];
+  if (!file) return;
+  el('imp-pdf-ok').textContent = '✅ ' + file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    IMP_PDF_B64 = e.target.result.split(',')[1];
+  };
+  reader.readAsDataURL(file);
+}
+
+async function importar() {
+  const empresa = v('imp-emp').trim();
+  if (!empresa) return toast('Informe o nome da empresa.', false);
+
+  const btn = el('imp-btn');
+  btn.disabled = true; btn.textContent = '⏳ A importar…';
+
+  let linhas = [];
+
+  if (IMP_PDF_B64) {
+    linhas = await extrairDoBase64(IMP_PDF_B64);
+  } else {
+    const texto = v('imp-txt').trim();
+    if (!texto) {
+      btn.disabled = false; btn.textContent = '▶ Importar';
+      return toast('Selecione um PDF ou cole o texto.', false);
+    }
+    linhas = parsearTexto(texto);
+  }
+
+  if (!linhas.length) {
+    btn.disabled = false; btn.textContent = '▶ Importar';
+    return toast('Nenhum colaborador encontrado. Verifique o ficheiro.', false);
+  }
+
+  await salvarLinhas(linhas, empresa);
+  btn.disabled = false; btn.textContent = '▶ Importar';
+}
+
+async function extrairDoBase64(b64) {
+  try {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const binStr = atob(b64);
+    const bytes  = new Uint8Array(binStr.length);
+    for (let i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
+
+    const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+    const colaboradores = [];
+
+    for (let p = 1; p <= pdf.numPages; p++) {
+      const page    = await pdf.getPage(p);
+      const content = await page.getTextContent();
+
+      const linhas = {};
+      for (const item of content.items) {
+        if (!item.str.trim()) continue;
+        const y = Math.round(item.transform[5]);
+        if (!linhas[y]) linhas[y] = [];
+        linhas[y].push({ x: item.transform[4], str: item.str.trim() });
+      }
+
+      const ys = Object.keys(linhas).map(Number).sort((a, b) => b - a);
+
+      for (const y of ys) {
+        const itens = linhas[y].sort((a, b) => a.x - b.x);
+        if (!itens.length) continue;
+
+        const primeiro = itens[0];
+        if (primeiro.x > 50 || !/^\d{6}$/.test(primeiro.str)) continue;
+
+        const nome_parts  = [];
+        const cargo_parts = [];
+        let salario = null;
+        let dataAdm = '';
+
+        for (const it of itens) {
+          const s = it.str;
+          if (/^\d{6}$/.test(s)) continue;
+          if (/^\d{2}\/\d{2}\/\d{4}$/.test(s)) { dataAdm = s; continue; }
+          if (/^[\d]+\.[\d]{3},[\d]{2}\/Mensal$/.test(s)) {
+            salario = parseFloat(s.replace('/Mensal','').replace(/\./g,'').replace(',','.'));
+            continue;
+          }
+          if (/^[\d]+\.[\d]{3},[\d]{2}$/.test(s) && it.x >= 340) {
+            salario = parseFloat(s.replace(/\./g,'').replace(',','.'));
+            continue;
+          }
+          if (s === '/Mensal') continue;
+          if (/^\d+,\d{2}\/\d{2},\d{2}%$/.test(s)) continue;
+          if (s.includes('%') && it.x > 450) continue;
+
+          if (it.x < 200) {
+            nome_parts.push(s);         
+          } else if (it.x < 350) {
+            cargo_parts.push(s);        
+          }
+        }
+
+        const nome  = nome_parts.join(' ').trim();
+        const cargo = cargo_parts.join(' ').trim();
+
+        if (!nome || !dataAdm) continue;
+        if (nome.startsWith('Total')) continue;
+
+        const [d, mo, yr] = dataAdm.split('/');
+        colaboradores.push({
+          nome,
+          cargo,
+          salario,
+          data_admissao: `${yr}-${mo}-${d}`,
+        });
+      }
+    }
+
+    if (!colaboradores.length) {
+      toast('Nenhum colaborador encontrado. Tente colar o texto (Opção 2).', false);
+    }
+    return colaboradores;
+  } catch(err) {
+    toast('Erro ao ler PDF: ' + err.message, false);
+    return [];
+  }
+}
+
+function parsearTexto(texto) {
+  const resultados = [];
+  const RE = /(\d{6})\s+([A-ZÀ-Ú][A-ZÀ-Ú\s]{2,}?)\s{2,}([A-ZÀ-Ú][A-ZÀ-Ú\s/º°ª\-]+?)\s{2,}([\d.,]+)\/Mensal\s+(\d{2}\/\d{2}\/\d{4})/g;
+  let m;
+  while ((m = RE.exec(texto)) !== null) {
+    const nome = m[2].trim();
+    if (nome.startsWith('Total')) continue;
+    const [d, mo, y] = m[5].split('/');
+    resultados.push({
+      nome,
+      cargo:        m[3].trim(),
+      salario:      parseFloat(m[4].replace(/\./g,'').replace(',','.')),
+      data_admissao:`${y}-${mo}-${d}`,
+    });
+  }
+
+  if (!resultados.length) {
+    const linhas = texto.split('\n');
+    for (const linha of linhas) {
+      const l = linha.trim();
+      const salM = l.match(/([\d]+\.[\d]{3},[\d]{2})\/Mensal\s+(\d{2}\/\d{2}\/\d{4})/);
+      const codM = l.match(/^(\d{6})\s+/);
+      if (!salM || !codM) continue;
+      const meio = l.slice(codM[0].length, l.indexOf(salM[0])).trim();
+      if (!meio || meio.startsWith('Total')) continue;
+      const [d, mo, y] = salM[2].split('/');
+      resultados.push({
+        nome:         meio,
+        cargo:        '',
+        salario:      parseFloat(salM[1].replace(/\./g,'').replace(',','.')),
+        data_admissao:`${y}-${mo}-${d}`,
+      });
+    }
+  }
+  return resultados;
+}
+
+async function salvarLinhas(linhas, empresa) {
+  const log = el('imp-log');
+  log.style.display = 'block';
+  log.innerHTML = '';
+
+  let proxCod = parseInt(await proximoCod());
+  let salvos = 0, pulados = 0, erros = 0;
+  const html = [];
+
+  for (const linha of linhas) {
+    const { data: existe } = await db.from('colaboradores')
+      .select('id').eq('nome', linha.nome).eq('empresa', empresa).maybeSingle();
+
+    if (existe) {
+      html.push(`<div class="sk">⏭ Já existe: ${linha.nome}</div>`);
+      pulados++;
+      continue;
+    }
+
+    const cod = String(proxCod).padStart(4, '0');
+    const { error } = await db.from('colaboradores').insert([{
+      cpf:          cod,
+      nome:         linha.nome,
+      cargo:        linha.cargo,
+      empresa:      empresa,
+      salario:      linha.salario,
+      data_admissao:linha.data_admissao,
+      status:       'Ativo',
+    }]);
+
+    if (error) {
+      html.push(`<div class="er">❌ ${linha.nome}: ${error.message}</div>`);
+      erros++;
+    } else {
+      html.push(`<div class="ok">✅ ${cod} — ${linha.nome} (${linha.cargo})</div>`);
+      salvos++;
+      proxCod++;
+    }
+  }
+
+  html.push(`<div class="isumm">✅ ${salvos} importados · ⏭ ${pulados} já existiam · ❌ ${erros} erros</div>`);
+  log.innerHTML = html.join('');
+
+  if (salvos > 0) {
+    toast(`${salvos} colaborador(es) importado(s)!`, true);
+    await reloadCMAP();
+    loadColab();
+  } else {
+    toast('Nenhum novo registo importado.', false);
+  }
+}
+
+// ─── GERAR PDF ADVERTÊNCIA ────────────────────────────
+function gerarPDF() {
+  const colab  = v('a-colab');
+  const emp    = v('a-emp');
+  const cnpj   = v('a-cnpj') || '';
+  const tipo   = v('a-tipo');
+  const data   = v('a-data'); // Permite múltiplas datas
+  const motivo = v('a-motivo');
+  const modelo = v('a-modelo-pdf');
+  
+  if (!colab) return toast('Preencha o colaborador.', false);
+
+  const empData = EMPRESA_MAP[emp] || {};
+  const cidade = empData.cidade || 'Local';
+  const dataAtual = new Date().toLocaleDateString('pt-PT');
+
+  let conteudoHTML = '';
+
+  if (modelo === 'falta') {
+    // MODELO ESPECÍFICO PARA FALTA NÃO JUSTIFICADA
+    if (!data) return toast('Preencha as datas da ocorrência.', false);
+    conteudoHTML = `
+      <p style="font-size:15px;line-height:1.6;text-align:justify;text-indent:40px;">
+        Vimos, pelo presente, aplicar-lhe <strong>advertência disciplinar</strong>, e já advertido verbalmente anteriormente pelo mesmo motivo, pelo fato de FALTA NÃO JUSTIFICADA NO DIA ${data}, agindo assim com ato de Desídia, na forma do art. 482 alínea e, da Consolidação das Leis do Trabalho (CLT).
+      </p>
+      <p style="font-size:15px;line-height:1.6;text-align:justify;text-indent:40px;">
+        Solicitamos adequar seu comportamento às normas e costumes desta empresa e manter a disciplina necessária para o bom desempenho de suas atividades no trabalho.
+      </p>
+      <p style="font-size:15px;line-height:1.6;text-align:justify;text-indent:40px;">
+        Esclarecemos que a reincidência em tal atitude poderá ensejar uma suspensão disciplinar ou até mesmo a extinção do contrato de trabalho por justa causa. Assim, evite a reincidência da prática de seu ato, o que, se ocorrer, nos obrigará a tomar outras medidas cabíveis de acordo a legislação em vigor.
+      </p>`;
+  } else {
+    // MODELO PADRÃO
+    if (!motivo) return toast('Preencha o motivo.', false);
+    conteudoHTML = `
+      <table style="width:100%;margin-bottom:16px;"><tbody>
+        <tr><td style="width:160px;padding:5px 0"><strong>Empresa:</strong></td><td>${emp}${cnpj?' — CNPJ: '+cnpj:''}</td></tr>
+        <tr><td style="padding:5px 0"><strong>Empregado(a):</strong></td><td>${colab}</td></tr>
+        <tr><td style="padding:5px 0"><strong>Data da Ocorrência:</strong></td><td>${data||'—'}</td></tr>
+      </tbody></table>
+      <p>Pelo presente instrumento, aplicamos a V. Sa. a presente advertência pelo seguinte motivo:</p>
+      <div style="padding:16px;border:1px solid #000;min-height:80px;margin:12px 0;font-size:14px;">${motivo}</div>
+      <p style="font-size:14px;text-align:justify;">Solicitamos que observe as normas internas, evitando reincidências que poderão acarretar medidas disciplinares mais severas, conforme a legislação vigente.</p>`;
+  }
+
+  const div = document.createElement('div');
+  div.innerHTML = `
+    <div style="padding:40px;font-family:Arial,sans-serif;color:#000;max-width:700px;margin:auto;">
+      <h2 style="text-align:center;font-size:18px;margin-bottom:4px;">TERMO DE ADVERTÊNCIA ${tipo.toUpperCase()}</h2>
+      <hr style="margin:16px 0 30px 0;">
+      
+      ${conteudoHTML}
+
+      <p style="text-align:right;font-size:14px;margin-top:40px;">${cidade}, ${dataAtual}</p>
+      
+      <div style="margin-top:60px;text-align:center;border-top:1px solid #000;padding-top:6px;width:70%;margin-left:auto;margin-right:auto;">
+        <strong>${emp}</strong><br><small>CNPJ: ${cnpj}</small><br><small>Empregador</small>
+      </div>
+
+      <div style="margin-top:60px;border:1px solid #000;padding:20px;border-radius:4px;">
+        <p style="margin-bottom:60px;font-size:14px;">Ciente do funcionário em: ___/___/______</p>
+        <div style="border-top:1px solid #000;width:80%;margin:0 auto;text-align:center;padding-top:6px;">
+          ${colab}
+        </div>
+      </div>
+    </div>`;
+  
+  html2pdf().set({
+    margin:10,
+    filename:`Advertencia_${colab.replace(/\s/g,'_')}.pdf`,
+    html2canvas:{ scale:2 },
+    jsPDF:{ unit:'mm', format:'a4' }
+  }).from(div).save();
+  toast('PDF gerado com sucesso!', true);
+}
+
+// ─── UTILITÁRIOS ──────────────────────────────────────
+function el(id)  { return document.getElementById(id); }
+function v(id)   { return (el(id)?.value || '').trim(); }
+function x(s)    { return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+const esc = x;
+
+function openMo(id)  { el(id).classList.add('open'); }
+function closeMo(id) { el(id).classList.remove('open'); }
+document.querySelectorAll('.mo').forEach(m =>
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); })
+);
+
+function filterTb(tbId, q) {
+  document.querySelectorAll(`#${tbId} tr`).forEach(r => {
+    const s = r.getAttribute('data-s') || r.textContent;
+    r.style.display = s.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function fileOk(input, prevId) {
+  const f = input.files[0]; if (!f) return;
+  const sz = f.size > 1048576 ? (f.size/1048576).toFixed(1)+'MB' : (f.size/1024).toFixed(0)+'KB';
+  el(prevId).textContent = '✅ ' + (f.name || 'foto.jpg') + ' (' + sz + ')';
+}
+
+function fd(d) {
+  if (!d) return '—';
+  if (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)) {
+    const [y,m,dd] = d.split('-');
+    return `${dd}/${m}/${y}`;
+  }
+  const dt = new Date(d); if (isNaN(dt)) return String(d);
+  return dt.toLocaleDateString('pt-PT');
+}
+
+function sVal(d) {
+  if (!d) return '<span class="bx gr">Sem data</span>';
+  const diff = Math.ceil((new Date(d) - new Date()) / 86400000);
+  if (diff < 0)   return '<span class="bx rd">🔴 Vencido</span>';
+  if (diff <= 30) return `<span class="bx yl">🟡 ${diff}d</span>`;
+  return '<span class="bx gn">🟢 Em dia</span>';
+}
+function sCt(d) {
+  if (!d) return '<span class="bx gn">Vigente</span>';
+  const diff = Math.ceil((new Date(d) - new Date()) / 86400000);
+  if (diff < 0)   return '<span class="bx gr">Encerrado</span>';
+  if (diff <= 15) return `<span class="bx yl">Vence ${diff}d</span>`;
+  return '<span class="bx gn">Vigente</span>';
+}
+function tipoCor(t) {
+  return {Admissão:'gn',Advertência:'or',Demissão:'rd',Exame:'bl',Falta:'rd',Contrato:'gr',Entrevista:'bl'}[t]||'gr';
+}
+function rColor(r) {
+  return {admin:'#F97316',socio:'#8B5CF6',gerente:'#10B981'}[r]||'#4E566A';
+}
+
+let _tt;
+function toast(msg, ok) {
+  const t = el('toast');
+  t.textContent = (ok ? '✅ ' : '❌ ') + msg;
+  t.className   = 'show ' + (ok ? 'ok' : 'er');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => t.className = '', 3500);
+}
+
+// ══════════════════════════════════════════════════════
+// ENTREVISTAS — Script de triagem e candidatos
+// ══════════════════════════════════════════════════════
+
+function showEntTab(tab, btn) {
+  ['triagem','candidatos','vaga'].forEach(t => {
+    const el_tab = document.getElementById('ent-tab-'+t);
+    if (el_tab) el_tab.style.display = t === tab ? '' : 'none';
+  });
+  document.querySelectorAll('.btn-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (tab === 'candidatos') loadTb('entrevistas','tb-ent', rEnt);
+}
+
+function gerarScripts() {
+  const nome   = el('triagem-nome')?.value?.trim() || 'candidato(a)';
+  const vaga   = el('triagem-vaga')?.value || 'Atendente';
+  const emp    = el('triagem-empresa')?.value || 'nossa empresa';
+
+  const msg1 = `Bom dia, tudo bem? 😊 Sou da equipa da ${emp}!
+
+Recebi o seu currículo para a vaga de ${vaga}, confirma?
+
+Podemos conversar mais sobre isso? Já lhe passo mais informações!`;
+
+  const msg2 = `Para agilizarmos a conversa e deixar registado aqui no WhatsApp, consegue responder-me a umas perguntas rapidinho?
+
+📝 *Nome completo:*
+📅 *Idade:*
+📍 *Localidade e freguesia:*
+🚌 *Utiliza transportes públicos?*
+👨‍🍳 *Tem experiência na área de restauração?*
+💼 *Qual a sua última experiência de trabalho e por quanto tempo?*
+📆 *Disponível para teste a partir de que data?*`;
+
+  const msg3 = `Ótimo! Aqui vão as informações da vaga de *${vaga}*:
+
+⏰ *Horário:* das 10h às 22h (podendo ir até as 23h)
+📅 *Escala:* 12h por 36h — trabalha um dia e folga outro
+💰 *Salário:* R$ 1.830,00
+🎁 *Benefícios:* Assiduidade + Sacolão + Folga Aniversário + Auxílio Transporte + Refeição no Local
+
+O nosso restaurante é especializado em *Poke* 🥗 — é como um sushi/temaki na tigela, ou uma salada com vários itens de sushi, onde a pessoa monta como quiser.
+
+A cozinha é de pratos frios. Uma pessoa cuida do arroz de sushi, salmão e itens mais delicados. Os restantes auxiliares ficam com a parte mais simples: picar frutas e legumes, grelhar alguns itens, preparar sumos e molhos.
+
+A tarefa mais importante é *montar os Pokes* junto ao atendimento — precisa de muita atenção e delicadeza para evitar erros e apresentar um prato bonito. Temos manuais que mostram como tudo deve ser feito! 📖`;
+
+  const msg4 = `A nossa vaga é para contratação imediata! Inicialmente marcamos *2 a 3 dias de teste/free* das 10h às 22h para avaliar a adaptação e o desempenho.
+
+💵 O pagamento é de *R$ 120,00 por dia*, pago no final do expediente. Após o free, iniciamos os trâmites de contratação.
+
+Para o dia do teste, as recomendações são:
+
+👕 Roupa preta ou escura
+👖 Calças e t-shirt (sem decote ou alças)
+👟 Calçado fechado
+💇 Cabelo apanhado
+✨ Sem adereços chamativos (colares, brincos...)
+💄 Sem maquilhagem ou maquilhagem leve
+
+Ficou com alguma dúvida? 😊`;
+
+  ['msg1','msg2','msg3','msg4'].forEach((id, i) => {
+    const el_msg = document.getElementById(id);
+    if (el_msg) el_msg.textContent = [msg1,msg2,msg3,msg4][i];
+  });
+}
+
+function copiarScript(id) {
+  const txt = document.getElementById(id)?.textContent || '';
+  navigator.clipboard.writeText(txt).then(() => toast('Mensagem copiada!', true));
+}
+
+function limparTriagem() {
+  ['triagem-nome','triagem-vaga'].forEach(id => { if(el(id)) el(id).value = ''; });
+  gerarScripts();
+  document.querySelectorAll('#triagem-checklist input[type=checkbox]').forEach(cb => { cb.checked = false; cb.closest('label')?.classList?.remove('done'); });
+  document.querySelectorAll('#campos-respostas input, #campos-respostas textarea').forEach(i => { i.value = ''; });
+}
+
+function buildChecklist() {
+  const items = [
+    'Nome completo recebido',
+    'Idade informada',
+    'Localidade e bairro informados',
+    'Transportes públicos respondido',
+    'Experiência na área confirmada',
+    'Última experiência informada',
+    'Data de disponibilidade confirmada',
+    'Vaga e horário explicados',
+    'Salário e benefícios passados',
+    'Informações da loja apresentadas',
+    'Processo de teste explicado',
+    'Data do teste marcada',
+  ];
+  const campos = [
+    {label:'Nome Completo', id:'resp-nome', type:'text'},
+    {label:'Idade', id:'resp-idade', type:'text'},
+    {label:'Localidade / Bairro', id:'resp-local', type:'text'},
+    {label:'Usa Transportes Públicos?', id:'resp-transp', type:'text'},
+    {label:'Experiência na área?', id:'resp-exp', type:'text'},
+    {label:'Última experiência / tempo', id:'resp-ult', type:'text'},
+    {label:'Disponível a partir de', id:'resp-data', type:'date'},
+    {label:'Data do Teste Marcado', id:'resp-teste', type:'date'},
+    {label:'Observações', id:'resp-obs', type:'textarea'},
+  ];
+
+  const cl = document.getElementById('triagem-checklist');
+  if (cl) cl.innerHTML = items.map((item, i) => `
+    <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;cursor:pointer;" id="cl-${i}">
+      <input type="checkbox" style="accent-color:var(--or);width:16px;height:16px;" onchange="this.closest('label').style.opacity=this.checked?'.5':'1'">
+      <span style="font-size:13px;color:var(--tx2)">${item}</span>
+    </label>`).join('');
+
+  const cr = document.getElementById('campos-respostas');
+  if (cr) cr.innerHTML = campos.map(c => `
+    <div class="fi" style="${c.id==='resp-obs'?'grid-column:1/-1':''}">
+      <label>${c.label}</label>
+      ${c.type==='textarea'
+        ? `<textarea id="${c.id}" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13px;outline:none;min-height:60px;resize:vertical;"></textarea>`
+        : `<input type="${c.type}" id="${c.id}" style="padding:9px 11px;background:var(--bg3);border:1.5px solid var(--bd);border-radius:8px;color:var(--tx);font-size:13px;outline:none;">`
+      }
+    </div>`).join('');
+}
+
+async function popularTriagemEmpresas() {
+  const sel = el('triagem-empresa');
+  if (!sel) return;
+  const { data } = await db.from('colaboradores').select('empresa').order('empresa');
+  const unicas = [...new Set((data||[]).map(r => r.empresa).filter(Boolean))].sort();
+  sel.innerHTML = unicas.map(e => `<option>${x(e)}</option>`).join('') || '<option>—</option>';
+  gerarScripts();
+}
+
+async function popularEntEmpresas() {
+  const sel = el('en-empresa');
+  if (!sel) return;
+  const { data } = await db.from('colaboradores').select('empresa').order('empresa');
+  const unicas = [...new Set((data||[]).map(r => r.empresa).filter(Boolean))].sort();
+  sel.innerHTML = unicas.map(e => `<option>${x(e)}</option>`).join('') || '<option>—</option>';
+}
+
+async function salvarTriagem() {
+  const nome = el('triagem-nome')?.value?.trim();
+  if (!nome) return toast('Informe o nome do candidato.', false);
+  const payload = {
+    candidato: nome,
+    vaga:      el('triagem-vaga')?.value,
+    empresa:   el('triagem-empresa')?.value,
+    idade:     el('resp-idade')?.value ? parseInt(el('resp-idade').value) : null,
+    local:     el('resp-local')?.value,
+    transporte:el('resp-transp')?.value,
+    experiencia: el('resp-exp')?.value,
+    ult_experiencia: el('resp-ult')?.value,
+    disponivel: el('resp-data')?.value || null,
+    data_teste: el('resp-teste')?.value || null,
+    obs:       el('resp-obs')?.value,
+    status:    '📞 Em triagem',
+    user_nome: el('un').textContent,
+  };
+  const { error } = await db.from('entrevistas').insert([payload]);
+  if (error) return toast('Erro: ' + error.message, false);
+  toast('Triagem salva com sucesso!', true);
+  limparTriagem();
+}
+
+async function saveEntrevista() {
+  const nome = v('en-nome');
+  if (!nome) return toast('Informe o nome do candidato.', false);
+  const payload = {
+    candidato:   nome,
+    vaga:        v('en-vaga'),
+    empresa:     v('en-empresa') || null,
+    idade:       v('en-idade') ? parseInt(v('en-idade')) : null,
+    local:       v('en-local') || null,
+    transporte:  v('en-transp') || null,
+    experiencia: v('en-exp') || null,
+    ult_experiencia: v('en-ult-exp') || null,
+    disponivel:  v('en-disponivel') || null,
+    data_teste:  v('en-teste') || null,
+    status:      v('en-status'),
+    nota:        v('en-nota') ? parseInt(v('en-nota')) : null,
+    obs:         v('en-obs') || null,
+    user_nome:   el('un').textContent,
+  };
+  const { error } = await db.from('entrevistas').insert([payload]);
+  if (error) return toast('Erro: ' + error.message, false);
+  toast('Candidato salvo!', true);
+  closeMo('mo-ent');
+  loadTb('entrevistas','tb-ent', rEnt);
+}
+
+// ══════════════════════════════════════════════════════
+// EMPRESAS
+// ══════════════════════════════════════════════════════
+let EMP_EDIT_ID = null;
+let EMPRESA_MAP = {}; // razaoSocial → { cnpj, ... }
+
+async function carregarEmpresasMap() {
+  try {
+    const { data, error } = await db.from('empresas').select('razao_social, cnpj, nome_fantasia, cidade');
+    EMPRESA_MAP = {};
+    if (data && !error) data.forEach(e => { EMPRESA_MAP[e.razao_social] = e; });
+  } catch(e) { console.warn('Tabela empresas não encontrada:', e.message); }
+}
+
+function preencherCNPJAdv() {
+  const empresa = el('a-emp')?.value || '';
+  const emp = EMPRESA_MAP[empresa];
+  if (el('a-cnpj')) el('a-cnpj').value = emp?.cnpj || '(não registado)';
+}
+
+async function loadEmpresas() {
+  el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6"><span class="spin"></span></td></tr>';
+  const { data, error } = await db.from('empresas').select('*').order('razao_social');
+  if (error) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6" style="color:var(--rd)">Aguardando tabela empresas no Supabase.</td></tr>'; return; }
+  if (!data?.length) { el('tb-empresas').innerHTML = '<tr class="erow"><td colspan="6">Nenhuma empresa registada.</td></tr>'; return; }
+  el('tb-empresas').innerHTML = data.map(e => `
+    <tr>
+      <td>${x(e.razao_social)}</td>
+      <td style="font-family:monospace">${x(e.cnpj||'—')}</td>
+      <td>${x(e.endereco||'—')}</td>
+      <td>${x(e.telefone||'—')}</td>
+      <td>${x(e.email||'—')}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-gh btn-sm" onclick="editarEmpresa('${e.id}')">✏️</button>
+        <button class="btn btn-rd btn-sm" onclick="excluirEmpresa('${e.id}',this)">🗑</button>
+      </td>
+    </tr>`).join('');
+  await carregarEmpresasMap();
+}
+
+async function loadOperacional() {
+  const tb = el('tb-operacional');
+  if (!tb) return;
+  tb.innerHTML = '<tr class="erow"><td colspan="7"><span class="spin"></span></td></tr>';
+
+  // Busca os dados na tabela do Supabase
+  const { data, error } = await db.from('checklist_execucoes')
+    .select('*, checklist_modelos(nome)')
+    .order('created_at', { ascending: false });
+
+  if (error || !data || data.length === 0) {
+    tb.innerHTML = '<tr class="erow"><td colspan="7">Nenhuma auditoria registada. Aguardando dados do Bot...</td></tr>';
+    // Zera os cards se não houver dados
+    el('op-total').textContent = '0';
+    el('op-inconf').textContent = '0';
+    el('op-tempo-medio').textContent = '0 min';
+    el('op-taxa').textContent = '0%';
+    return;
+  }
+
+  let totalMin = 0, inconf = 0, concluidos = 0;
+
+  tb.innerHTML = data.map(r => {
+    let duracao = "—";
+    if (r.inicio_em && r.fim_em) {
+      const diff = (new Date(r.fim_em) - new Date(r.inicio_em)) / 60000;
+      duracao = Math.round(diff) + " min";
+      totalMin += diff;
+      concluidos++;
+    }
+    if (r.status === 'Inconformidade') inconf++;
+
+    return `
+      <tr>
+        <td>${fd(r.created_at)} <small style="display:block;color:var(--tx3)">${new Date(r.created_at).toLocaleTimeString()}</small></td>
+        <td><strong>${x(r.loja)}</strong></td>
+        <td>${x(r.checklist_modelos?.nome || 'Geral')}</td>
+        <td>${duracao}</td>
+        <td><span class="bx ${r.status === 'Concluído' ? 'gn' : 'rd'}">${x(r.status)}</span></td>
+        <td>${r.fotos_url ? `<button class="btn btn-gh btn-sm" onclick="window.open('${r.fotos_url[0]}', '_blank')">🖼️ Ver</button>` : '—'}</td>
+        <td><button class="btn btn-gh btn-sm" onclick="alert('Detalhes: ${esc(r.inconformidades || 'Nenhuma observação.')}')">📝 Info</button></td>
+      </tr>`;
+  }).join('');
+
+  el('op-total').textContent = data.length;
+  el('op-inconf').textContent = inconf;
+  el('op-tempo-medio').textContent = concluidos > 0 ? Math.round(totalMin / concluidos) + " min" : "0 min";
+  el('op-taxa').textContent = data.length > 0 ? Math.round(((data.length - inconf) / data.length) * 100) + "%" : "0%";
+}
+function verEvidencias(jsonFotos) {
+    const fotos = JSON.parse(jsonFotos);
+    // Aqui você pode abrir um modal com um carrossel de imagens
+    window.open(fotos[0], '_blank'); 
+}
+
+function verDetalhesIA(txt) {
+    alert("Feedback da Auditoria IA:\n\n" + txt);
+}
+
+async function salvarEmpresa() {
+  const razao = v('emp-razao');
+  if (!razao) return toast('Razão Social é obrigatória.', false);
+
+  const payload = {
+    razao_social: razao,
+    nome_fantasia: v('emp-fantasia') || null,
+    cnpj:         v('emp-cnpj') || null,
+    inscricao_estadual: v('emp-ie') || null,
+    endereco:     v('emp-end') || null,
+    bairro:       v('emp-bairro') || null,
+    cidade:       v('emp-cidade') || null,
+    estado:       v('emp-estado') || null,
+    cep:          v('emp-cep') || null,
+    telefone:     v('emp-tel') || null,
+    email:        v('emp-email') || null,
+    responsavel:  v('emp-resp') || null,
+    ramo:         v('emp-ramo') || null,
+    data_abertura:v('emp-abertura') || null,
+  };
+
+  let res;
+  try {
+    if (EMP_EDIT_ID) {
+      // Editar
+      res = await db.from('empresas').update(payload).eq('id', EMP_EDIT_ID);
+    } else {
+      res = await db.from('empresas').insert([payload]);
+    }
+    
+    if (res.error) {
+      console.error("Erro Supabase:", res.error);
+      return toast('Erro da Base de Dados: ' + res.error.message, false);
+    }
+
+    toast(EMP_EDIT_ID ? 'Empresa atualizada!' : 'Empresa registada com sucesso!', true);
+    EMP_EDIT_ID = null;
+    closeMo('mo-empresa');
+    
+    // Limpar modal
+    ['emp-razao','emp-fantasia','emp-cnpj','emp-ie','emp-end','emp-bairro','emp-cidade','emp-estado','emp-cep','emp-tel','emp-email','emp-resp','emp-ramo','emp-abertura'].forEach(id => { if(el(id)) el(id).value=''; });
+    
+    // Atualizar ecrã
+    loadEmpresas();
+    popularFiltroEmpresas();
+
+  } catch (err) {
+    console.error("Erro Crítico no JS:", err);
+    toast("Erro no sistema. Pressione F12 para ver a consola.", false);
+  }
+}
+
+async function editarEmpresa(id) {
+  const { data } = await db.from('empresas').select('*').eq('id', id).single();
+  if (!data) return;
+  EMP_EDIT_ID = id;
+  el('emp-modal-titulo').textContent = 'Editar Empresa';
+  el('emp-razao').value    = data.razao_social||'';
+  el('emp-fantasia').value = data.nome_fantasia||'';
+  el('emp-cnpj').value     = data.cnpj||'';
+  el('emp-ie').value       = data.inscricao_estadual||'';
+  el('emp-end').value      = data.endereco||'';
+  if(el('emp-bairro')) el('emp-bairro').value = data.bairro||'';
+  if(el('emp-cidade')) el('emp-cidade').value = data.cidade||'';
+  if(el('emp-estado')) el('emp-estado').value = data.estado||'';
+  if(el('emp-cep'))    el('emp-cep').value    = data.cep||'';
+  el('emp-tel').value      = data.telefone||'';
+  el('emp-email').value    = data.email||'';
+  el('emp-resp').value     = data.responsavel||'';
+  el('emp-ramo').value     = data.ramo||'';
+  el('emp-abertura').value = data.data_abertura||'';
+  openMo('mo-empresa');
+}
+
+async function excluirEmpresa(id, btn) {
+  if (!confirm('Excluir esta empresa?')) return;
+  btn.disabled = true;
+  const { error } = await db.from('empresas').delete().eq('id', id);
+  if (error) { toast('Erro: ' + error.message, false); btn.disabled=false; return; }
+  toast('Empresa excluída.', true);
+  loadEmpresas();
+}
+
+// ══════════════════════════════════════════════════════
+// FILTRO DE EMPRESA NA ABA COLABORADORES E RELATÓRIOS
+// ══════════════════════════════════════════════════════
+async function popularFiltroEmpresas() {
+  try {
+  const { data } = await db.from('colaboradores').select('empresa').order('empresa');
+  const filtro = el('filtro-empresa');
+  if (!filtro || !data) return;
+  const unicas = [...new Set(data.map(r => r.empresa).filter(Boolean))].sort();
+  const relEmp = el('rel-empresa');
+  const opts = '<option value="">Todas as empresas</option>' + unicas.map(e => `<option>${x(e)}</option>`).join('');
+  filtro.innerHTML = opts;
+  if (relEmp) relEmp.innerHTML = opts;
+  } catch(e) { console.warn('popularFiltroEmpresas:', e.message); }
+}
+
+function filtrarPorEmpresa() {
+  const val = el('filtro-empresa')?.value?.toLowerCase() || '';
+  document.querySelectorAll('#tb-colab tr').forEach(r => {
+    if (!val) { r.style.display = ''; return; }
+    const s = r.getAttribute('data-s') || r.textContent;
+    r.style.display = s.toLowerCase().includes(val) ? '' : 'none';
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// ADVERTÊNCIAS: nova lógica (sem save/import, com edição)
+// ══════════════════════════════════════════════════════
+let ADV_EDIT_ID = null;
+
+function abrirNovaAdv() {
+  ADV_EDIT_ID = null;
+  el('adv-modal-titulo').textContent = 'Nova Advertência';
+  el('adv-save-btn').textContent = 'Salvar no Sistema';
+  el('adv-edit-id').value = '';
+  ['a-motivo'].forEach(id => { if(el(id)) el(id).value=''; });
+  if(el('a-colab')) el('a-colab').value='';
+  if(el('a-emp'))   el('a-emp').value='';
+  if(el('a-cnpj'))  el('a-cnpj').value='';
+  if(el('a-cargo')) el('a-cargo').value='';
+  if(el('a-data'))  el('a-data').value='';
+  openMo('mo-adv');
+}
+
+async function abrirEditarAdv(id) {
+  const { data } = await db.from('advertencias').select('*').eq('id', id).single();
+  if (!data) return;
+  ADV_EDIT_ID = id;
+  el('adv-modal-titulo').textContent = 'Editar Advertência';
+  el('adv-save-btn').textContent = 'Salvar Alterações';
+  el('adv-edit-id').value = id;
+  if(el('a-colab')) el('a-colab').value = data.colaborador||'';
+  if(el('a-emp'))   el('a-emp').value   = data.empresa||'';
+  if(el('a-cargo')) el('a-cargo').value = data.cargo||'';
+  if(el('a-tipo'))  el('a-tipo').value  = data.tipo||'';
+  if(el('a-data'))  el('a-data').value  = data.data||'';
+  if(el('a-motivo'))el('a-motivo').value= data.motivo||'';
+  preencherCNPJAdv();
+  openMo('mo-adv');
+}
+
+async function salvarAdvertencia() {
+  const colab = v('a-colab');
+  if (!colab) return toast('Selecione o colaborador.', false);
+  const userName = el('un').textContent;
+  const payload = {
+    colaborador: colab,
+    empresa:     v('a-emp'),
+    cargo:       v('a-cargo'),
+    tipo:        v('a-tipo'),
+    data:        v('a-data')||null,
+    motivo:      v('a-motivo'),
+    user_nome:   userName,
+  };
+  let error;
+  if (ADV_EDIT_ID) {
+    ({ error } = await db.from('advertencias').update(payload).eq('id', ADV_EDIT_ID));
+  } else {
+    ({ error } = await db.from('advertencias').insert([payload]));
+    if (!error) await db.from('atividades').insert([{ tipo:'Advertência', colaborador:colab, empresa:v('a-emp'), user_nome:userName }]);
+  }
+  if (error) return toast('Erro: ' + error.message, false);
+  toast(ADV_EDIT_ID ? 'Advertência atualizada!' : 'Advertência salva!', true);
+  ADV_EDIT_ID = null;
+  closeMo('mo-adv');
+  loadTb('advertencias','tb-adv', rAdv);
+}
+
+// ══════════════════════════════════════════════════════
+// DOCUMENTOS DA DEMISSÃO
+// ══════════════════════════════════════════════════════
+let DEM_DOCS_PENDENTES = []; 
+
+function adicionarDocDemissao() {
+  const file = el('dem-file').files[0] || el('dem-cam').files[0];
+  const tipo  = v('dem-doc-tipo');
+  if (!file) return toast('Selecione um ficheiro primeiro.', false);
+  DEM_DOCS_PENDENTES.push({ file, tipo });
+  const prev = el('dem-docs-preview');
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg3);border:1px solid var(--bd);border-radius:7px;font-size:12.5px;';
+  div.innerHTML = `<span>📄</span><span style="flex:1">${x(tipo)} — ${x(file.name)}</span><button type="button" onclick="this.parentElement.remove();DEM_DOCS_PENDENTES.splice(${DEM_DOCS_PENDENTES.length-1},1);" style="background:none;border:none;cursor:pointer;color:var(--rd);font-size:15px;">✕</button>`;
+  prev.appendChild(div);
+  el('dem-file').value=''; el('dem-ok').textContent='';
+}
+
+// ══════════════════════════════════════════════════════
+// RELATÓRIOS E HISTÓRICO
+// ══════════════════════════════════════════════════════
+
+function gerarRelatorioIndDireto() {
+  const nome = v('rel-colab');
+  if (!nome) return toast('Selecione um colaborador.', false);
+  const empresa = CMAP[nome]?.empresa || '';
+  relatorioIndividual(nome, empresa);
+}
+
+async function gerarRelatorio() {
+  const empresa = v('rel-empresa');
+  const cont = el('rel-conteudo');
+  cont.innerHTML = '<div style="text-align:center;padding:32px"><span class="spin"></span></div>';
+
+  let qColab = db.from('colaboradores').select('*').eq('status','Ativo').order('empresa').order('nome');
+  if (empresa) qColab = qColab.eq('empresa', empresa);
+  const { data: colabs } = await qColab;
+
+  let qAdv = db.from('advertencias').select('*').order('empresa').order('colaborador');
+  if (empresa) qAdv = qAdv.eq('empresa', empresa);
+  const { data: advs } = await qAdv;
+
+  let qFlt = db.from('faltas').select('*').order('empresa').order('colaborador');
+  if (empresa) qFlt = qFlt.eq('empresa', empresa);
+  const { data: faltas } = await qFlt;
+
+  const porEmpresa = {};
+  (colabs||[]).forEach(c => {
+    if (!porEmpresa[c.empresa]) porEmpresa[c.empresa] = { colabs:[], adv:[], flt:[] };
+    porEmpresa[c.empresa].colabs.push(c);
+  });
+  (advs||[]).forEach(a => {
+    if (!porEmpresa[a.empresa]) porEmpresa[a.empresa] = { colabs:[], adv:[], flt:[] };
+    porEmpresa[a.empresa].adv.push(a);
+  });
+  (faltas||[]).forEach(f => {
+    if (!porEmpresa[f.empresa]) porEmpresa[f.empresa] = { colabs:[], adv:[], flt:[] };
+    porEmpresa[f.empresa].flt.push(f);
+  });
+
+  let html_rel = '';
+  let totalGeralSal = 0;
+
+  for (const [emp, dados] of Object.entries(porEmpresa)) {
+    const totalSal = dados.colabs.reduce((s,c) => s + (Number(c.salario)||0), 0);
+    totalGeralSal += totalSal;
+    const fmt = n => 'R$ ' + Number(n).toLocaleString('pt-PT',{minimumFractionDigits:2});
+
+    html_rel += `
+      <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;margin-bottom:20px;">
+        <div style="background:var(--or-bg);border-bottom:1px solid var(--bd);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;">${x(emp)}</div>
+          <div style="font-size:12.5px;color:var(--tx2)">${dados.colabs.length} colaborador(es) · Folha: <strong style="color:var(--gn)">${fmt(totalSal)}</strong></div>
+        </div>`;
+
+    if (dados.colabs.length) {
+      html_rel += `
+        <div style="padding:14px 18px 6px;font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em">Salários</div>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:10px;">
+          <thead><tr>
+            <th style="text-align:left;padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Nome</th>
+            <th style="text-align:left;padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Cargo</th>
+            <th style="text-align:left;padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Admissão</th>
+            <th style="text-align:right;padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Salário</th>
+            <th style="padding:8px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)"></th>
+          </tr></thead>
+          <tbody>
+            ${dados.colabs.map(c => `
+              <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
+                <td style="padding:10px 18px;font-size:13px;color:var(--tx)">${x(c.nome)}</td>
+                <td style="padding:10px 18px;font-size:13px;color:var(--tx2)">${x(c.cargo||'—')}</td>
+                <td style="padding:10px 18px;font-size:13px;color:var(--tx2)">${fd(c.data_admissao)}</td>
+                <td style="padding:10px 18px;font-size:13px;color:var(--tx2);text-align:right">${c.salario?fmt(c.salario):'—'}</td>
+                <td style="padding:10px 18px;text-align:right"><button class="btn btn-gh btn-sm" onclick="relatorioIndividual('${esc(c.nome)}','${esc(c.empresa||'')}')">📊 Histórico</button></td>
+              </tr>`).join('')}
+            <tr style="background:rgba(16,185,129,.05)">
+              <td colspan="3" style="padding:10px 18px;font-size:13px;font-weight:600;color:var(--tx)">Total da Folha</td>
+              <td style="padding:10px 18px;font-size:13px;font-weight:700;color:var(--gn);text-align:right">${fmt(totalSal)}</td>
+            </tr>
+          </tbody>
+        </table>`;
+    }
+
+    if (dados.adv.length) {
+      html_rel += `
+        <div style="padding:10px 18px 6px;font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-top:1px solid var(--bd)">Advertências (${dados.adv.length})</div>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:10px;">
+          <thead><tr>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Colaborador</th>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Tipo</th>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Data</th>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Motivo</th>
+          </tr></thead>
+          <tbody>
+            ${dados.adv.map(a => `
+              <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx)">${x(a.colaborador)}</td>
+                <td style="padding:8px 18px;font-size:12px"><span style="padding:2px 8px;border-radius:20px;background:var(--or-bg);color:var(--or);font-weight:600">${x(a.tipo)}</span></td>
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx2)">${x(a.data||'—')}</td>
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx2)">${x(a.motivo||'—')}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    if (dados.flt.length) {
+      const justif = dados.flt.filter(f => f.justificada === 'Sim').length;
+      const injust = dados.flt.length - justif;
+      html_rel += `
+        <div style="padding:10px 18px 6px;font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;border-top:1px solid var(--bd)">Faltas (${dados.flt.length} · ${justif} justificadas · ${injust} não justificadas)</div>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:10px;">
+          <thead><tr>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Colaborador</th>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Data</th>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Justificada</th>
+            <th style="text-align:left;padding:7px 18px;font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Motivo</th>
+          </tr></thead>
+          <tbody>
+            ${dados.flt.map(f => `
+              <tr style="border-bottom:1px solid rgba(255,255,255,.03)">
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx)">${x(f.colaborador)}</td>
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx2)">${fd(f.data)}</td>
+                <td style="padding:8px 18px;font-size:12px"><span style="padding:2px 8px;border-radius:20px;background:${f.justificada==='Sim'?'var(--gn-bg)':'var(--rd-bg)'};color:${f.justificada==='Sim'?'var(--gn)':'var(--rd)'};font-weight:600">${f.justificada||'—'}</span></td>
+                <td style="padding:8px 18px;font-size:13px;color:var(--tx2)">${x(f.motivo||'—')}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    html_rel += `</div>`;
+  }
+
+  if (Object.keys(porEmpresa).length > 1) {
+    html_rel += `
+      <div style="background:var(--gn-bg);border:1px solid rgba(16,185,129,.3);border-radius:var(--r);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:15px">Total Geral da Folha</div>
+        <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:22px;color:var(--gn)">R$ ${Number(totalGeralSal).toLocaleString('pt-PT',{minimumFractionDigits:2})}</div>
+      </div>`;
+  }
+
+  const btnPrint = `<div style="text-align:right;margin-bottom:16px;">
+    <button class="btn btn-gh" onclick="window.print()">🖨️ Imprimir / Salvar PDF</button>
+  </div>`;
+  cont.innerHTML = btnPrint + (html_rel || '<div class="erow">Nenhum dado encontrado.</div>');
+}
+
+async function relatorioIndividual(nome, empresa) {
+  const cont = el('rel-conteudo');
+  if (!cont) return;
+  cont.innerHTML = '<div style="text-align:center;padding:32px"><span class="spin"></span></div>';
+
+  const [
+    { data: adms },
+    { data: advs },
+    { data: flts },
+    { data: dems },
+    { data: exams },
+    { data: cts },
+  ] = await Promise.all([
+    db.from('colaboradores').select('*').eq('nome', nome).eq('empresa', empresa),
+    db.from('advertencias').select('*').eq('colaborador', nome).order('data'),
+    db.from('faltas').select('*').eq('colaborador', nome).order('data'),
+    db.from('demissoes').select('*').eq('colaborador', nome),
+    db.from('exames').select('*').eq('colaborador', nome).order('data_validade'),
+    db.from('contratos').select('*').eq('colaborador', nome).order('created_at'),
+  ]);
+
+  const colab = adms?.[0];
+  if (!colab) { cont.innerHTML = '<div class="erow">Colaborador não encontrado.</div>'; return; }
+
+  const fmt = n => n != null ? 'R$ ' + Number(n).toLocaleString('pt-PT',{minimumFractionDigits:2}) : '—';
+  const suspensoes = (advs||[]).filter(a => a.tipo === 'Suspensão').length;
+
+  let html_ind = `
+    <div style="text-align:right;margin-bottom:16px;">
+      <button class="btn btn-gh btn-sm" onclick="el('rel-conteudo').innerHTML='';el('rel-colab').value='';">← Voltar</button>
+      <button class="btn btn-gh btn-sm" style="margin-left:8px" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+        <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--or),#c2410c);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:20px;color:#fff;flex-shrink:0;">${x(colab.nome[0])}</div>
+        <div>
+          <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:18px;">${x(colab.nome)}</div>
+          <div style="font-size:13px;color:var(--tx2);margin-top:3px;">${x(colab.cargo||'—')} · ${x(colab.empresa||'—')}</div>
+        </div>
+        <div style="margin-left:auto"><span class="bx ${colab.status==='Ativo'?'gn':(colab.status==='Aviso Prévio'?'yl':'gr')}">${colab.status||'—'}</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;">
+        ${[
+          ['Código', colab.cpf||'—'],
+          ['Nascimento', fd(colab.data_nascimento)],
+          ['Admissão', fd(colab.data_admissao)],
+          ['Salário', fmt(colab.salario)],
+          ['Advertências', (advs||[]).length],
+          ['Suspensões', suspensoes],
+          ['Faltas', (flts||[]).length],
+          ['Faltas Injustificadas', (flts||[]).filter(f=>f.justificada==='Não').length],
+        ].map(([k,v2])=>`<div style="background:var(--bg3);padding:12px;border-radius:8px;"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:4px;">${k}</div><div style="font-size:15px;font-weight:600;color:var(--tx)">${v2}</div></div>`).join('')}
+      </div>
+    </div>`;
+
+  // Linha do tempo
+  const eventos = [];
+  if (colab.data_admissao) eventos.push({ data: colab.data_admissao, tipo: 'Admissão', desc: `Admitido como ${colab.cargo||'—'}`, cor: 'gn' });
+  (exams||[]).forEach(e => eventos.push({ data: e.data_validade, tipo: 'Exame', desc: `${e.tipo} — ${e.resultado||'—'}`, cor: 'bl' }));
+  (advs||[]).forEach(a => eventos.push({ data: a.data, tipo: a.tipo, desc: a.motivo||'—', cor: a.tipo==='Suspensão'?'rd':'or' }));
+  (flts||[]).forEach(f => eventos.push({ data: f.data, tipo: 'Falta', desc: `${f.justificada} — ${f.motivo||'—'}`, cor: f.justificada==='Sim'?'yl':'rd' }));
+  (dems||[]).forEach(d => eventos.push({ data: d.data, tipo: 'Demissão', desc: `${d.tipo} — ${d.status||'Concluída'}`, cor: 'rd' }));
+  eventos.sort((a,b) => (a.data||'').localeCompare(b.data||''));
+
+  if (eventos.length) {
+    html_ind += `
+      <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;margin-bottom:16px;">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;margin-bottom:18px;">📅 Histórico Completo</div>
+        <div style="position:relative;padding-left:28px;">
+          <div style="position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:var(--bd);"></div>
+          ${eventos.map(e => `
+            <div style="position:relative;margin-bottom:18px;">
+              <div style="position:absolute;left:-24px;top:3px;width:10px;height:10px;border-radius:50%;background:var(--${e.cor==='gn'?'gn':e.cor==='rd'?'rd':e.cor==='or'?'or':e.cor==='bl'?'bl':'yl'});border:2px solid var(--bg);"></div>
+              <div style="font-size:11px;color:var(--tx3);font-weight:600;letter-spacing:.04em;">${fd(e.data)}</div>
+              <div style="font-size:13px;margin-top:2px;"><span class="bx ${e.cor}" style="margin-right:6px;">${e.tipo}</span>${x(e.desc)}</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  cont.innerHTML = html_ind;
+}
+
+// ─── CONVIDAR USUÁRIO ─────────────────────────────────
+async function convidarUsuario() {
+  const nome    = v('inv-nome');
+  const email   = v('inv-email');
+  const role    = v('inv-role') || 'gerente';
+  const empresa = v('inv-empresa');
+  if (!nome || !email) return toast('Preencha nome e e-mail.', false);
+  const btn = el('inv-btn');
+  btn.disabled = true; btn.textContent = 'A enviar…';
+
+  const { data, error } = await db.auth.admin?.inviteUserByEmail
+    ? await db.auth.admin.inviteUserByEmail(email, {
+        data: { nome, role, empresa: empresa || null }
+      })
+    : await db.auth.signUp({
+        email,
+        password: Math.random().toString(36).slice(-10) + 'Aa1!',
+        options: { data: { nome, role, empresa: empresa || null } }
+      });
+
+  btn.disabled = false; btn.textContent = 'Enviar Convite';
+
+  if (error) {
+    toast('Erro no convite: ' + error.message, false);
+    return;
+  }
+  toast('Convite enviado!', true);
+  closeMo('mo-invite');
+  loadUsuarios();
+}
+
+// ══════════════════════════════════════════════════════
+// NAVEGAÇÃO ENTRE MÓDULOS (HUB)
+// ══════════════════════════════════════════════════════
+
+function entrarModulo(mod) {
+  const nav = el('nav-menu');
+  const hub = el('hub-screen');
+  const app = el('app');
+
+  if (!nav || !hub || !app) return;
+
+  hub.style.display = 'none';
+  app.style.display = 'block';
+
+  if (mod === 'rh') {
+    nav.innerHTML = `
+      <div class="sec-lbl">Visão Geral</div>
+      <div class="ni" onclick="goPage('dashboard',this)">📊 Dashboard</div>
+      <div class="sec-lbl">Pessoas</div>
+      <div class="ni" onclick="goPage('colaboradores',this)">👥 Colaboradores</div>
+      <div class="ni" onclick="goPage('exames',this)">🏥 Exames</div>
+      <div class="ni" onclick="goPage('advertencias',this)">⚠️ Advertências</div>
+      <div class="ni" onclick="goPage('faltas',this)">📅 Faltas</div>
+      <div class="ni" onclick="goPage('demissoes',this)">🚪 Demissões</div>
+      <div class="sec-lbl">Arquivos</div>
+      <div class="ni" onclick="goPage('documentos',this)">📁 Documentos</div>
+      <div class="sec-lbl">Gestão</div>
+      <div class="ni" onclick="goPage('empresas',this)">🏢 Empresas</div>
+      <div class="ni" onclick="goPage('relatorios',this)">📊 Relatórios</div>
+      <div id="page-operacional" class="pg">
+  <div class="tb">
+    <div>
+      <div class="pt">Gestão Operacional</div>
+      <div class="ps">Monitoramento de checklists e auditoria de conformidade</div>
+    </div>
+    <div class="row">
+        <button class="btn btn-gh btn-sm" onclick="loadOperacional()">↻ Atualizar</button>
+    </div>
+  </div>
+
+  <div class="sg">
+    <div class="sc bl"><div class="sv" id="op-tempo-medio">0 min</div><div class="sl">Tempo Médio</div></div>
+    <div class="sc rd"><div class="sv" id="op-inconf">0</div><div class="sl">Inconformidades</div></div>
+    <div class="sc gn"><div class="sv" id="op-taxa">0%</div><div class="sl">Conformidade</div></div>
+    <div class="sc pu"><div class="sv" id="op-total">0</div><div class="sl">Total Realizado</div></div>
+  </div>
+
+  <div class="tc">
+    <div class="tc-h">Auditorias em Tempo Real (WhatsApp Bot)</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Data/Hora</th>
+          <th>Loja</th>
+          <th>Checklist</th>
+          <th>Duração</th>
+          <th>Status</th>
+          <th>Fotos</th>
+          <th>Feedback IA</th>
+        </tr>
+      </thead>
+      <tbody id="tb-operacional">
+        <tr class="erow"><td colspan="7">Aguardando dados da operação...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>		
+    `;
+    goPage('dashboard', nav.querySelector('.ni'));
+  } 
+  else if (mod === 'ops') {
+    nav.innerHTML = `
+      <div class="sec-lbl">Operação</div>
+      <div class="ni" onclick="goPage('operacional',this)">📊 Dashboard Ops</div>
+      <div class="sec-lbl">Checklists</div>
+      <div class="ni" onclick="toast('Módulo em desenvolvimento', true)">⚙️ Modelos</div>
+    `;
+    goPage('operacional', nav.querySelector('.ni'));
+    if (typeof loadOperacional === 'function') loadOperacional();
+  }
+}
+
+function voltarHub() {
+  el('app').style.display = 'none';
+  el('hub-screen').style.display = 'block';
+  el('nav-menu').innerHTML = ''; // Limpa para a próxima entrada
+}
+
+// ─── START ────────────────────────────────────────────
+init();
+// ══════════════════════════════════════════════════════
+// MÓDULO OPERACIONAL - LÓGICA DE DADOS
+// ══════════════════════════════════════════════════════
+
+async function loadOperacional() {
+  const tb = el('tb-operacional');
+  if (!tb) return;
+  
+  tb.innerHTML = '<tr class="erow"><td colspan="7"><span class="spin"></span> Carregando auditorias...</td></tr>';
+
+  try {
+    const { data, error } = await db.from('checklist_execucoes')
+      .select('*, checklist_modelos(nome)')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      tb.innerHTML = '<tr class="erow"><td colspan="7">Nenhuma auditoria registada. Aguardando dados do Bot...</td></tr>';
+      el('op-total').textContent = '0';
+      el('op-inconf').textContent = '0';
+      el('op-tempo-medio').textContent = '0 min';
+      el('op-taxa').textContent = '0%';
+      return;
+    }
+
+    let totalMin = 0, inconf = 0, concluidos = 0;
+
+    tb.innerHTML = data.map(r => {
+      let duracao = "—";
+      if (r.inicio_em && r.fim_em) {
+        const diff = (new Date(r.fim_em) - new Date(r.inicio_em)) / 60000;
+        duracao = Math.round(diff) + " min";
+        totalMin += diff;
+        concluidos++;
+      }
+      if (r.status === 'Inconformidade') inconf++;
+
+      return `
+        <tr>
+          <td>${fd(r.created_at)} <small style="display:block;color:var(--tx3)">${new Date(r.created_at).toLocaleTimeString()}</small></td>
+          <td><strong>${x(r.loja)}</strong></td>
+          <td>${x(r.checklist_modelos?.nome || 'Geral')}</td>
+          <td>${duracao}</td>
+          <td><span class="bx ${r.status === 'Concluído' ? 'gn' : 'rd'}">${x(r.status)}</span></td>
+          <td>${r.fotos_url ? `<button class="btn btn-gh btn-sm" onclick="window.open('${r.fotos_url[0]}', '_blank')">🖼️ Ver</button>` : '—'}</td>
+          <td><button class="btn btn-gh btn-sm" onclick="alert('Detalhes: ${esc(r.inconformidades || 'Nenhuma observação.')}')">📝 Info</button></td>
+        </tr>`;
+    }).join('');
+
+    el('op-total').textContent = data.length;
+    el('op-inconf').textContent = inconf;
+    el('op-tempo-medio').textContent = concluidos > 0 ? Math.round(totalMin / concluidos) + " min" : "0 min";
+    el('op-taxa').textContent = data.length > 0 ? Math.round(((data.length - inconf) / data.length) * 100) + "%" : "0%";
+
+  } catch (err) {
+    console.error("Erro no Operacional:", err);
+    tb.innerHTML = `<tr class="erow"><td colspan="7" style="color:var(--or)">Erro ao carregar: ${err.message}</td></tr>`;
+  }
+}
+</script>
+</body>
+</html>
